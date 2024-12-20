@@ -21,4 +21,5 @@ public interface FilmService {
     void updateRatingFilm(int id_film);
     FilmOutputDTO findByTitle(String title);
     List<String> getAllGenres();
+    String findFilmNameById(Long filmId);
 }

@@ -1,5 +1,6 @@
 package com.example.OnlineSinema.service;
 
+import com.example.OnlineSinema.dto.userDTO.UserInfoDTO;
 import com.example.OnlineSinema.dto.userDTO.UserOutputDTO;
 import org.springframework.data.domain.Page;
 
@@ -16,5 +17,6 @@ public interface UserService {
     void delete(int id);
     void register(String username, String password, String email);
     boolean authenticate(String email, String password);
-
+    String findUserNameById(int id);
+    UserInfoDTO findByUsername(String name);
 }

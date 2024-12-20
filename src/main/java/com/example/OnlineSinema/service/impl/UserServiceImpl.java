@@ -161,4 +161,28 @@ public class UserServiceImpl implements UserService {
         }
         return passwordEncoder.matches(password, user.getPassword());
     }
+
+    @Override
+    public String findUserNameById(int userId) {
+        User user = userRepository.findById(userId);
+        if (user == null) {
+            throw new RuntimeException("User not found with ID: " + userId);
+        }
+        return user.getName();
+    }
+
+    @Override
+    public UserInfoDTO findByUsername(String name) {
+        User user = userRepository.findByName(name);
+        if (user == null) {
+            throw new UserNotFound("User not found with this name: " + name);
+        }
+
+        List<String> reviewComments  = reviewsService.findByUserId(user.getId())
+                .stream()
+                .map(ReviewOutputDTO::getComment)
+                .collect(Collectors.toList());
+
+        return new UserInfoDTO(user.getId(), user.getName(), reviewComments );
+    }
 }

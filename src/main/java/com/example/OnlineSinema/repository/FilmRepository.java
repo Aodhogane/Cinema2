@@ -13,11 +13,11 @@ public interface FilmRepository {
     void save(Film film);
     void update(Film film);
     void deleteById(int id);
+    Film findById(int filmId);
     Film findByTitle(String title);
     Film findFilmWithDetails(int filmId);
     List<Film> findByGenres(List<Genres> genresList);
     Page<Film> findByGenres(List<Genres> genresList, Pageable pageable);
-    Film findById(int filmId);
     List<Film> findAll();
     Page<Film> findAll(Pageable pageable);
     List<Film> findTopFilmsByReviewCount(boolean isTop);

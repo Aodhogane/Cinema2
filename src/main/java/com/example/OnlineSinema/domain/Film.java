@@ -120,5 +120,4 @@ public class Film extends BaseEntity {
     public void setTicketsList(List<Ticket> ticketsList) {
         this.ticketsList = ticketsList;
     }
-
 }

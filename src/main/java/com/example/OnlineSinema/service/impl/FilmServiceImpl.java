@@ -256,4 +256,13 @@ public class FilmServiceImpl implements FilmService {
                 .map(Genres::getGenres)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public String findFilmNameById(Long filmId) {
+        Film film = filmRepository.findById(Math.toIntExact(filmId));
+        if (film == null) {
+            throw new RuntimeException("Film not found with ID: " + filmId);
+        }
+        return film.getTitle();
+    }
 }
