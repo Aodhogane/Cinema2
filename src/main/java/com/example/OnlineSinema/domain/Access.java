@@ -11,6 +11,7 @@ import java.util.List;
 public class Access extends BaseEntity {
 
     private String registered;
+    private User user;
 
     public Access(String registered) {
         this.registered = registered;
@@ -26,4 +27,12 @@ public class Access extends BaseEntity {
         this.registered = registered;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

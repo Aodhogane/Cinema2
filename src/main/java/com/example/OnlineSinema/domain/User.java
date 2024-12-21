@@ -58,8 +58,7 @@ public class User extends BaseEntity {
         this.password = password;
     }
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "accessId", referencedColumnName = "id")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     public List<Access> getAccess() {
         return access;
     }
@@ -82,9 +81,4 @@ public class User extends BaseEntity {
     public void setTicketsList(List<Ticket> ticketsList) {
         this.ticketsList = ticketsList;
     }
-
-//    @Transient
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return List.of(new SimpleGrantedAuthority(access.getRegistered()));
-//    }
 }

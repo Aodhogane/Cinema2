@@ -12,8 +12,8 @@ public interface UserRepository {
     void save(User user);
     void update(User user);
     void deleteById(int id);
-    User findByEmail(String email);
-    User findByName(String name);
+    Optional<User> findByEmail(String email);
+    Optional<User> findByName(String name);
     User findById(int id);
     List<User> findAll();
     Page<User> findAll(Pageable pageable);

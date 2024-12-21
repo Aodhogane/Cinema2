@@ -58,22 +58,22 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findByEmail(String email) {
+    public Optional<User> findByEmail(String email) {
         try {
-            return entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
+            return Optional.ofNullable(entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
                     .setParameter("email", email)
-                    .getSingleResult();
+                    .getSingleResult());
         } catch (NoResultException e) {
             return null;
         }
     }
 
     @Override
-    public User findByName(String name) {
+    public Optional<User> findByName(String name) {
         try {
-            return entityManager.createQuery("SELECT u FROM User u WHERE LOWER(u.name) = LOWER(:name)", User.class)
+            return Optional.ofNullable(entityManager.createQuery("SELECT u FROM User u WHERE LOWER(u.name) = LOWER(:name)", User.class)
                     .setParameter("name", name)
-                    .getSingleResult();
+                    .getSingleResult());
         } catch (NoResultException e) {
             return null;
         }

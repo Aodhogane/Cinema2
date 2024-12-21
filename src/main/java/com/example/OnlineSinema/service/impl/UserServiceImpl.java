@@ -48,12 +48,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void save(UserOutputDTO userOutputDTO) {
-        User user = userRepository.findByEmail(userOutputDTO.getEmail());
-        if (user != null) {
+        boolean emailExists = userRepository.findByEmail(userOutputDTO.getEmail()).isPresent();
+        if (emailExists) {
             throw new ThisEmailAlreadyConnected("Client with email: " + userOutputDTO.getEmail() + " already exists");
         }
-        user.setAccess(new Access("USER"));
-        user.setPassword(user.getPassword());
+
+        User user = new User();
+        user.setAccess((List<Access>) new Access("USER"));
+        user.setPassword(userOutputDTO.getPassword()); // Предполагается, что пароль хешируется заранее
+        user.setEmail(userOutputDTO.getEmail());
+
         userRepository.save(user);
     }
 
@@ -103,29 +107,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    //если надо получить только данные пользователя
     public UserOutputDTO findByName(String name) {
-        User user = userRepository.findByName(name);
-        if (user == null) {
-            throw new UserNotFound("User not found with name: " + name);
-        }
+        User user = userRepository.findByName(name)
+                .orElseThrow(() -> new UserNotFound("User not found with name: " + name));
+
         return modelMapper.map(user, UserOutputDTO.class);
     }
 
     @Override
-    //если требуется собрать пользователь и его коментарии
     public UserInfoDTO findByUsername(String name) {
-        User user = userRepository.findByName(name);
-        if (user == null) {
-            throw new UserNotFound("User not found with this name: " + name);
-        }
+        User user = userRepository.findByName(name)
+                .orElseThrow(() -> new UserNotFound("User not found with this name: " + name));
 
-        List<String> reviewComments  = reviewsService.findByUserId(user.getId())
+        List<String> reviewComments = reviewsService.findByUserId(user.getId())
                 .stream()
                 .map(ReviewOutputDTO::getComment)
                 .collect(Collectors.toList());
 
-        return new UserInfoDTO(user.getId(), user.getName(), reviewComments );
+        return new UserInfoDTO(user.getId(), user.getName(), reviewComments);
     }
 
     @Override
@@ -167,11 +166,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean authenticateUser(String email, String password) {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new UserNotFound("User not found with email: " + email);
-        }
-        return passwordEncoder.matches(password, user.getPassword());
+        return userRepository.findByEmail(email)
+                .map(user -> passwordEncoder.matches(password, user.getPassword()))
+                .orElseThrow(() -> new UserNotFound("User not found with email: " + email));
     }
 
     @Override

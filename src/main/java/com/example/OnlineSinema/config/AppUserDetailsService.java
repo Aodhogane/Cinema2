@@ -20,10 +20,10 @@ public class AppUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username)
                 .map(u -> new User(
-                        u.getUsername(),
+                        u.getEmail(),
                         u.getPassword(),
-                        u.getRoles().stream()
-                                .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getName().name()))
+                        u.getAccess().stream()
+                                .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getRegistered()))
                                 .collect(Collectors.toList())
                 )).orElseThrow(() -> new UsernameNotFoundException(username + " was not found!"));
     }

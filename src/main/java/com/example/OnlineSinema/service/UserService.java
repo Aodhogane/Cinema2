@@ -20,5 +20,4 @@ public interface UserService {
     boolean register(String username, String password, String email);
     String findUserNameById(int id);
     UserInfoDTO findByUsername(String name);
-
 }

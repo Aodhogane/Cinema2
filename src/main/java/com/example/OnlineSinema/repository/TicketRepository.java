@@ -4,6 +4,7 @@ import com.example.OnlineSinema.domain.Ticket;
 
 import java.util.List;
 
+
 public interface TicketRepository {
     void save(Ticket ticket);
     Ticket findById(int id);
