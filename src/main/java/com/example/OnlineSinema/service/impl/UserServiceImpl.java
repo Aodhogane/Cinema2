@@ -1,5 +1,6 @@
 package com.example.OnlineSinema.service.impl;
 
+import com.example.OnlineSinema.domain.Access;
 import com.example.OnlineSinema.domain.User;
 import com.example.OnlineSinema.dto.reviewDTO.ReviewOutputDTO;
 import com.example.OnlineSinema.dto.userDTO.UserInfoDTO;
@@ -51,7 +52,9 @@ public class UserServiceImpl implements UserService {
         if (user != null) {
             throw new ThisEmailAlreadyConnected("Client with email: " + userOutputDTO.getEmail() + " already exists");
         }
-        userRepository.save(modelMapper.map(userOutputDTO, User.class));
+        user.setAccess(new Access("USER"));
+        user.setPassword(user.getPassword());
+        userRepository.save(user);
     }
 
     @Override
@@ -100,6 +103,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    //если надо получить только данные пользователя
     public UserOutputDTO findByName(String name) {
         User user = userRepository.findByName(name);
         if (user == null) {
@@ -109,12 +113,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean authenticateUser(String email, String password) {
-        User user = userRepository.findByEmail(email);
+    //если требуется собрать пользователь и его коментарии
+    public UserInfoDTO findByUsername(String name) {
+        User user = userRepository.findByName(name);
         if (user == null) {
-            throw new UserNotFound("User not found with email: " + email);
+            throw new UserNotFound("User not found with this name: " + name);
         }
-        return user.getPassword().equals(password);
+
+        List<String> reviewComments  = reviewsService.findByUserId(user.getId())
+                .stream()
+                .map(ReviewOutputDTO::getComment)
+                .collect(Collectors.toList());
+
+        return new UserInfoDTO(user.getId(), user.getName(), reviewComments );
     }
 
     @Override
@@ -140,7 +151,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void register(String username, String email, String password) {
+    public boolean register(String username, String email, String password) {
         if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Email already exists");
         }
@@ -151,10 +162,11 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(password));
 
         userRepository.save(user);
+        return true;
     }
 
     @Override
-    public boolean authenticate(String email, String password) {
+    public boolean authenticateUser(String email, String password) {
         User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new UserNotFound("User not found with email: " + email);
@@ -169,20 +181,5 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("User not found with ID: " + userId);
         }
         return user.getName();
-    }
-
-    @Override
-    public UserInfoDTO findByUsername(String name) {
-        User user = userRepository.findByName(name);
-        if (user == null) {
-            throw new UserNotFound("User not found with this name: " + name);
-        }
-
-        List<String> reviewComments  = reviewsService.findByUserId(user.getId())
-                .stream()
-                .map(ReviewOutputDTO::getComment)
-                .collect(Collectors.toList());
-
-        return new UserInfoDTO(user.getId(), user.getName(), reviewComments );
     }
 }

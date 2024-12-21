@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -14,14 +15,17 @@ public class User extends BaseEntity {
     private String name;
     private String email;
     private String password;
-    private Access access;
+    private List<Access> access;
     private List<Reviews> reviewsList;
     private List<Ticket> ticketsList;
 
     public User() {
+        this.access = new ArrayList<>();
     }
 
-    public User(String name, Access access, String email, String password, List<Reviews> reviewsList, List<Ticket> ticketsList) {
+    public User(String name, List<Access> access, String email, String password, List<Reviews> reviewsList, List<Ticket> ticketsList) {
+        this();
+
         this.name = name;
         this.access = access;
         this.email = email;
@@ -56,10 +60,10 @@ public class User extends BaseEntity {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "accessId", referencedColumnName = "id")
-    public Access getAccess() {
+    public List<Access> getAccess() {
         return access;
     }
-    public void setAccess(Access access) {
+    public void setAccess(List<Access> access) {
         this.access = access;
     }
 
@@ -79,8 +83,8 @@ public class User extends BaseEntity {
         this.ticketsList = ticketsList;
     }
 
-    @Transient
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(access.getRegistered()));
-    }
+//    @Transient
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        return List.of(new SimpleGrantedAuthority(access.getRegistered()));
+//    }
 }
