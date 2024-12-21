@@ -11,7 +11,7 @@ import java.util.List;
 public class Access extends BaseEntity {
 
     private String registered;
-    private User user;
+    private List<User> users;
 
     public Access(String registered) {
         this.registered = registered;
@@ -27,12 +27,11 @@ public class Access extends BaseEntity {
         this.registered = registered;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    public User getUser() {
-        return user;
+    @OneToMany(mappedBy = "access", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    public List<User>  getUser() {
+        return users;
     }
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(List<User> users) {
+        this.users = users;
     }
 }

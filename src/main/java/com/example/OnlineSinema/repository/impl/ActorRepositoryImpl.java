@@ -60,10 +60,10 @@ public class ActorRepositoryImpl implements ActorRepository {
     }
 
     @Override
-    public List<Actors> findByFilmId(int id) {
+    public List<Actors> findByFilmId(int filmId) {
         return entityManager.createQuery(
-                        "SELECT a FROM Actors a JOIN a.filmsList f WHERE f.id = :filmId", Actors.class)
-                .setParameter("filmId", id)
+                        "SELECT a FROM Actors a JOIN a.films f WHERE f.id = :filmId", Actors.class)
+                .setParameter("filmId", filmId)
                 .getResultList();
     }
 

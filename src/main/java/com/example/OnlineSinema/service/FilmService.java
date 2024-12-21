@@ -11,6 +11,7 @@ public interface FilmService {
     void save(FilmOutputDTO filmOutputDTO);
     List<FilmCardDTO> findAll();
     Page<FilmCardDTO> findAll(int page, int size);
+    List<FilmCardDTO> findByNameContaining(String title);
     List<FilmCardDTO> findByGenres(List<String> genres);
     Page<FilmCardDTO> findByGenre(String genre, int page, int size);
     FilmOutputDTO findById(int id);
@@ -20,6 +21,6 @@ public interface FilmService {
     List<FilmOutputDTO> findTopFilmsByReviewCount(boolean isTop);
     void updateRatingFilm(int id_film);
     FilmOutputDTO findByTitle(String title);
+    Page<FilmCardDTO> findByNameContainingAndByGenres(String filmPart, List<String> genres, int page, int size);
     List<String> getAllGenres();
-    String findFilmNameById(Long filmId);
 }

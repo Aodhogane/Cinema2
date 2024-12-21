@@ -39,14 +39,21 @@ public class ReviewServiceImpl implements ReviewsService {
     }
 
     private ReviewOutputDTO createReviewOutputDto(Reviews review) {
+        User user = review.getUser();
+        Film film = review.getFilm();
+
+        if (user == null || film == null) {
+            throw new IllegalArgumentException("Review must have both user and film");
+        }
+
         return new ReviewOutputDTO(
                 review.getId(),
-                review.getUser().getId(),
-                Long.valueOf(review.getFilm().getId()),
+                user.getId(),
+                Long.valueOf(film.getId()),
                 review.getEstimation(),
                 review.getComment(),
-                review.getUser().getName(),
-                review.getFilm().getTitle(),
+                user.getName(),
+                film.getTitle(),
                 review.getDateTime()
         );
     }

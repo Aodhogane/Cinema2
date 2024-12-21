@@ -1,11 +1,7 @@
 package com.example.OnlineSinema.domain;
 
 import jakarta.persistence.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -15,15 +11,14 @@ public class User extends BaseEntity {
     private String name;
     private String email;
     private String password;
-    private List<Access> access;
+    private Access access;
     private List<Reviews> reviewsList;
     private List<Ticket> ticketsList;
 
     public User() {
-        this.access = new ArrayList<>();
     }
 
-    public User(String name, List<Access> access, String email, String password, List<Reviews> reviewsList, List<Ticket> ticketsList) {
+    public User(String name, Access access, String email, String password, List<Reviews> reviewsList, List<Ticket> ticketsList) {
         this();
 
         this.name = name;
@@ -59,14 +54,6 @@ public class User extends BaseEntity {
     }
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    public List<Access> getAccess() {
-        return access;
-    }
-    public void setAccess(List<Access> access) {
-        this.access = access;
-    }
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     public List<Reviews> getReviewsList() {
         return reviewsList;
     }
@@ -80,5 +67,14 @@ public class User extends BaseEntity {
     }
     public void setTicketsList(List<Ticket> ticketsList) {
         this.ticketsList = ticketsList;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "accessId")
+    public Access getAccess() {
+        return access;
+    }
+    public void setAccess(Access access) {
+        this.access = access;
     }
 }

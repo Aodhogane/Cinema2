@@ -70,10 +70,10 @@ public class DirectorRepositoryImpl implements DirectorRepository {
     }
 
     @Override
-    public List<Directors> findByFilmId(int id) {
+    public List<Directors> findByFilmId(int filmId) {
         return entityManager.createQuery(
-                        "SELECT d FROM Directors d JOIN d.filmsList f WHERE f.id = :filmId", Directors.class)
-                .setParameter("filmId", id)
+                        "SELECT d FROM Directors d JOIN d.films f WHERE f.id = :filmId", Directors.class)
+                .setParameter("filmId", filmId)
                 .getResultList();
     }
 

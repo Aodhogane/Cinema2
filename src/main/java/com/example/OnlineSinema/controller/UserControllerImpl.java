@@ -30,23 +30,23 @@ public class UserControllerImpl implements UserController {
         this.userService = userService;
     }
 
-//    @GetMapping("/{id}")
-//    public String userProfile(@PathVariable int id, Model model, Principal principal) {
-//        try {
-//            UserInfoDTO userInfo = userService.findById(id);
-//
-//            String loggedUser = principal.getName();
-//
-//            model.addAttribute("loggedUser", loggedUser);
-//            model.addAttribute("userName", userInfo.getName());
-//            model.addAttribute("reviews", userInfo.getReviews());
-//
-//            return "user/profile";
-//        } catch (UserNotFound e) {
-//            model.addAttribute("error", e.getMessage());
-//            return "error/404";
-//        }
-//    }
+    @GetMapping("/{id}")
+    public String userProfile(@PathVariable int id, Model model, Principal principal) {
+        try {
+            UserInfoDTO userInfo = userService.findById(id);
+
+            String loggedUser = principal.getName();
+
+            model.addAttribute("loggedUser", loggedUser);
+            model.addAttribute("userName", userInfo.getName());
+            model.addAttribute("reviews", userInfo.getReviews());
+
+            return "user/profile";
+        } catch (UserNotFound e) {
+            model.addAttribute("error", e.getMessage());
+            return "error/404";
+        }
+    }
 
     @Override
     @GetMapping("/{username}")

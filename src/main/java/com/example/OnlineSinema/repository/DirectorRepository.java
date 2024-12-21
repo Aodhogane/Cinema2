@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface DirectorRepository {
     void save(Directors director);
-    void update(Directors directors);
-    void deleteById(int id);
     Directors findById(int id);
     Directors findByName(String name, String surname, String middleName);
     List<Directors> findAll();
     Page<Directors> findAll(Pageable pageable);
     List<Directors> findByFilmId(int id);
+    void deleteById(int id);
+    void update(Directors directors);
 }

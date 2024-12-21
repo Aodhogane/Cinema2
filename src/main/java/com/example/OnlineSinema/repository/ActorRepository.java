@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface ActorRepository {
     void save(Actors actor);
-    void update(Actors actor);
     Actors findById(int id);
     Actors findByName(String name, String surname, String middleName);
     List<Actors> findAll();
     List<Actors> findByFilmId(int id);
     void deleteById(int id);
     Page<Actors> findAll(Pageable pageable);
+    void update(Actors actor);
 }

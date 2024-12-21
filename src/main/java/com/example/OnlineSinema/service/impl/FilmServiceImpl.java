@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,11 +60,11 @@ public class FilmServiceImpl implements FilmService {
 
         List<Genres> genresList = new ArrayList<>();
         for (String s : filmOutputDTO.getGenres()) {
-            Genres genres = genreRepository.findByName(s);
-            if (genres == null) {
+            Genres genre = genreRepository.findByName(s);
+            if (genre == null) {
                 throw new GenreNotFoundException("Genre with name: " + s + " not found");
             }
-            genresList.add(genres);
+            genresList.add(genre);
         }
 
         Film film = modelMapper.map(filmOutputDTO, Film.class);
@@ -78,6 +79,12 @@ public class FilmServiceImpl implements FilmService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<FilmCardDTO> findByNameContaining(String title) {
+        return filmRepository.findByTitleContaining(title).stream()
+                .map(film -> modelMapper.map(film, FilmCardDTO.class))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public List<FilmCardDTO> findByGenres(List<String> genres) {
@@ -98,10 +105,12 @@ public class FilmServiceImpl implements FilmService {
     public Page<FilmCardDTO> findByGenre(String genre, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        // Поиск фильмов по жанру
-        Page<Film> films = filmRepository.findByGenre(genre, pageable);
+        Genres genreObj = genreRepository.findByName(genre);
+        if (genreObj == null) {
+            throw new GenreNotFoundException("Genre with name: " + genre + " not found");
+        }
 
-        // Конвертация сущностей Film в DTO
+        Page<Film> films = filmRepository.findByGenres(Collections.singletonList(genreObj), pageable);
         return films.map(this::convertToFilmCardDTO);
     }
 
@@ -185,6 +194,25 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    public Page<FilmCardDTO> findByNameContainingAndByGenres(String filmPart, List<String> genres, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        List<Genres> genresList = genres.stream()
+                .map(genreName -> {
+                    Genres genre = genreRepository.findByName(genreName);
+                    if (genre == null) {
+                        throw new GenreNotFoundException("Genre with name: " + genreName + " not found");
+                    }
+                    return genre;
+                })
+                .collect(Collectors.toList());
+
+        Page<Film> filmPage = filmRepository.findByTitleContainingAndGenres(filmPart, genresList, pageable);
+
+        return filmPage.map(film -> modelMapper.map(film, FilmCardDTO.class));
+    }
+
+    @Override
     @Transactional
     public void deleteById(int id) {
         Film film = filmRepository.findById(id);
@@ -204,48 +232,35 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public List<FilmOutputDTO> findTopFilmsByReviewCount(boolean isTop) {
-        List<Film> topFilms = filmRepository.findTopFilmsByReviewCount(isTop);
+        List<Film> topFilms = filmRepository.findByReviewCount();
         return topFilms.stream()
                 .map(this::convertToOutputDto)
                 .collect(Collectors.toList());
     }
 
-
     private FilmOutputDTO convertToOutputDto(Film film) {
-        int reviewCount = film.getReviews().size();
+        int ticketCount = film.getTicketsList().size();
 
-        List<DirectorOutputDTO> directors = film.getDirectors().stream()
-                .map(director -> new DirectorOutputDTO(
-                        director.getId(),
-                        director.getFilms().stream().map(Film::getTitle).collect(Collectors.toList()),
-                        director.getMidlName(),
-                        director.getSurname(),
-                        director.getName()
-                ))
+        List<String> directors = film.getDirectors().stream()
+                .map(director -> String.format("%s %s %s", director.getName(), director.getSurname(), director.getMidlName()))
                 .collect(Collectors.toList());
 
-        List<ActorsOutputDTO> actors = film.getActors().stream()
-                .map(actor -> new ActorsOutputDTO(
-                        actor.getId(),
-                        actor.getMidlName(),
-                        actor.getFilms().stream().map(Film::getTitle).collect(Collectors.toList()),
-                        actor.getSurname(),
-                        actor.getName()
-                ))
+        List<String> actors = film.getActors().stream()
+                .map(actor -> String.format("%s %s %s", actor.getName(), actor.getSurname(), actor.getMidlName()))
+                .collect(Collectors.toList());
+
+        List<String> genres = film.getGenres().stream()
+                .map(Genres::getGenres)
                 .collect(Collectors.toList());
 
         return new FilmOutputDTO(
                 film.getId(),
-                film.getActors().stream()
-                        .map(actor -> actor.getName() + " " + actor.getSurname()) // собираем полное имя актера
-                        .collect(Collectors.toList()),
-                film.getGenres().stream().map(Genres::getGenres).collect(Collectors.toList()),
-                film.getDirectors().stream()
-                        .map(director -> director.getName() + " " + director.getSurname())
-                        .collect(Collectors.toList()),
+                actors,
+                genres,
+                directors,
                 film.getExitDate(),
                 film.getTitle(),
-                film.getReviews().size(),
+                ticketCount,
                 film.getRating()
         );
     }
@@ -255,14 +270,5 @@ public class FilmServiceImpl implements FilmService {
         return genreRepository.findAll().stream()
                 .map(Genres::getGenres)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public String findFilmNameById(Long filmId) {
-        Film film = filmRepository.findById(Math.toIntExact(filmId));
-        if (film == null) {
-            throw new RuntimeException("Film not found with ID: " + filmId);
-        }
-        return film.getTitle();
     }
 }

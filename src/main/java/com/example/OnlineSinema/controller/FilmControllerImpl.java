@@ -1,5 +1,6 @@
 package com.example.OnlineSinema.controller;
 
+import com.example.OnlineSinema.dto.filmDTO.FilmCardDTO;
 import com.example.OnlineSinema.dto.filmDTO.FilmOutputDTO;
 import com.example.OnlineSinema.dto.filmDTO.FilmSalesDTO;
 import com.example.OnlineSinema.dto.reviewDTO.ReviewOutputDTO;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/films")
+@RequestMapping("/film")
 public class FilmControllerImpl implements FilmControllerMain {
 
     private final FilmService filmService;
@@ -79,6 +80,14 @@ public class FilmControllerImpl implements FilmControllerMain {
         model.addAttribute("films", films);
         model.addAttribute("isTop", isTop);
         return "films/most-discussed";
+    }
+
+    @GetMapping("/search")
+    public String searchFilms(@RequestParam String query, Model model) {
+        List<FilmCardDTO> searchResults = filmService.findByNameContaining(query);
+        model.addAttribute("films", searchResults);
+        model.addAttribute("query", query);
+        return "films/search-results";
     }
 
     @Override

@@ -58,22 +58,22 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
+    public User findByEmail(String email) {
         try {
-            return Optional.ofNullable(entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
+            return entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
                     .setParameter("email", email)
-                    .getSingleResult());
+                    .getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
 
     @Override
-    public Optional<User> findByName(String name) {
+    public User findByName(String name) {
         try {
-            return Optional.ofNullable(entityManager.createQuery("SELECT u FROM User u WHERE LOWER(u.name) = LOWER(:name)", User.class)
+            return entityManager.createQuery("SELECT u FROM User u WHERE LOWER(u.name) = LOWER(:name)", User.class)
                     .setParameter("name", name)
-                    .getSingleResult());
+                    .getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -115,5 +115,25 @@ public class UserRepositoryImpl implements UserRepository {
                 .setParameter("email", email)
                 .getSingleResult();
         return count > 0;
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        Long count = (Long) entityManager.createQuery("SELECT COUNT(u) FROM User u WHERE u.username = :username")
+                .setParameter("username", username)
+                .getSingleResult();
+        return count > 0;
+    }
+
+    @Override
+    public Optional<User> findByUsername(String username) {
+        List<User> users = entityManager.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
+                .setParameter("username", username)
+                .getResultList();
+
+        if (users.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(users.get(0));
     }
 }

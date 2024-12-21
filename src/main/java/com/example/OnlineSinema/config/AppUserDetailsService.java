@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 public class AppUserDetailsService implements UserDetailsService {
@@ -18,13 +19,14 @@ public class AppUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmail(username)
-                .map(u -> new User(
-                        u.getEmail(),
-                        u.getPassword(),
-                        u.getAccess().stream()
-                                .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getRegistered()))
-                                .collect(Collectors.toList())
-                )).orElseThrow(() -> new UsernameNotFoundException(username + " was not found!"));
+
+        com.example.OnlineSinema.domain.User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username + " was not found!"));
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getName(),
+                user.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getAccess().getRegistered()))
+        );
     }
 }

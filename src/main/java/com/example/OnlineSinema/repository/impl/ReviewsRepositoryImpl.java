@@ -116,7 +116,7 @@ public class ReviewsRepositoryImpl implements ReviewsRepository {
 
     @Override
     public List<Reviews> findAll() {
-        return entityManager.createQuery("SELECT r FROM Reviews f", Reviews.class)
+        return entityManager.createQuery("SELECT r FROM Reviews r", Reviews.class)
                 .getResultList();
     }
 }

@@ -12,10 +12,12 @@ public interface UserRepository {
     void save(User user);
     void update(User user);
     void deleteById(int id);
-    Optional<User> findByEmail(String email);
-    Optional<User> findByName(String name);
+    User findByEmail(String email);
+    User findByName(String name);
     User findById(int id);
     List<User> findAll();
     Page<User> findAll(Pageable pageable);
     boolean existsByEmail(String email);
+    boolean existsByUsername(String username);
+    Optional<User> findByUsername(String username);
 }

@@ -3,6 +3,7 @@ package com.example.OnlineSinema.service.impl;
 import com.example.OnlineSinema.domain.Directors;
 import com.example.OnlineSinema.domain.Film;
 import com.example.OnlineSinema.dto.directorDTO.DirectorOutputDTO;
+import com.example.OnlineSinema.dto.directorDTO.DirectorsInfoDto;
 import com.example.OnlineSinema.dto.filmDTO.FilmOutputDTO;
 import com.example.OnlineSinema.exceptions.DirectorsNotFound;
 import com.example.OnlineSinema.exceptions.FilmNotFounf;
@@ -95,11 +96,11 @@ public class DirectorsServiceImpl implements DirectorsService {
     }
 
     @Override
-    public Page<DirectorOutputDTO> findAll(int page, int size) {
+    public Page<DirectorsInfoDto> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Directors> directorsPage = directorsRepository.findAll(pageable);
 
-        return directorsPage.map(director -> modelMapper.map(director, DirectorOutputDTO.class));
+        return directorsPage.map(director -> modelMapper.map(director, DirectorsInfoDto.class));
     }
 
     @Override
