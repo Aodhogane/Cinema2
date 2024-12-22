@@ -2,6 +2,7 @@ package com.example.OnlineSinema.config;
 
 import com.example.OnlineSinema.enums.UserRole;
 import com.example.OnlineSinema.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,10 +16,14 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 
+import static com.example.OnlineSinema.enums.UserRole.ADMIN;
+
 @Configuration
 public class AppSecurityConfiguration {
+
     private final UserRepository userRepository;
 
+    @Autowired
     public AppSecurityConfiguration(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -26,37 +31,38 @@ public class AppSecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, SecurityContextRepository securityContextRepository) throws Exception {
         http
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                        .permitAll()
-                        .requestMatchers("/favicon.ico").permitAll()
-                        .requestMatchers("/error").permitAll()
-                        .requestMatchers("/", "/user/login", "/user/register", "/user/login-error")
-                        .permitAll()
-                        .requestMatchers("/user/profile").authenticated()
-                        .requestMatchers("/admin/**").hasRole(UserRole.ADMIN.name())
-                        .anyRequest().authenticated()
+                .authorizeHttpRequests(authorizeHttpRequests ->
+                        authorizeHttpRequests
+                                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                                .requestMatchers("/favicon.ico").permitAll()
+                                .requestMatchers("/", "/search", "/film/{id}", "/user/{id}", "/auth/**").permitAll()
+                                .requestMatchers("/review/**", "/reaction/**", "/comment/**").authenticated()
+                                .requestMatchers("/admin/**").hasRole(String.valueOf(ADMIN))
+                                .anyRequest().authenticated()
                 )
-                .formLogin((formLogin) -> formLogin
-                        .loginPage("/user/login")
-                        .usernameParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY)
-                        .usernameParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY)
-                        .defaultSuccessUrl("/")
-                        .failureForwardUrl("/user/login-error")
+                .formLogin(formLogin ->
+                        formLogin
+                                .loginPage("/user/login")
+                                .usernameParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY)
+                                .passwordParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY)
+                                .defaultSuccessUrl("/")
+                                .failureUrl("/auth/login?error=error")
                 )
-                .logout((logout) -> logout.logoutUrl("/user/logout")
-                        .logoutSuccessUrl("/")
-                        .invalidateHttpSession(true)
+                .logout(logout ->
+                        logout
+                                .logoutUrl("/user/logout")
+                                .logoutSuccessUrl("/")
+                                .invalidateHttpSession(true)
                 )
-                .securityContext(
-                        securityContext-> securityContext
-                                .securityContextRepository(securityContextRepository)
+                .securityContext(securityContext ->
+                        securityContext.securityContextRepository(securityContextRepository)
                 );
+
         return http.build();
     }
 
     @Bean
-    public SecurityContextRepository securityContextRepository(){
+    public SecurityContextRepository securityContextRepository() {
         return new DelegatingSecurityContextRepository(
                 new RequestAttributeSecurityContextRepository(),
                 new HttpSessionSecurityContextRepository()
@@ -64,7 +70,7 @@ public class AppSecurityConfiguration {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(){
+    public UserDetailsService userDetailsService() {
         return new AppUserDetailsService(userRepository);
     }
 

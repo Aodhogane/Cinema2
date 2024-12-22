@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${baseViewModel.title}">Main Page</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Ваши стили -->
+</head>
+<body>
+<header>
+    <h1 th:text="${baseViewModel.title}">Main Page</h1>
+    <div>
+            <span th:if="${baseViewModel.username != null}">
+                Welcome, <strong th:text="${baseViewModel.username}">User</strong>!
+            </span>
+        <span th:if="${baseViewModel.username == null}">
+                Welcome, Guest!
+            </span>
+    </div>
+</header>
+
+<section>
+    <form action="/main" method="get">
+        <input type="text" name="query" placeholder="Search by title" th:value="${query}">
+        <select name="genre">
+            <option value="" th:if="${selectedGenre == null || selectedGenre == ''}" selected>All Genres</option>
+            <option th:each="genre : ${genres}" th:value="${genre}"
+                    th:text="${genre}" th:if="${selectedGenre == genre}" selected></option>
+            <option th:each="genre : ${genres}" th:value="${genre}" th:text="${genre}"
+                    th:if="${selectedGenre != genre}"></option>
+        </select>
+        <button type="submit">Search</button>
+    </form>
+</section>
+
+<section>
+    <h2>Films</h2>
+    <div th:if="${films.content.isEmpty()}">
+        <p>No films found.</p>
+    </div>
+    <div th:each="film : ${films.content}">
+        <div class="film-card">
+            <a th:href="@{'/films/' + ${film.id}}" th:text="${film.title}">Film Title</a>
+            <p th:text="${film.genre}">Genre</p>
+            <p>Released: <span th:text="${film.releaseDate}">Date</span></p>
+        </div>
+    </div>
+</section>
+
+<section th:if="${totalPages > 1}">
+    <h2>Pages</h2>
+    <div>
+        <a th:if="${currentPage > 1}" th:href="@{'/main?page=' + (${currentPage - 2}) + '&size=' + ${size} + '&query=' + ${query} + '&genre=' + ${selectedGenre}}">Previous</a>
+        <span th:text="${currentPage}">1</span>
+        <a th:if="${currentPage < totalPages}" th:href="@{'/main?page=' + ${currentPage} + '&size=' + ${size} + '&query=' + ${query} + '&genre=' + ${selectedGenre}}">Next</a>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2024 My Film Library</p>
+</footer>
+</body>
+</html>

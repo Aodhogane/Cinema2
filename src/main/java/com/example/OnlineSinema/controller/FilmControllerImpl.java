@@ -62,10 +62,10 @@ public class FilmControllerImpl implements FilmControllerMain {
             return "details";
         } catch (FilmNotFounf e) {
             model.addAttribute("error", "Film not found: " + e.getMessage());
-            return "error/404";
+            return "404";
         } catch (Exception e) {
             model.addAttribute("error", "An unexpected error occurred: " + e.getMessage());
-            return "error/500";
+            return "500";
         }
     }
 
@@ -73,7 +73,7 @@ public class FilmControllerImpl implements FilmControllerMain {
     public String getTopFilmsBySales(Model model) {
         List<FilmSalesDTO> topFilms = filmService.getTop5FilmsBySales();
         model.addAttribute("topFilms", topFilms);
-        return "films/top-sales";
+        return "top-sales";
     }
 
     @GetMapping("/most-discussed")
@@ -81,7 +81,7 @@ public class FilmControllerImpl implements FilmControllerMain {
         List<FilmOutputDTO> films = filmService.findTopFilmsByReviewCount(isTop);
         model.addAttribute("films", films);
         model.addAttribute("isTop", isTop);
-        return "films/most-discussed";
+        return "most-discussed";
     }
 
     @GetMapping("/search")
@@ -89,7 +89,7 @@ public class FilmControllerImpl implements FilmControllerMain {
         List<FilmCardDTO> searchResults = filmService.findByNameContaining(query);
         model.addAttribute("films", searchResults);
         model.addAttribute("query", query);
-        return "films/search-results";
+        return "search-results";
     }
 
     @Override

@@ -119,16 +119,16 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean existsByUsername(String username) {
-        Long count = (Long) entityManager.createQuery("SELECT COUNT(u) FROM User u WHERE u.username = :username")
-                .setParameter("username", username)
+        Long count = (Long) entityManager.createQuery("SELECT COUNT(u) FROM User u WHERE u.name = :name")
+                .setParameter("name", username)
                 .getSingleResult();
         return count > 0;
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
-        List<User> users = entityManager.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
-                .setParameter("username", username)
+        List<User> users = entityManager.createQuery("SELECT u FROM User u WHERE u.name = :name", User.class)
+                .setParameter("name", username)
                 .getResultList();
 
         if (users.isEmpty()) {

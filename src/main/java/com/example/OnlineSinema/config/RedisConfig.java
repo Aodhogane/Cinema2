@@ -1,5 +1,7 @@
 package com.example.OnlineSinema.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +16,6 @@ import java.time.Duration;
 
 @Configuration
 public class RedisConfig {
-
     @Value("${redis.host}")
     private String redisHost;
 
@@ -24,7 +25,6 @@ public class RedisConfig {
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(redisHost, redisPort);
-
         return new LettuceConnectionFactory(configuration);
     }
 
@@ -34,15 +34,36 @@ public class RedisConfig {
 
         return RedisCacheManager.builder(redisConnectionFactory())
                 .cacheDefaults(cacheConfig)
-                .withCacheConfiguration("companies", myDefaultCacheConfig(Duration.ofMinutes(10)))
-                .withCacheConfiguration("employees", myDefaultCacheConfig(Duration.ofMinutes(10)))
+                .withCacheConfiguration("USER_TOP", myDefaultCacheConfig(Duration.ofMinutes(30)))
+                .withCacheConfiguration("FILM_TOP", myDefaultCacheConfig(Duration.ofMinutes(30)))
+                .withCacheConfiguration("FILM_PAGE", myDefaultCacheConfig(Duration.ofDays(3)))
+                .withCacheConfiguration("USER_PAGE", myDefaultCacheConfig(Duration.ofDays(3)))
                 .build();
     }
 
-    private RedisCacheConfiguration myDefaultCacheConfig(Duration duration) {
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        objectMapper.activateDefaultTyping(
+                objectMapper.getPolymorphicTypeValidator(),
+                ObjectMapper.DefaultTyping.NON_FINAL
+        );
+
+        return objectMapper;
+    }
+
+
+    @Bean
+    public RedisCacheConfiguration myDefaultCacheConfig(Duration duration) {
+        ObjectMapper objectMapper = objectMapper();
+
         return RedisCacheConfiguration
                 .defaultCacheConfig()
                 .entryTtl(duration)
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
+                        new GenericJackson2JsonRedisSerializer(objectMapper)
+                ));
     }
 }
