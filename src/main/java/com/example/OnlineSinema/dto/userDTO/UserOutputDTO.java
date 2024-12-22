@@ -21,9 +21,6 @@ public class UserOutputDTO {
 
     public UserOutputDTO() {}
 
-    public UserOutputDTO(int id, String name, List<ReviewOutputDTO> reviews) {
-    }
-
     public int getId() {
         return id;
     }

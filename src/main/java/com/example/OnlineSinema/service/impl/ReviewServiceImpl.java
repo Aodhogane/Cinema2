@@ -173,4 +173,26 @@ public class ReviewServiceImpl implements ReviewsService {
         List<Reviews> reviews = reviewsRepository.findAll();
         return reviews.stream().map(this::createReviewOutputDto).collect(Collectors.toList());
     }
+
+    @Override
+    public Page<ReviewOutputDTO> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Reviews> reviewsPage = reviewsRepository.findAll(pageable);
+
+        List<ReviewOutputDTO> reviewOutputDTOList = reviewsPage.getContent().stream()
+                .map(review -> new ReviewOutputDTO(
+                        review.getId(),
+                        review.getUser().getId(),
+                        (long) review.getFilm().getId(),
+                        review.getEstimation(),
+                        review.getComment(),
+                        review.getUser().getName(),
+                        review.getFilm().getTitle(),
+                        review.getDateTime()
+                ))
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(reviewOutputDTOList, pageable, reviewsPage.getTotalElements());
+    }
 }

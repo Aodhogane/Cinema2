@@ -25,6 +25,7 @@ public class ReviewOutputDTO {
 
     public ReviewOutputDTO() {}
 
+
     public int getId() {
         return id;
     }

@@ -1,19 +1,16 @@
 package com.example.OnlineSinema.service.impl;
 
-import com.example.OnlineSinema.domain.Film;
-import com.example.OnlineSinema.domain.Genres;
-import com.example.OnlineSinema.domain.Reviews;
+import com.example.OnlineSinema.domain.*;
 import com.example.OnlineSinema.dto.actorsDTO.ActorsOutputDTO;
 import com.example.OnlineSinema.dto.directorDTO.DirectorOutputDTO;
 import com.example.OnlineSinema.dto.filmDTO.FilmCardDTO;
 import com.example.OnlineSinema.dto.filmDTO.FilmOutputDTO;
 import com.example.OnlineSinema.dto.filmDTO.FilmSalesDTO;
+import com.example.OnlineSinema.exceptions.ActorsNotFound;
+import com.example.OnlineSinema.exceptions.DirectorsNotFound;
 import com.example.OnlineSinema.exceptions.FilmNotFounf;
 import com.example.OnlineSinema.exceptions.GenreNotFoundException;
-import com.example.OnlineSinema.repository.FilmRepository;
-import com.example.OnlineSinema.repository.GenreRepository;
-import com.example.OnlineSinema.repository.ReviewsRepository;
-import com.example.OnlineSinema.repository.TicketRepository;
+import com.example.OnlineSinema.repository.*;
 import com.example.OnlineSinema.service.FilmService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,18 +34,22 @@ public class FilmServiceImpl implements FilmService {
     private final ModelMapper modelMapper;
     private final TicketRepository ticketRepository;
     private final ReviewsRepository reviewsRepository;
+    private final ActorRepository actorRepository;
+    private final DirectorRepository directorRepository;
 
     @Autowired
-    public FilmServiceImpl(ModelMapper modelMapper,
-                           GenreRepository genreRepository,
-                           FilmRepository filmRepository,
-                           TicketRepository ticketRepository,
-                           ReviewsRepository reviewsRepository) {
-        this.modelMapper = modelMapper;
-        this.genreRepository = genreRepository;
+    public FilmServiceImpl(FilmRepository filmRepository, GenreRepository genreRepository,
+                           ModelMapper modelMapper, TicketRepository ticketRepository,
+                           ReviewsRepository reviewsRepository,
+                           ActorRepository actorRepository,
+                           DirectorRepository directorRepository) {
         this.filmRepository = filmRepository;
+        this.genreRepository = genreRepository;
+        this.modelMapper = modelMapper;
         this.ticketRepository = ticketRepository;
         this.reviewsRepository = reviewsRepository;
+        this.actorRepository = actorRepository;
+        this.directorRepository = directorRepository;
     }
 
     @Override

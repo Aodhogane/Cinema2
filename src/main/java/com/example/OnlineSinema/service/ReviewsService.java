@@ -18,4 +18,5 @@ public interface ReviewsService {
     List<ReviewOutputDTO> findByRating(int filmId, float rating);
     ReviewOutputDTO findByUserIdFilmId(int userId, int filmId);
     List<ReviewOutputDTO> findAll();
+    Page<ReviewOutputDTO> findAll(int page, int size);
 }

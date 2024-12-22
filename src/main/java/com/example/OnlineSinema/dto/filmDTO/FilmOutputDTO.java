@@ -26,6 +26,7 @@ public class FilmOutputDTO {
         this.rating = rating;
     }
 
+
     public int getId() {
         return id;
     }

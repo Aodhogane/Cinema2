@@ -8,6 +8,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -118,5 +119,18 @@ public class ReviewsRepositoryImpl implements ReviewsRepository {
     public List<Reviews> findAll() {
         return entityManager.createQuery("SELECT r FROM Reviews r", Reviews.class)
                 .getResultList();
+    }
+
+    @Override
+    public Page<Reviews> findAll(Pageable pageable) {
+        List<Reviews> reviews = entityManager.createQuery("SELECT r FROM Reviews r", Reviews.class)
+                .setFirstResult((int) pageable.getOffset())
+                .setMaxResults(pageable.getPageSize())
+                .getResultList();
+
+        long totalReviews = entityManager.createQuery("SELECT COUNT(r) FROM Reviews r", Long.class)
+                .getSingleResult();
+
+        return new PageImpl<>(reviews, pageable, totalReviews);
     }
 }

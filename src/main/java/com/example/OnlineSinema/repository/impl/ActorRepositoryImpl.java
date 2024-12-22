@@ -44,10 +44,10 @@ public class ActorRepositoryImpl implements ActorRepository {
     public Actors findByName(String name, String surname, String middleName) {
         try {
             return entityManager.createQuery(
-                            "SELECT a FROM Actors a WHERE LOWER(a.name) = LOWER(:name) AND LOWER(a.surname) = LOWER(:surname) AND LOWER(a.middleName) = LOWER(:middleName)", Actors.class)
+                            "SELECT a FROM Actors a WHERE LOWER(a.name) = LOWER(:name) AND LOWER(a.surname) = LOWER(:surname) AND LOWER(a.middl_name) = LOWER(:middl_name)", Actors.class)
                     .setParameter("name", name)
                     .setParameter("surname", surname)
-                    .setParameter("middleName", middleName)
+                    .setParameter("middl_name", middleName)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null;

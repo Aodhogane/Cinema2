@@ -7,11 +7,13 @@ import com.example.OnlineSinema.dto.reviewDTO.ReviewOutputDTO;
 import com.example.OnlineSinema.exceptions.FilmNotFounf;
 import com.example.OnlineSinema.service.FilmService;
 import com.example.OnlineSinema.service.ReviewsService;
+import com.example.OnlineSinema.service.impl.UserDetailsServiceImpl;
 import com.example.SinemaContract.VM.cards.BaseViewModel;
 import com.example.SinemaContract.VM.domain.film.ReviewPageFormModel;
 import com.example.SinemaContract.VM.form.actor.ActorPageFM;
 import com.example.SinemaContract.VM.form.director.DirectorPageFM;
 import com.example.SinemaContract.controllers.domeinController.FilmControllerMain;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -91,7 +93,12 @@ public class FilmControllerImpl implements FilmControllerMain {
     }
 
     @Override
-    public BaseViewModel createBaseVieModel(String title, int filmId) {
-        return new BaseViewModel(title, filmId);
+    public BaseViewModel createBaseVieModel(String title, UserDetails userDetails) {
+        if (userDetails == null) {
+            return new BaseViewModel(title, -1, null);
+        } else {
+            UserDetailsServiceImpl.CustomUser customUser = (UserDetailsServiceImpl.CustomUser) userDetails;
+            return new BaseViewModel(title, customUser.getId(), customUser.getName());
+        }
     }
 }

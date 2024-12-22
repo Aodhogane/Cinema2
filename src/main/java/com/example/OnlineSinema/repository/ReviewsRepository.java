@@ -18,5 +18,6 @@ public interface ReviewsRepository {
     Page<Reviews> getLatestReviewsByFilmId(int id, Pageable pageable);
     void update(Reviews reviews);
     List<Reviews> findAll();
+    Page<Reviews> findAll(Pageable pageable);
 }
 
