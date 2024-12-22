@@ -1,11 +1,7 @@
 package com.example.OnlineSinema.controller.AdminPanely;
 
-import com.example.OnlineSinema.exceptions.FilmNotFounf;
-import com.example.OnlineSinema.exceptions.GenreNotFoundException;
-import com.example.OnlineSinema.exceptions.ReviewNotFound;
-import com.example.OnlineSinema.service.FilmService;
-import com.example.OnlineSinema.service.GenresService;
-import com.example.OnlineSinema.service.ReviewsService;
+import com.example.OnlineSinema.exceptions.*;
+import com.example.OnlineSinema.service.*;
 import com.example.OnlineSinema.service.impl.UserDetailsServiceImpl;
 import com.example.SinemaContract.VM.cards.BaseViewModel;
 import com.example.SinemaContract.controllers.admine.AdminControllerDelete;
@@ -21,12 +17,20 @@ public class AdminControllerDeleteImpl implements AdminControllerDelete {
     private final GenresService genresService;
     private final FilmService filmService;
     private final ReviewsService reviewsService;
+    private final ActorsServis actorsServis;
+    private final DirectorsService directorsService;
 
     @Autowired
-    public AdminControllerDeleteImpl(GenresService genresService, FilmService filmService, ReviewsService reviewsService) {
+    public AdminControllerDeleteImpl(GenresService genresService,
+                                     FilmService filmService,
+                                     ReviewsService reviewsService,
+                                     ActorsServis actorsServis,
+                                     DirectorsService directorsService) {
         this.genresService = genresService;
         this.filmService = filmService;
         this.reviewsService = reviewsService;
+        this.actorsServis = actorsServis;
+        this.directorsService = directorsService;
     }
 
     @Override
@@ -69,6 +73,34 @@ public class AdminControllerDeleteImpl implements AdminControllerDelete {
 
         redirectAttributes.addFlashAttribute("successMessage", "Review successfully deleted!");
         return "redirect:/admin/review";
+    }
+
+    @Override
+    @PostMapping("/{id}/actor")
+    public String deleteActor(@PathVariable int id, Model model, RedirectAttributes redirectAttributes){
+        try {
+            actorsServis.deleteById(id);
+        } catch (ActorsNotFound e){
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin";
+        }
+
+        redirectAttributes.addFlashAttribute("successMessage", "Actor successfully deleted!");
+        return "redirect:/admin/actors";
+    }
+
+    @Override
+    @PostMapping("/{id}/director")
+    public String deleteDirector(@PathVariable int id, Model model, RedirectAttributes redirectAttributes){
+        try {
+            directorsService.deleteById(id);
+        } catch (DirectorsNotFound e){
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin";
+        }
+
+        redirectAttributes.addFlashAttribute("successMessage", "Director successfully deleted!");
+        return "redirect:/admin/director";
     }
 
     @Override

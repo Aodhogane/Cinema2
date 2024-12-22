@@ -1,12 +1,12 @@
 package com.example.OnlineSinema.controller.AdminPanely;
 
+import com.example.OnlineSinema.dto.actorsDTO.ActorsOutputDTO;
+import com.example.OnlineSinema.dto.directorDTO.DirectorOutputDTO;
 import com.example.OnlineSinema.dto.filmDTO.FilmOutputDTO;
 import com.example.OnlineSinema.dto.genresDTO.GenresOutputDTO;
 import com.example.OnlineSinema.dto.userDTO.UserInfoDTO;
 import com.example.OnlineSinema.dto.userDTO.UserOutputDTO;
-import com.example.OnlineSinema.exceptions.FilmNotFounf;
-import com.example.OnlineSinema.exceptions.GenreNotFoundException;
-import com.example.OnlineSinema.exceptions.UserNotFound;
+import com.example.OnlineSinema.exceptions.*;
 import com.example.OnlineSinema.repository.AccessRepository;
 import com.example.OnlineSinema.service.*;
 import com.example.OnlineSinema.service.impl.UserDetailsServiceImpl;
@@ -120,13 +120,41 @@ public class AdminControllerEditImpl implements AdminControllerEdit {
     }
 
     @Override
-    public String editActor(int id, Model model, RedirectAttributes redirectAttributes) {
-        return "";
+    @GetMapping("/{id}/actor")
+    public String editActor(@PathVariable int id, Model model, RedirectAttributes redirectAttributes, @AuthenticationPrincipal UserDetails userDetails) {
+        ActorsOutputDTO actor;
+        try {
+            actor = actorsServis.findById(id);
+        } catch (ActorsNotFound e){
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin";
+        }
+
+        var viewModel = new AdminViewModelEntityEdit(createBaseVieModel("Actor edit page", userDetails),
+                "actor", id);
+
+        model.addAttribute("model", viewModel);
+        model.addAttribute("actorForm", new ActorFM(actor.getName(), actor.getSurname(), actor.getMidlName()));
+        return "admin-edit";
     }
 
     @Override
-    public String editDirector(int id, Model model, RedirectAttributes redirectAttributes) {
-        return "";
+    @GetMapping("/{id}/director")
+    public String editDirector(@PathVariable int id, Model model, RedirectAttributes redirectAttributes, @AuthenticationPrincipal UserDetails userDetails) {
+        DirectorOutputDTO director;
+        try {
+            director = directorsService.findById(id);
+        } catch (DirectorsNotFound e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin";
+        }
+
+        var viewModel = new AdminViewModelEntityEdit(createBaseVieModel("Director edit page", userDetails),
+                "director", id);
+
+        model.addAttribute("model", viewModel);
+        model.addAttribute("directorForm", new DirectorFM(director.getName(), director.getSurname(), director.getMidlName()));
+        return "admin-edit";
     }
 
     @Override
@@ -199,13 +227,43 @@ public class AdminControllerEditImpl implements AdminControllerEdit {
     }
 
     @Override
-    public String createActor(int id, ActorFM actorFM, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        return "";
+    @PostMapping("/{id}/actor")
+    public String createActor(@PathVariable int id, @Valid @ModelAttribute("actorForm") ActorFM actorFM,
+                              BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Error in filling out the form");
+            redirectAttributes.addFlashAttribute("form", actorFM);
+            return "redirect:/admin/edit/" + id + "/actor";
+        }
+        try {
+            actorsServis.update(id, actorFM.name(), actorFM.surname(), actorFM.midlllname());
+        } catch (ActorsNotFound e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/edit/" + id + "/actor";
+        }
+
+        redirectAttributes.addFlashAttribute("successMessage", "Actor successfully updated!");
+        return "redirect:/admin/actor";
     }
 
     @Override
-    public String createDirector(int id, DirectorFM directorFM, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        return "";
+    @PostMapping("/{id}/director")
+    public String createDirector(@PathVariable int id, @Valid @ModelAttribute("directorForm") DirectorFM directorFM,
+                                 BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Error in filling out the form");
+            redirectAttributes.addFlashAttribute("form", directorFM);
+            return "redirect:/admin/edit/" + id + "/director";
+        }
+        try {
+            directorsService.update(id, directorFM.name(), directorFM.midlllname(), directorFM.surname());
+        } catch (DirectorsNotFound e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/edit/" + id + "/director";
+        }
+
+        redirectAttributes.addFlashAttribute("successMessage", "Director successfully updated!");
+        return "redirect:/admin/director";
     }
 
     @Override
