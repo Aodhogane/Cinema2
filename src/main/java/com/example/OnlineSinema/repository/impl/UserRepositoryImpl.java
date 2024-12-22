@@ -38,7 +38,7 @@ public class UserRepositoryImpl implements UserRepository {
             throw new UserNotFound("User with ID: " + user.getId() + " not found");
         }
 
-        existingUser.setName(user.getName());
+        existingUser.setUsername(user.getUsername());
         existingUser.setEmail(user.getEmail());
         existingUser.setPassword(user.getPassword());
         existingUser.setAccess(user.getAccess());
@@ -71,8 +71,8 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User findByName(String name) {
         try {
-            return entityManager.createQuery("SELECT u FROM User u WHERE LOWER(u.name) = LOWER(:name)", User.class)
-                    .setParameter("name", name)
+            return entityManager.createQuery("SELECT u FROM User u WHERE LOWER(u.name) = LOWER(:username)", User.class)
+                    .setParameter("username", name)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null;
@@ -119,16 +119,16 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean existsByUsername(String username) {
-        Long count = (Long) entityManager.createQuery("SELECT COUNT(u) FROM User u WHERE u.name = :name")
-                .setParameter("name", username)
+        Long count = (Long) entityManager.createQuery("SELECT COUNT(u) FROM User u WHERE u.username = :username")
+                .setParameter("username", username)
                 .getSingleResult();
         return count > 0;
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
-        List<User> users = entityManager.createQuery("SELECT u FROM User u WHERE u.name = :name", User.class)
-                .setParameter("name", username)
+        List<User> users = entityManager.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class)
+                .setParameter("username", username)
                 .getResultList();
 
         if (users.isEmpty()) {

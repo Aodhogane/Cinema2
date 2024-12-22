@@ -75,6 +75,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    @Transactional
     public List<FilmCardDTO> findAll() {
         return filmRepository.findAll().stream()
                 .map(film -> modelMapper.map(film, FilmCardDTO.class))
@@ -89,6 +90,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    @Transactional
     public List<FilmCardDTO> findByGenres(List<String> genres) {
         List<Genres> genresList = new ArrayList<>();
         for (String s : genres) {
@@ -104,6 +106,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    @Transactional
     public Page<FilmCardDTO> findByGenre(String genre, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 

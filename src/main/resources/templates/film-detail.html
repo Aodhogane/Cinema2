@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Film Details</title>
+</head>
+<body>
+
+<h1 th:text="${film.title}"></h1>
+<p><strong>Rating:</strong> <span th:text="${film.rating}"></span></p>
+<p><strong>Release Date:</strong> <span th:text="${film.exitDate}"></span></p>
+
+<h3>Actors</h3>
+<ul>
+    <th:block th:each="actor : ${film.actors}">
+        <li th:text="${actor}"></li>
+    </th:block>
+</ul>
+
+<h3>Directors</h3>
+<ul>
+    <th:block th:each="director : ${film.directors}">
+        <li th:text="${director}"></li>
+    </th:block>
+</ul>
+
+<h3>Genres</h3>
+<ul>
+    <th:block th:each="genre : ${film.genres}">
+        <li th:text="${genre}"></li>
+    </th:block>
+</ul>
+
+<h3>Reviews</h3>
+<ul>
+    <th:block th:each="review : ${reviews}">
+        <li>
+            <span th:text="${review.estimation}"></span> -
+            <span th:text="${review.comment}"></span>
+        </li>
+    </th:block>
+</ul>
+
+</body>
+</html>

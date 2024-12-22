@@ -106,6 +106,7 @@ public class FilmRepositoryImpl implements FilmRepository {
     }
 
     @Override
+    @Transactional
     public List<Film> findAll() {
         return entityManager.createQuery("SELECT f FROM Film f", Film.class)
                 .getResultList();

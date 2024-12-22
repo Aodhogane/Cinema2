@@ -61,7 +61,7 @@
 //        accessRepository.save(adminAccess);
 //
 //        User adminUser = new User();
-//        adminUser.setName("Admin");
+//        adminUser.setUsername("Admin");
 //        adminUser.setEmail("admin@example.com");
 //        adminUser.setPassword(passwordEncoder.encode("admin"));
 //        adminUser.setAccess(adminAccess);
@@ -74,7 +74,7 @@
 //
 //        for (int i = 0; i < 5; i++) {
 //            User user = new User();
-//            user.setName(faker.name().username());
+//            user.setUsername(faker.name().username());
 //            user.setEmail(faker.internet().emailAddress());
 //            user.setPassword(passwordEncoder.encode(faker.internet().password()));
 //            user.setAccess(userAccess);

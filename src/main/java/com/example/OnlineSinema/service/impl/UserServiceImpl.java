@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
                 .map(review -> review.getComment())
                 .collect(Collectors.toList());
 
-        return new UserInfoDTO(user.getId(), user.getName(), reviews);
+        return new UserInfoDTO(user.getId(), user.getUsername(), reviews);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFound("User not found with id: " + userOutputDTO.getId());
         }
 
-        user.setName(userOutputDTO.getName());
+        user.setUsername(userOutputDTO.getName());
         user.setEmail(userOutputDTO.getEmail());
         user.setPassword(userOutputDTO.getPassword());
         userRepository.save(user);
@@ -102,12 +102,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean authenticateUser(String email, String password) {
-        User user = userRepository.findByEmail(email);
+    public boolean authenticateUser(String username, String password) {
+        User user = userRepository.findByName(username);
         if (user == null) {
-            throw new UserNotFound("User not found with email: " + email);
+            throw new UserNotFound("User not found with email: " + username);
         }
-        return user.getPassword().equals(password);
+        return passwordEncoder.matches(password, user.getPassword());
     }
 
     @Override
@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
                     .map(ReviewOutputDTO::getComment)
                     .collect(Collectors.toList());
 
-            return new UserInfoDTO(user.getId(), user.getName(), reviews);
+            return new UserInfoDTO(user.getId(), user.getUsername(), reviews);
         });
     }
 
@@ -143,9 +143,9 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = new User();
-        user.setName(username);
+        user.setUsername(username);
         user.setEmail(email);
-//        user.setPassword(passwordEncoder.encode(password));
+        user.setPassword(passwordEncoder.encode(password));
 
         userRepository.save(user);
     }
@@ -160,15 +160,6 @@ public class UserServiceImpl implements UserService {
                 .map(Reviews::getComment)
                 .collect(Collectors.toList());
 
-        return new UserInfoDTO(user.getId(), user.getName(), reviews);
-    }
-
-    @Override
-    public boolean authenticate(String email, String password) {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new UserNotFound("User not found with email: " + email);
-        }
-        return passwordEncoder.matches(password, user.getPassword());
+        return new UserInfoDTO(user.getId(), user.getUsername(), reviews);
     }
 }

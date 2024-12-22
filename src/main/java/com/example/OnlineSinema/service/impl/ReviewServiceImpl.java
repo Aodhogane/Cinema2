@@ -52,7 +52,7 @@ public class ReviewServiceImpl implements ReviewsService {
                 Long.valueOf(film.getId()),
                 review.getEstimation(),
                 review.getComment(),
-                user.getName(),
+                user.getUsername(),
                 film.getTitle(),
                 review.getDateTime()
         );
@@ -187,7 +187,7 @@ public class ReviewServiceImpl implements ReviewsService {
                         (long) review.getFilm().getId(),
                         review.getEstimation(),
                         review.getComment(),
-                        review.getUser().getName(),
+                        review.getUser().getUsername(),
                         review.getFilm().getTitle(),
                         review.getDateTime()
                 ))

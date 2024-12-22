@@ -6,7 +6,6 @@ import com.example.OnlineSinema.service.impl.ElasticsearchFilmService;
 import com.example.OnlineSinema.service.impl.UserDetailsServiceImpl;
 import com.example.SinemaContract.VM.cards.BaseViewModel;
 import com.example.SinemaContract.controllers.MainController;
-import jakarta.persistence.Access;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +15,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 
 @Controller

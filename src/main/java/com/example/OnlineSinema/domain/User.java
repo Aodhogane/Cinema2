@@ -29,11 +29,11 @@ public class User extends BaseEntity {
         this.ticketsList = ticketsList;
     }
 
-    @Column(name = "name", nullable = false)
-    public String getName() {
+    @Column(name = "username", nullable = false)
+    public String getUsername() {
         return username;
     }
-    public void setName(String username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 

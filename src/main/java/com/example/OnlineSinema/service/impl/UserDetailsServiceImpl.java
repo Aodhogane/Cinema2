@@ -28,8 +28,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if(username == null){
             throw new UsernameNotFoundException("Client with email:" + username + " not found");
         }
-        return new CustomUser(user.getName(), user.getPassword(), Collections.singleton(new SimpleGrantedAuthority("ROLE_"+user.getAccess().getRegistered())),
-                user.getId(), user.getName());
+        return new CustomUser(user.getUsername(), user.getPassword(), Collections.singleton(new SimpleGrantedAuthority("ROLE_"+user.getAccess().getRegistered())),
+                user.getId(), user.getUsername());
     }
 
     public static class CustomUser extends User{

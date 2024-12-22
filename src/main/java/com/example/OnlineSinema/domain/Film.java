@@ -66,7 +66,7 @@ public class Film extends BaseEntity {
         this.rating = rating;
     }
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "FilmActors",
             joinColumns = @JoinColumn(name = "filmId"),
@@ -79,7 +79,7 @@ public class Film extends BaseEntity {
         this.actorsList = actors;
     }
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "FilmDirector",
             joinColumns = @JoinColumn(name = "filmId"),
@@ -92,7 +92,7 @@ public class Film extends BaseEntity {
         this.directorsList = directors;
     }
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "FilmGenre",
             joinColumns = @JoinColumn(name = "filmId"),

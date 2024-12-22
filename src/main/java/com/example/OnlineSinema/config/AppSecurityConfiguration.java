@@ -11,6 +11,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -81,5 +83,22 @@ public class AppSecurityConfiguration {
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler successHandler() {
+        return (request, response, authentication) -> {
+            String username = authentication.getName();
+            System.out.println("Успешный вход пользователя: " + username);
+            response.sendRedirect("/?success");
+        };
+    }
+
+    @Bean
+    public AuthenticationFailureHandler failureHandler() {
+        return (request, response, exception) -> {
+            System.out.println("Ошибка входа: " + exception.getMessage());
+            response.sendRedirect("/login?error");
+        };
     }
 }
