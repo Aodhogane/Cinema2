@@ -23,10 +23,20 @@ public class AppUserDetailsService implements UserDetailsService {
         com.example.OnlineSinema.domain.User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username + " was not found!"));
 
+        if (user.getName() == null || user.getName().isEmpty()) {
+            throw new UsernameNotFoundException("Username is null or empty for user: " + username);
+        }
+
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            throw new UsernameNotFoundException("Password is null or empty for user: " + username);
+        }
+
+        String role = user.getAccess() != null ? user.getAccess().getRegistered() : "USER";
+
         return new org.springframework.security.core.userdetails.User(
                 user.getName(),
                 user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getAccess().getRegistered()))
+                Collections.singletonList(new SimpleGrantedAuthority(role))
         );
     }
 }

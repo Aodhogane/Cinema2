@@ -28,10 +28,10 @@ public class Access extends BaseEntity {
     }
 
     @OneToMany(mappedBy = "access", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    public List<User>  getUser() {
+    public List<User> getUsers() {
         return users;
     }
-    public void setUser(List<User> users) {
+    public void setUsers(List<User> users) {
         this.users = users;
     }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 @Table(name = "Users")
 public class User extends BaseEntity {
 
-    private String name;
+    private String username;
     private String email;
     private String password;
     private Access access;
@@ -18,10 +18,10 @@ public class User extends BaseEntity {
     public User() {
     }
 
-    public User(String name, Access access, String email, String password, List<Reviews> reviewsList, List<Ticket> ticketsList) {
+    public User(String username, Access access, String email, String password, List<Reviews> reviewsList, List<Ticket> ticketsList) {
         this();
 
-        this.name = name;
+        this.username = username;
         this.access = access;
         this.email = email;
         this.password = password;
@@ -31,10 +31,10 @@ public class User extends BaseEntity {
 
     @Column(name = "name", nullable = false)
     public String getName() {
-        return name;
+        return username;
     }
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String username) {
+        this.username = username;
     }
 
     @Column(name = "Email", nullable = false, unique = true)

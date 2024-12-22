@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -35,9 +36,9 @@ public class AppSecurityConfiguration {
                         authorizeHttpRequests
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .requestMatchers("/favicon.ico").permitAll()
-                                .requestMatchers("/", "/search", "/film/{id}", "/user/{id}", "/auth/**").permitAll()
+                                .requestMatchers("/main", "/search", "/film/{id}", "/user/{id}", "/auth/**").permitAll()
                                 .requestMatchers("/review/**", "/reaction/**", "/comment/**").authenticated()
-                                .requestMatchers("/admin/**").hasRole(String.valueOf(ADMIN))
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .formLogin(formLogin ->
@@ -45,17 +46,20 @@ public class AppSecurityConfiguration {
                                 .loginPage("/user/login")
                                 .usernameParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY)
                                 .passwordParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY)
-                                .defaultSuccessUrl("/")
+                                .defaultSuccessUrl("/main", true)
                                 .failureUrl("/auth/login?error=error")
                 )
                 .logout(logout ->
                         logout
                                 .logoutUrl("/user/logout")
-                                .logoutSuccessUrl("/")
+                                .logoutSuccessUrl("/user/login")
                                 .invalidateHttpSession(true)
                 )
                 .securityContext(securityContext ->
                         securityContext.securityContextRepository(securityContextRepository)
+                )
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 );
 
         return http.build();

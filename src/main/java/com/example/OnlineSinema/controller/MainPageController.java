@@ -37,8 +37,7 @@ public class MainPageController implements MainController {
         this.elasticsearchFilmService = elasticsearchFilmService;
     }
 
-    @Override
-    @PostMapping
+    @GetMapping("/main")
     public String getMainPage(
             @RequestParam(required = false, defaultValue = "") String query,
             @RequestParam(required = false) String genre,
