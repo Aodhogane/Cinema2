@@ -10,22 +10,19 @@
 <header>
     <h1 th:text="${baseViewModel.title}">Main Page</h1>
     <div>
-            <span th:if="${baseViewModel.username != null}">
-                Welcome, <strong th:text="${baseViewModel.username}">User</strong>!
-            </span>
-        <span th:if="${baseViewModel.username == null}">
-                Welcome, Guest!
-            </span>
+        <span th:if="${baseViewModel.name != null}">
+            Welcome, <strong th:text="${baseViewModel.name}">User</strong>!
+        </span>
+        <span th:if="${baseViewModel.name == null}">Welcome, Guest!</span>
     </div>
 </header>
-
 <section>
     <form action="/main" method="get">
         <input type="text" name="query" placeholder="Search by title" th:value="${query}">
         <select name="genre">
             <option value="" th:if="${selectedGenre == null || selectedGenre == ''}" selected>All Genres</option>
-            <option th:each="genre : ${genres}" th:value="${genre}"
-                    th:text="${genre}" th:if="${selectedGenre == genre}" selected></option>
+            <option th:each="genre : ${genres}" th:value="${genre}" th:text="${genre}"
+                    th:if="${selectedGenre == genre}" selected></option>
             <option th:each="genre : ${genres}" th:value="${genre}" th:text="${genre}"
                     th:if="${selectedGenre != genre}"></option>
         </select>
@@ -41,8 +38,12 @@
     <div th:each="film : ${films.content}">
         <div class="film-card">
             <a th:href="@{'/films/' + ${film.id}}" th:text="${film.title}">Film Title</a>
-            <p th:text="${film.genre}">Genre</p>
-            <p>Released: <span th:text="${film.releaseDate}">Date</span></p>
+
+            <p>Genres:
+                <span th:each="genre : ${film.genres}" th:text="${genre}"></span>
+            </p>
+
+            <p>Released: <span th:text="${film.exitDate}">Date</span></p> <!-- Исправлено здесь -->
         </div>
     </div>
 </section>

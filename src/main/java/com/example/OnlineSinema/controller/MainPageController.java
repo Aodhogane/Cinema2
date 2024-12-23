@@ -61,7 +61,14 @@ public class MainPageController implements MainController {
             LOG.info("Fetching all films, page: {}, size: {}", page, size);
         }
 
-        UserDetails userDetails = principal != null ? (UserDetails) ((Authentication) principal).getPrincipal() : null;
+        UserDetails userDetails = null;
+        if (principal != null) {
+            if (principal instanceof Authentication) {
+                Authentication authentication = (Authentication) principal;
+                userDetails = (UserDetails) authentication.getPrincipal();
+            }
+        }
+
         BaseViewModel baseViewModel = createBaseVieModel("Main Page", userDetails);
 
         model.addAttribute("baseViewModel", baseViewModel);
@@ -72,8 +79,8 @@ public class MainPageController implements MainController {
         model.addAttribute("genres", genres);
         model.addAttribute("selectedGenre", genre);
 
-        if (principal != null) {
-            String username = principal.getName();
+        if (userDetails != null) {
+            String username = userDetails.getUsername();
             LOG.info("Main page model constructed successfully for user '{}'.", username);
         } else {
             LOG.info("Main page model constructed successfully for anonymous user.");
@@ -86,9 +93,11 @@ public class MainPageController implements MainController {
     public BaseViewModel createBaseVieModel(String title, UserDetails userDetails) {
         if (userDetails == null){
             return new BaseViewModel(title, -1, null);
-        }else{
+        } else if (userDetails instanceof UserDetailsServiceImpl.CustomUser) {
             UserDetailsServiceImpl.CustomUser customUser = (UserDetailsServiceImpl.CustomUser) userDetails;
             return new BaseViewModel(title, customUser.getId(), customUser.getName());
+        } else {
+            return new BaseViewModel(title, -1, null);
         }
     }
 }
