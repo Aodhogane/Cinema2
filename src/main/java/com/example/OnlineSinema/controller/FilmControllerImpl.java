@@ -35,7 +35,9 @@ public class FilmControllerImpl implements FilmControllerMain {
     }
 
     @Override
-    public String filmPage(ReviewPageFormModel reviewForm, ActorPageFM actorForm, DirectorPageFM directorForm, int id, Model model) {
+    @GetMapping("/{id}")
+    public String filmPage(ReviewPageFormModel reviewForm, ActorPageFM actorForm, DirectorPageFM directorForm,
+                           @PathVariable int id, Model model) {
         try {
             FilmOutputDTO film = filmService.findById(id);
 
@@ -50,16 +52,11 @@ public class FilmControllerImpl implements FilmControllerMain {
                     .average()
                     .orElse(0.0);
 
-            List<String> actors = film.getActors();
-            List<String> directors = film.getDirectors();
-
             model.addAttribute("film", film);
             model.addAttribute("reviews", reviews);
-            model.addAttribute("actors", actors);
-            model.addAttribute("directors", directors);
             model.addAttribute("averageRating", averageRating);
 
-            return "details";
+            return "film-detail";
         } catch (FilmNotFounf e) {
             model.addAttribute("error", "Film not found: " + e.getMessage());
             return "404";

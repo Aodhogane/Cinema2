@@ -142,17 +142,12 @@ public class FilmRepositoryImpl implements FilmRepository {
     @Override
     public List<Film> findTop5FilmsBySales() {
         return entityManager.createQuery(
-                        "SELECT f, COUNT(t) AS ticketCount " +
-                                "FROM Ticket t " +
-                                "JOIN t.film f " +
-                                "GROUP BY f " +
-                                "ORDER BY ticketCount DESC",
-                        Object[].class)
+                        "SELECT f FROM Film f " +
+                                "JOIN FETCH f.ticketsList t " +
+                                "ORDER BY (SELECT COUNT(t) FROM Ticket t WHERE t.film = f) DESC",
+                        Film.class)
                 .setMaxResults(5)
-                .getResultList()
-                .stream()
-                .map(result -> (Film) result[0])
-                .collect(Collectors.toList());
+                .getResultList();
     }
 
     @Override

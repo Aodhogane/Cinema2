@@ -12,26 +12,18 @@ import java.util.List;
 public interface FilmRepository {
     List<Film> findAll();
     Page<Film> findAll(Pageable pageable);
-
     Film findByTitle(String title);
     List<Film> findByTitleContaining(String titlePart);
     Page<Film> findByTitleContaining(String titlePart, Pageable pageable);
-
     Film findFilmWithDetails(int filmId);
-
     List<Film> findFilmsByActorId(int actorId);
     List<Film> findFilmsByDirectorId(int directorId);
-
     List<Film> findByGenres(List<Genres> genresList);
     Page<Film> findByGenres(List<Genres> genresList, Pageable pageable);
-
     List<Film> findTop5FilmsBySales();
-
     List<Film> findByReviewCount();
     Page<Film> findByReviewCount(Pageable pageable);
-
     Page<Film> findByTitleContainingAndGenres(String filmPart, List<Genres> genresList, Pageable  pageable);
-
     Film findById(int filmId);
     void save(Film film);
     void deleteById(int id);

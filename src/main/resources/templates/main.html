@@ -15,7 +15,13 @@
         </span>
         <span th:if="${baseViewModel.name == null}">Welcome, Guest!</span>
     </div>
+    <nav>
+        <ul>
+            <li><a th:href="@{/film/top-sales}">Top 5 Films by Sales</a></li>
+        </ul>
+    </nav>
 </header>
+
 <section>
     <form action="/main" method="get">
         <input type="text" name="query" placeholder="Search by title" th:value="${query}">
@@ -43,7 +49,7 @@
                 <span th:each="genre : ${film.genres}" th:text="${genre}"></span>
             </p>
 
-            <p>Released: <span th:text="${film.exitDate}">Date</span></p> <!-- Исправлено здесь -->
+            <p>Released: <span th:text="${film.exitDate}">Date</span> </p> <!-- Исправлено здесь -->
         </div>
     </div>
 </section>

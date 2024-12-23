@@ -13,6 +13,9 @@ import com.example.OnlineSinema.repository.ReviewsRepository;
 import com.example.OnlineSinema.repository.UserRepository;
 import com.example.OnlineSinema.service.ReviewsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@EnableCaching
 public class ReviewServiceImpl implements ReviewsService {
 
     private final UserRepository userRepository;
@@ -60,6 +64,10 @@ public class ReviewServiceImpl implements ReviewsService {
 
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "CLIENT_PAGE", key = "#reviewInputDto.getClientId()"),
+            @CacheEvict(value = "FILM_PAGE", key = "#reviewInputDto.getFilmId()")
+    })
     public void save(ReviewOutputDTO reviewOutputDTO) {
         User user = userRepository.findById(reviewOutputDTO.getUserId());
         if (user == null) {

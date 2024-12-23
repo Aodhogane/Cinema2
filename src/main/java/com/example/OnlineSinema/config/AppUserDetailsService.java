@@ -23,10 +23,6 @@ public class AppUserDetailsService implements UserDetailsService {
         com.example.OnlineSinema.domain.User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username + " was not found!"));
 
-//        if (user.getAccess() == null || user.getAccess().isEmpty()) {
-//            throw new UsernameNotFoundException("Username is null or empty for user: " + username);
-//        }
-
         if (user.getPassword() == null || user.getPassword().isEmpty()) {
             throw new UsernameNotFoundException("Password is null or empty for user: " + username);
         }

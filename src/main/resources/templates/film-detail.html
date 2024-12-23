@@ -2,13 +2,15 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Film Details</title>
+    <title th:text="${film.title}">Film Details</title>
 </head>
 <body>
 
 <h1 th:text="${film.title}"></h1>
 <p><strong>Rating:</strong> <span th:text="${film.rating}"></span></p>
-<p><strong>Release Date:</strong> <span th:text="${film.exitDate}"></span></p>
+<p><strong>Release Date:</strong>
+    <span th:text="${#dates.format(film.exitData, 'yyyy-MM-dd HH:mm')}"></span>
+</p>
 
 <h3>Actors</h3>
 <ul>

@@ -14,6 +14,9 @@ import com.example.OnlineSinema.repository.*;
 import com.example.OnlineSinema.service.FilmService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@EnableCaching
 public class FilmServiceImpl implements FilmService {
 
     private final FilmRepository filmRepository;
@@ -130,6 +134,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    @Cacheable(value = "FILM_PAGE", key = "#id")
     public FilmOutputDTO findById(int id) {
         Film film = filmRepository.findById(id);
         if (film == null) {
@@ -147,6 +152,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "FILM_PAGE", key = "#id")
     public void update(int id, String title, List<String> genres) {
         Film film = filmRepository.findById(id);
         if (film == null) {
@@ -219,6 +225,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "FILM_PAGE", key = "#id")
     public void deleteById(int id) {
         Film film = filmRepository.findById(id);
         if (film == null) {

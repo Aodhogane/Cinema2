@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Top Films by Sales</title>
+</head>
+<body>
+
+<h1>Top 5 Films by Sales</h1>
+
+<div th:if="${topFilms != null}">
+    <ul>
+        <th:block th:each="film : ${topFilms}">
+            <li>
+                <span th:text="${film.title}"></span> -
+                <span th:text="${film.ticketCount}"></span> tickets sold
+            </li>
+        </th:block>
+    </ul>
+</div>
+
+<div th:if="${topFilms == null}">
+    <p>No films available.</p>
+</div>
+
+</body>
+</html>

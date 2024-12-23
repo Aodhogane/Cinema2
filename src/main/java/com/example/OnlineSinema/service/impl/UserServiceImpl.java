@@ -14,6 +14,9 @@ import com.example.OnlineSinema.service.ReviewsService;
 import com.example.OnlineSinema.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +30,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@EnableCaching
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -68,6 +72,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "USER_PAGE", key = "#id")
     public UserInfoDTO findById(int id) {
         User user = userRepository.findById(id);
         if (user == null) {
@@ -84,6 +89,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "USER_PAGE", key = "#id")
     public void update(UserOutputDTO userOutputDTO) {
         User user = userRepository.findById(userOutputDTO.getId());
         if (user == null) {
