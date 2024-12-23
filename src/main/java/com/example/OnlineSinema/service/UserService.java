@@ -3,6 +3,7 @@ package com.example.OnlineSinema.service;
 import com.example.OnlineSinema.dto.userDTO.UserInfoDTO;
 import com.example.OnlineSinema.dto.userDTO.UserOutputDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,6 +16,6 @@ public interface UserService {
     boolean authenticateUser(String username, String password);
     Page<UserInfoDTO> findAll(int page, int size);
     void delete(int id);
-    void register(String username, String password, String email);
+    void register(String username, String email, String password, int accessId);
     UserInfoDTO findByUsername(String username);
 }

@@ -2,16 +2,20 @@ package com.example.OnlineSinema.controller;
 
 
 import com.example.OnlineSinema.dto.userDTO.UserOutputDTO;
+import com.example.OnlineSinema.exceptions.UserNotFound;
 import com.example.OnlineSinema.service.UserService;
 import com.example.OnlineSinema.service.impl.UserDetailsServiceImpl;
 import com.example.SinemaContract.VM.cards.BaseViewModel;
+import com.example.SinemaContract.VM.form.user.UserFM;
 import com.example.SinemaContract.VM.form.user.UserLoginFM;
 import com.example.SinemaContract.controllers.domeinController.UserController;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -55,8 +59,15 @@ public class UserControllerImpl implements UserController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute("user") UserOutputDTO userDto) {
-        userService.register(userDto.getName(), userDto.getEmail(), userDto.getPassword());
+    public String registerUser(@ModelAttribute("user") @Valid UserOutputDTO userDto,
+                               @RequestParam("accessId") int accessId,
+                               BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "register";
+        }
+
+        userService.register(userDto.getName(), userDto.getEmail(), userDto.getPassword(), accessId);
+
         return "redirect:/main";
     }
 

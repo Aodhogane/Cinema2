@@ -10,8 +10,12 @@ public class UserOutputDTO {
     private String email;
     private String password;
     private String access;
+    private int accessId;
 
-    public UserOutputDTO(int id, String name, String email, String password, String access) {
+
+    public UserOutputDTO(int id, String name,
+                         String email, String password,
+                         String access) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -20,6 +24,12 @@ public class UserOutputDTO {
     }
 
     public UserOutputDTO() {}
+
+    public UserOutputDTO(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
 
     public int getId() {
         return id;
@@ -59,6 +69,14 @@ public class UserOutputDTO {
 
     public void setAccess(String access) {
         this.access = access;
+    }
+
+    public int getAccessId() {
+        return accessId;
+    }
+
+    public void setAccessId(int accessId) {
+        this.accessId = accessId;
     }
 }
 

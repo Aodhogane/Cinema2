@@ -22,9 +22,7 @@
         <input type="password" id="password" name="password" th:field="*{password}" required>
         <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
     </div>
-    <div th:if="${error != null}">
-        <p th:text="${error}"></p>
-    </div>
+    <input type="hidden" name="accessId" value="2" />
     <button type="submit">Register</button>
 </form>
 </body>

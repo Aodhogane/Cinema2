@@ -20,6 +20,9 @@
     <p th:if="${param.logout}">You have been logged out successfully</p>
 </form>
 
+<!-- Ссылка на страницу регистрации -->
+<p>Don't have an account? <a th:href="@{/user/register}">Register here</a></p>
+
 <script>
     const errorMessage = document.getElementById('error-message');
     if (errorMessage) {

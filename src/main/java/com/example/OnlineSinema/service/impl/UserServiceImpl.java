@@ -8,6 +8,7 @@ import com.example.OnlineSinema.dto.userDTO.UserInfoDTO;
 import com.example.OnlineSinema.dto.userDTO.UserOutputDTO;
 import com.example.OnlineSinema.exceptions.ThisEmailAlreadyConnected;
 import com.example.OnlineSinema.exceptions.UserNotFound;
+import com.example.OnlineSinema.repository.AccessRepository;
 import com.example.OnlineSinema.repository.UserRepository;
 import com.example.OnlineSinema.service.ReviewsService;
 import com.example.OnlineSinema.service.UserService;
@@ -31,6 +32,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ReviewsService reviewsService;
     private final ModelMapper modelMapper;
+    private final AccessRepository accessRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     private final Map<String, Integer> authTokens = new HashMap<>();
@@ -39,11 +41,13 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository,
                            ReviewsService reviewsService,
                            ModelMapper modelMapper,
-                           BCryptPasswordEncoder passwordEncoder) {
+                           BCryptPasswordEncoder passwordEncoder,
+                           AccessRepository accessRepository) {
         this.userRepository = userRepository;
         this.reviewsService = reviewsService;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
+        this.accessRepository = accessRepository;
     }
 
     @Override
@@ -137,7 +141,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void register(String username, String email, String password) {
+    public void register(String username, String email, String password, int accessId) {
         if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Email already exists");
         }
@@ -147,6 +151,14 @@ public class UserServiceImpl implements UserService {
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
 
+        int defaultAccessId = 2;
+
+        Access userAccess = accessRepository.findById(defaultAccessId);
+        if (userAccess == null) {
+            throw new RuntimeException("Access with id " + defaultAccessId + " not found");
+        }
+
+        user.setAccess(userAccess);
         userRepository.save(user);
     }
 
