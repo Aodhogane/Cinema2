@@ -1,0 +1,15 @@
+  input {
+    file {
+    path => "D:/logs/spring.log"
+    start_position => "beginning"
+    }
+  }
+    output {
+    stdout {
+    codec => rubydebug
+    }
+    elasticsearch {
+    hosts => ["http://localhost:9200"]
+    index => "elkdemoindex"
+    }
+  }
