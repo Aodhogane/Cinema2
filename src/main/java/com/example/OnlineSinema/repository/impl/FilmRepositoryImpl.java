@@ -69,11 +69,14 @@ public class FilmRepositoryImpl implements FilmRepository {
 
     @Override
     public List<Film> findByGenres(List<Genres> genresList) {
-        return entityManager.createQuery(
+        List<Film> films = entityManager.createQuery(
                         "SELECT DISTINCT f FROM Film f JOIN f.genresList g WHERE g IN :genresList GROUP BY f HAVING COUNT(DISTINCT g) = :genreCount", Film.class)
                 .setParameter("genresList", genresList)
-                .setParameter("genreCount", genresList.size())
                 .getResultList();
+
+        return films.stream()
+                .filter(f -> f.getGenresList().contains(genresList))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -182,24 +185,25 @@ public class FilmRepositoryImpl implements FilmRepository {
     @Override
     public Page<Film> findByTitleContainingAndGenres(String filmPart, List<Genres> genresList, Pageable pageable) {
         Long filmCount = entityManager.createQuery(
-                        "SELECT COUNT(f) FROM Film f " +
-                                "JOIN f.genres g " +
+                        "SELECT COUNT(DISTINCT f) FROM Film f " +
+                                "JOIN f.genresList g " +
                                 "WHERE f.title LIKE :filmPart AND g IN :genresList", Long.class)
                 .setParameter("filmPart", "%" + filmPart + "%")
                 .setParameter("genresList", genresList)
                 .getSingleResult();
 
-        List<Film> filmList = entityManager.createQuery(
-                        "SELECT DISTINCT f FROM Film f " +
-                                "JOIN f.genres g " +
-                                "WHERE f.title LIKE :filmPart AND g IN :genresList", Film.class)
-                .setParameter("filmPart", "%" + filmPart + "%")
-                .setParameter("genresList", genresList)
-                .setFirstResult((int) pageable.getOffset())
-                .setMaxResults(pageable.getPageSize())
-                .getResultList();
+       List<Film> filmsList = (List<Film>) entityManager.createQuery(
+               "SELECT DISTINCT f FROM Fil f" +
+                       "JOIN f.genresList genresList g" +
+                       "WHERE f.title LIKE :filmPart AND g IN" +
+                       "IN :genresList", Film.class)
+               .setParameter("filmPart", "%" + filmPart + "%")
+               .setParameter("genresList", genresList)
+               .setFirstResult((int) pageable.getOffset())
+               .setMaxResults(pageable.getPageSize())
+               .getResultList();
 
-        return new PageImpl<>(filmList, pageable, filmCount);
+       return new PageImpl<>(filmsList, pageable, filmCount);
     }
 
     @Override

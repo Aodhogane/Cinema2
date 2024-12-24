@@ -20,18 +20,29 @@
             <li><a th:href="@{/film/top-sales}">Top 5 Films by Sales</a></li>
         </ul>
     </nav>
+
+    <div>
+        <span th:if="${baseViewModel.name != null}">
+            <form action="/user/logout" method="post">
+                <button type="submit">Log out</button>
+            </form>
+        </span>
+    </div>
 </header>
 
 <section>
     <form action="/main" method="get">
         <input type="text" name="query" placeholder="Search by title" th:value="${query}">
+
         <select name="genre">
-            <option value="" th:if="${selectedGenre == null || selectedGenre == ''}" selected>All Genres</option>
-            <option th:each="genre : ${genres}" th:value="${genre}" th:text="${genre}"
-                    th:if="${selectedGenre == genre}" selected></option>
-            <option th:each="genre : ${genres}" th:value="${genre}" th:text="${genre}"
-                    th:if="${selectedGenre != genre}"></option>
+            <option value="" th:text="'All Genres'"  th:selected="${selectedGenre == null || selectedGenre == ''}">All Genres</option>
+            <option th:each="genre : ${genres}"
+                    th:value="${genre}"
+                    th:text="${genre}"
+                    th:selected="${selectedGenre == genre}">
+            </option>
         </select>
+
         <button type="submit">Search</button>
     </form>
 </section>
@@ -43,13 +54,11 @@
     </div>
     <div th:each="film : ${films.content}">
         <div class="film-card">
-            <a th:href="@{'/films/' + ${film.id}}" th:text="${film.title}">Film Title</a>
-
+            <a th:href="@{'/film/films/' + ${film.title}}" th:text="${film.title}">Film Title</a>
             <p>Genres:
                 <span th:each="genre : ${film.genres}" th:text="${genre}"></span>
             </p>
-
-            <p>Released: <span th:text="${film.exitDate}">Date</span> </p> <!-- Исправлено здесь -->
+            <p>Released: <span th:text="${film.exitDate}">Date</span></p>
         </div>
     </div>
 </section>
@@ -57,9 +66,9 @@
 <section th:if="${totalPages > 1}">
     <h2>Pages</h2>
     <div>
-        <a th:if="${currentPage > 1}" th:href="@{'/main?page=' + (${currentPage - 2}) + '&size=' + ${size} + '&query=' + ${query} + '&genre=' + ${selectedGenre}}">Previous</a>
+        <a th:if="${currentPage > 1}" th:href="@{'/main?page=' + (${currentPage - 1}) + '&size=' + ${size} + '&query=' + ${query} + '&genre=' + ${selectedGenre}}">Previous</a>
         <span th:text="${currentPage}">1</span>
-        <a th:if="${currentPage < totalPages}" th:href="@{'/main?page=' + ${currentPage} + '&size=' + ${size} + '&query=' + ${query} + '&genre=' + ${selectedGenre}}">Next</a>
+        <a th:if="${currentPage < totalPages}" th:href="@{'/main?page=' + (${currentPage}) + '&size=' + ${size} + '&query=' + ${query} + '&genre=' + ${selectedGenre}}">Next</a>
     </div>
 </section>
 

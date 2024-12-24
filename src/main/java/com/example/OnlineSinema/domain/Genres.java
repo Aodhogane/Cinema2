@@ -34,7 +34,7 @@ public class Genres extends BaseEntity {
         return genres;
     }
 
-    @ManyToMany(mappedBy = "genres")
+    @ManyToMany(mappedBy = "genresList")
     public List<Film> getFilms() {return filmList;}
     public void setFilms(List<Film> films) {this.filmList = filmList;}
 }

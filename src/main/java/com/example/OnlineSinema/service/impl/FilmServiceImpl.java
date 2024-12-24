@@ -74,7 +74,7 @@ public class FilmServiceImpl implements FilmService {
         }
 
         Film film = modelMapper.map(filmOutputDTO, Film.class);
-        film.setGenres(genresList);
+        film.setGenresList(genresList);
         filmRepository.save(film);
     }
 
@@ -127,7 +127,7 @@ public class FilmServiceImpl implements FilmService {
         return new FilmCardDTO(
                 film.getId(),
                 film.getRating(),
-                film.getGenres(),
+                film.getGenresList(),
                 film.getTitle(),
                 film.getExitDate()
         );
@@ -170,7 +170,7 @@ public class FilmServiceImpl implements FilmService {
             genresList.add(genre);
         }
 
-        film.setGenres(genresList);
+        film.setGenresList(genresList);
         filmRepository.save(film);
     }
 
@@ -261,7 +261,7 @@ public class FilmServiceImpl implements FilmService {
                 .map(actor -> String.format("%s %s %s", actor.getName(), actor.getSurname(), actor.getMidlName()))
                 .collect(Collectors.toList());
 
-        List<String> genres = film.getGenres().stream()
+        List<String> genres = film.getGenresList().stream()
                 .map(Genres::getGenres)
                 .collect(Collectors.toList());
 

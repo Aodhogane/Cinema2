@@ -98,10 +98,10 @@ public class Film extends BaseEntity {
             joinColumns = @JoinColumn(name = "filmId"),
             inverseJoinColumns = @JoinColumn(name = "genreId")
     )
-    public List<Genres> getGenres() {
+    public List<Genres> getGenresList() {
         return genresList;
     }
-    public void setGenres(List<Genres> genres) {
+    public void setGenresList(List<Genres> genres) {
         this.genresList = genres;
     }
 

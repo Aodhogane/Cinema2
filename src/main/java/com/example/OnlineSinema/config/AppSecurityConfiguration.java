@@ -61,7 +61,7 @@ public class AppSecurityConfiguration {
                         securityContext.securityContextRepository(securityContextRepository)
                 )
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                        session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 );
 
         return http.build();
@@ -69,10 +69,7 @@ public class AppSecurityConfiguration {
 
     @Bean
     public SecurityContextRepository securityContextRepository() {
-        return new DelegatingSecurityContextRepository(
-                new RequestAttributeSecurityContextRepository(),
-                new HttpSessionSecurityContextRepository()
-        );
+        return new HttpSessionSecurityContextRepository();
     }
 
     @Bean
@@ -90,7 +87,7 @@ public class AppSecurityConfiguration {
         return (request, response, authentication) -> {
             String username = authentication.getName();
             System.out.println("Успешный вход пользователя: " + username);
-            response.sendRedirect("/?success");
+            response.sendRedirect("/main?success");
         };
     }
 

@@ -9,9 +9,6 @@ import com.example.OnlineSinema.service.FilmService;
 import com.example.OnlineSinema.service.ReviewsService;
 import com.example.OnlineSinema.service.impl.UserDetailsServiceImpl;
 import com.example.SinemaContract.VM.cards.BaseViewModel;
-import com.example.SinemaContract.VM.domain.film.ReviewPageFormModel;
-import com.example.SinemaContract.VM.form.actor.ActorPageFM;
-import com.example.SinemaContract.VM.form.director.DirectorPageFM;
 import com.example.SinemaContract.controllers.domeinController.FilmControllerMain;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -35,13 +32,11 @@ public class FilmControllerImpl implements FilmControllerMain {
     }
 
     @Override
-    @GetMapping("/{id}")
-    public String filmPage(ReviewPageFormModel reviewForm, ActorPageFM actorForm, DirectorPageFM directorForm,
-                           @PathVariable int id, Model model) {
+    @GetMapping("/films/{title}")
+    public String getFilmById(@PathVariable String title, Model model) {
         try {
-            FilmOutputDTO film = filmService.findById(id);
-
-            List<ReviewOutputDTO> reviews = reviewsService.findByFilmId(id)
+            FilmOutputDTO film = (FilmOutputDTO) filmService.findByNameContaining(title);
+            List<ReviewOutputDTO> reviews = reviewsService.findByFilmId(film.getId())
                     .stream()
                     .sorted(Comparator.comparing(ReviewOutputDTO::getDateTime).reversed())
                     .limit(10)

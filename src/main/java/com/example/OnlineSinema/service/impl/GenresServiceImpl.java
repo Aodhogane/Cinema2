@@ -68,8 +68,8 @@ public class GenresServiceImpl implements GenresService {
         }
 
         genre.getFilms().forEach(film -> {
-            film.getGenres().remove(genre);
-            List<String> genres = film.getGenres().stream().map(Genres::getGenres).toList();
+            film.getGenresList().remove(genre);
+            List<String> genres = film.getGenresList().stream().map(Genres::getGenres).toList();
             filmService.update(film.getId(), film.getTitle(), genres);
         });
 
