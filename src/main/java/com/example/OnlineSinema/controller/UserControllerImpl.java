@@ -61,14 +61,21 @@ public class UserControllerImpl implements UserController {
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") @Valid UserOutputDTO userDto,
                                @RequestParam("accessId") int accessId,
-                               BindingResult bindingResult) {
+                               BindingResult bindingResult,
+                               Model model) {
         if (bindingResult.hasErrors()) {
             return "register";
         }
 
+        try {
+            userService.register(userDto.getName(), userDto.getEmail(), userDto.getPassword(), accessId);
+        } catch (IllegalArgumentException ex){
+            model.addAttribute("error", ex.getMessage());
+            return "register";
+        }
         userService.register(userDto.getName(), userDto.getEmail(), userDto.getPassword(), accessId);
 
-        return "redirect:/main";
+        return "redirect:/user/login";
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.example.OnlineSinema.service.impl;
 
+import com.example.OnlineSinema.controller.UserControllerImpl;
 import com.example.OnlineSinema.domain.Access;
 import com.example.OnlineSinema.domain.Reviews;
 import com.example.OnlineSinema.domain.User;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +42,7 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     private final Map<String, Integer> authTokens = new HashMap<>();
+    private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(UserControllerImpl.class);
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
@@ -149,6 +152,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void register(String username, String email, String password, int accessId) {
         if (userRepository.existsByEmail(email)) {
+            LOG.warn("Attempt to register an existing email: {}", email);
             throw new IllegalArgumentException("Email already exists");
         }
 
@@ -158,14 +162,16 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(password));
 
         int defaultAccessId = 2;
-
         Access userAccess = accessRepository.findById(defaultAccessId);
         if (userAccess == null) {
             throw new RuntimeException("Access with id " + defaultAccessId + " not found");
         }
 
         user.setAccess(userAccess);
+
         userRepository.save(user);
+
+        LOG.info("User successfully registered: {} with email: {}", username, email);
     }
 
     @Override
