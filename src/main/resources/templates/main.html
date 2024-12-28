@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${baseViewModel.title}">Main Page</title>
-    <link rel="stylesheet" href="/css/styles.css"> <!-- Ваши стили -->
 </head>
 <body>
 <header>
@@ -53,7 +52,7 @@
     </div>
     <div th:each="film : ${films.content}">
         <div class="film-card">
-            <a th:href="@{'/film/films/' + ${film.title}}" th:text="${film.title}">Film Title</a>
+            <a th:href="@{'/film/details/' + ${film.id}}" th:text="${film.title}">Film Title</a>
             <p>Genres:
                 <span th:each="genre : ${film.genres}" th:text="${genre}"></span>
             </p>

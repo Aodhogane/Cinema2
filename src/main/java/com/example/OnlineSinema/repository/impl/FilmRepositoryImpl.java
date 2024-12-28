@@ -2,15 +2,16 @@ package com.example.OnlineSinema.repository.impl;
 
 import com.example.OnlineSinema.domain.Film;
 import com.example.OnlineSinema.domain.Genres;
+import com.example.OnlineSinema.exceptions.FilmNotFounf;
 import com.example.OnlineSinema.repository.FilmRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
@@ -55,16 +56,22 @@ public class FilmRepositoryImpl implements FilmRepository {
 
     @Override
     public Film findFilmWithDetails(int filmId) {
-        return entityManager.createQuery(
-                        "SELECT f FROM Film f " +
-                                "LEFT JOIN FETCH f.genresList " +
-                                "LEFT JOIN FETCH f.directorsList " +
-                                "LEFT JOIN FETCH f.actorsList " +
-                                "LEFT JOIN FETCH f.reviewsList " +
-                                "LEFT JOIN FETCH f.ticketsList " +
-                                "WHERE f.id = :filmId", Film.class)
-                .setParameter("filmId", filmId)
-                .getSingleResult();
+        try {
+            Film film = entityManager.createQuery(
+                            "SELECT f FROM Film f " +
+                                    "LEFT JOIN FETCH f.actors " +
+                                    "LEFT JOIN FETCH f.directors " +
+                                    "LEFT JOIN FETCH f.genresList " +
+                                    "LEFT JOIN FETCH f.ticketsList " +
+                                    "LEFT JOIN FETCH f.reviews " +
+                                    "WHERE f.id = :filmId", Film.class)
+                    .setParameter("filmId", filmId)
+                    .getSingleResult();
+
+            return film;
+        } catch (NoResultException e) {
+            throw new FilmNotFounf("Film with ID: " + filmId + " not found");
+        }
     }
 
     @Override

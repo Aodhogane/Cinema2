@@ -12,6 +12,7 @@ import com.example.OnlineSinema.repository.FilmRepository;
 import com.example.OnlineSinema.repository.ReviewsRepository;
 import com.example.OnlineSinema.repository.UserRepository;
 import com.example.OnlineSinema.service.ReviewsService;
+import com.example.SinemaContract.VM.form.review.ReviewFormModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
@@ -62,21 +63,49 @@ public class ReviewServiceImpl implements ReviewsService {
         );
     }
 
+//    @Override
+//    @Transactional
+//    @Caching(evict = {
+//            @CacheEvict(value = "CLIENT_PAGE", key = "#reviewInputDto.getClientId()"),
+//            @CacheEvict(value = "FILM_PAGE", key = "#reviewInputDto.getFilmId()")
+//    })
+//    public void save(ReviewOutputDTO reviewOutputDTO) {
+//
+//        User user = userRepository.findById(reviewOutputDTO.getUserId());
+//        if (user == null) {
+//            throw new UserNotFound("User with id: " + reviewOutputDTO.getUserId() + " not found");
+//        }
+//
+//        Film film = filmRepository.findById(reviewOutputDTO.getFilmId().intValue());
+//        if (film == null) {
+//            throw new FilmNotFounf("Film with id: " + reviewOutputDTO.getFilmId() + " not found");
+//        }
+//
+//        List<Reviews> reviews = reviewsRepository.findByFilmIdAndUserId(film.getId(), user.getId());
+//        if (!reviews.isEmpty()) {
+//            throw new ReviewNotFound("User with id: " + user.getId() + " already has a review for film with id: " + film.getId());
+//        }
+//
+//        Reviews review = new Reviews(user, film, reviewOutputDTO.getComment(), reviewOutputDTO.getEstimation(), LocalDateTime.now());
+//        reviewsRepository.save(review);
+//    }
+
     @Override
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "CLIENT_PAGE", key = "#reviewInputDto.getClientId()"),
             @CacheEvict(value = "FILM_PAGE", key = "#reviewInputDto.getFilmId()")
     })
-    public void save(ReviewOutputDTO reviewOutputDTO) {
-        User user = userRepository.findById(reviewOutputDTO.getUserId());
+    public void save(ReviewFormModel reviewFormModel) {
+
+        User user = userRepository.findById(reviewFormModel.userId());
         if (user == null) {
-            throw new UserNotFound("User with id: " + reviewOutputDTO.getUserId() + " not found");
+            throw new UserNotFound("User with id: " + reviewFormModel.userId() + " not found");
         }
 
-        Film film = filmRepository.findById(reviewOutputDTO.getFilmId().intValue());
+        Film film = filmRepository.findById(reviewFormModel.filmId());
         if (film == null) {
-            throw new FilmNotFounf("Film with id: " + reviewOutputDTO.getFilmId() + " not found");
+            throw new FilmNotFounf("Film with id: " + reviewFormModel.filmId() + " not found");
         }
 
         List<Reviews> reviews = reviewsRepository.findByFilmIdAndUserId(film.getId(), user.getId());
@@ -84,8 +113,10 @@ public class ReviewServiceImpl implements ReviewsService {
             throw new ReviewNotFound("User with id: " + user.getId() + " already has a review for film with id: " + film.getId());
         }
 
-        Reviews review = new Reviews(user, film, reviewOutputDTO.getComment(), reviewOutputDTO.getEstimation(), LocalDateTime.now());
+        Reviews review = new Reviews(user, film, reviewFormModel.text(), reviewFormModel.rating(), LocalDateTime.now());
         reviewsRepository.save(review);
+
+        updateRatingFilm(film.getId());
     }
 
     @Override
@@ -202,5 +233,23 @@ public class ReviewServiceImpl implements ReviewsService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(reviewOutputDTOList, pageable, reviewsPage.getTotalElements());
+    }
+
+    @Override
+    @Transactional
+    public void updateRatingFilm(int id) {
+        List<Reviews> reviews = reviewsRepository.findByFilmId(id);
+
+
+        double averageRating  = reviews.stream()
+                .mapToInt(Reviews::getEstimation)
+                .average()
+                .orElse(0);
+
+        Film film = filmRepository.findById(id);
+        if(film != null){
+            film.setRating(averageRating);
+            filmRepository.save(film);
+        }
     }
 }

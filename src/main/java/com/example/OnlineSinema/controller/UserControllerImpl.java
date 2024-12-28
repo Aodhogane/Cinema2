@@ -2,11 +2,9 @@ package com.example.OnlineSinema.controller;
 
 
 import com.example.OnlineSinema.dto.userDTO.UserOutputDTO;
-import com.example.OnlineSinema.exceptions.UserNotFound;
 import com.example.OnlineSinema.service.UserService;
 import com.example.OnlineSinema.service.impl.UserDetailsServiceImpl;
 import com.example.SinemaContract.VM.cards.BaseViewModel;
-import com.example.SinemaContract.VM.form.user.UserFM;
 import com.example.SinemaContract.VM.form.user.UserLoginFM;
 import com.example.SinemaContract.controllers.domeinController.UserController;
 import jakarta.validation.Valid;
@@ -43,10 +41,7 @@ public class UserControllerImpl implements UserController {
             return "redirect:/";
         }
         model.addAttribute("model", baseView);
-        if (error != null) {
-            LOG.warn("Failed login attempt by '{}'. Reason: Incorrect login or password.", username);
-            model.addAttribute("error", "Неверный логин или пароль");
-        }
+
         model.addAttribute("loginForm", new UserLoginFM(null, null));
         LOG.info("Returning the login page for client '{}'.", username);
         return "login";

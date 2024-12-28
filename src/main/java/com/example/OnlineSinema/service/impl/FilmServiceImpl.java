@@ -1,13 +1,10 @@
 package com.example.OnlineSinema.service.impl;
 
+import com.example.OnlineSinema.controller.UserControllerImpl;
 import com.example.OnlineSinema.domain.*;
-import com.example.OnlineSinema.dto.actorsDTO.ActorsOutputDTO;
-import com.example.OnlineSinema.dto.directorDTO.DirectorOutputDTO;
 import com.example.OnlineSinema.dto.filmDTO.FilmCardDTO;
 import com.example.OnlineSinema.dto.filmDTO.FilmOutputDTO;
 import com.example.OnlineSinema.dto.filmDTO.FilmSalesDTO;
-import com.example.OnlineSinema.exceptions.ActorsNotFound;
-import com.example.OnlineSinema.exceptions.DirectorsNotFound;
 import com.example.OnlineSinema.exceptions.FilmNotFounf;
 import com.example.OnlineSinema.exceptions.GenreNotFoundException;
 import com.example.OnlineSinema.repository.*;
@@ -23,10 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +34,7 @@ public class FilmServiceImpl implements FilmService {
     private final ReviewsRepository reviewsRepository;
     private final ActorRepository actorRepository;
     private final DirectorRepository directorRepository;
+    private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(UserControllerImpl.class);
 
     @Autowired
     public FilmServiceImpl(FilmRepository filmRepository, GenreRepository genreRepository,
@@ -64,7 +59,7 @@ public class FilmServiceImpl implements FilmService {
             throw new FilmNotFounf("Film with title: " + filmOutputDTO.getTitle() + " already exists");
         }
 
-        List<Genres> genresList = new ArrayList<>();
+        Set<Genres> genresList = new LinkedHashSet<>();
         for (String s : filmOutputDTO.getGenres()) {
             Genres genre = genreRepository.findByName(s);
             if (genre == null) {
@@ -127,7 +122,7 @@ public class FilmServiceImpl implements FilmService {
         return new FilmCardDTO(
                 film.getId(),
                 film.getRating(),
-                film.getGenresList(),
+                new ArrayList<>(film.getGenresList()),
                 film.getTitle(),
                 film.getExitDate()
         );
@@ -138,8 +133,10 @@ public class FilmServiceImpl implements FilmService {
     public FilmOutputDTO findById(int id) {
         Film film = filmRepository.findById(id);
         if (film == null) {
+            LOG.warn("Film with ID: {} not found", id);
             throw new FilmNotFounf("Film with ID: " + id + " not found");
         }
+        LOG.warn("Film found: {}", film);
         return modelMapper.map(film, FilmOutputDTO.class);
     }
 
@@ -161,7 +158,7 @@ public class FilmServiceImpl implements FilmService {
 
         film.setTitle(title);
 
-        List<Genres> genresList = new ArrayList<>();
+        Set<Genres> genresList = new LinkedHashSet<>();
         for (String s : genres) {
             Genres genre = genreRepository.findByName(s);
             if (genre == null) {
@@ -177,22 +174,19 @@ public class FilmServiceImpl implements FilmService {
     @Override
     @Transactional
     public void updateRatingFilm(int id) {
-        Film film = filmRepository.findById(id);
-        if (film == null) {
-            throw new FilmNotFounf("Film with ID: " + id + " not found");
-        }
+       List<Reviews> reviews = reviewsRepository.findByFilmId(id);
 
-        List<Reviews> reviews = reviewsRepository.findByFilmId(id);
 
-        double sumRating = 0;
-        double countRating = reviews.size();
-        for (Reviews r : reviews) {
-            sumRating += r.getEstimation();
-        }
+       double averageRating  = reviews.stream()
+               .mapToInt(Reviews::getEstimation)
+               .average()
+               .orElse(0);
 
-        double filmRating = countRating > 0 ? sumRating / countRating : 0;
-        film.setRating(filmRating);
-        filmRepository.save(film);
+       Film film = filmRepository.findById(id);
+       if(film != null){
+           film.setRating(averageRating);
+           filmRepository.save(film);
+       }
     }
 
     @Override
@@ -243,44 +237,18 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public List<FilmOutputDTO> findTopFilmsByReviewCount(boolean isTop) {
-        List<Film> topFilms = filmRepository.findByReviewCount();
-        return topFilms.stream()
-                .map(this::convertToOutputDto)
-                .collect(Collectors.toList());
-    }
-
-    private FilmOutputDTO convertToOutputDto(Film film) {
-        int ticketCount = film.getTicketsList().size();
-
-        List<String> directors = film.getDirectors().stream()
-                .map(director -> String.format("%s %s %s", director.getName(), director.getSurname(), director.getMidlName()))
-                .collect(Collectors.toList());
-
-        List<String> actors = film.getActors().stream()
-                .map(actor -> String.format("%s %s %s", actor.getName(), actor.getSurname(), actor.getMidlName()))
-                .collect(Collectors.toList());
-
-        List<String> genres = film.getGenresList().stream()
-                .map(Genres::getGenres)
-                .collect(Collectors.toList());
-
-        return new FilmOutputDTO(
-                film.getId(),
-                actors,
-                genres,
-                directors,
-                film.getExitDate(),
-                film.getTitle(),
-                ticketCount,
-                film.getRating()
-        );
-    }
-
-    @Override
     public List<String> getAllGenres() {
         return genreRepository.findAll().stream()
                 .map(Genres::getGenres)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Film findFilmWithDetails(int filmId) {
+        Film film = filmRepository.findFilmWithDetails(filmId);
+        if (film == null) {
+            throw new FilmNotFounf("Film with ID: " + filmId + " not found");
+        }
+        return film;
     }
 }

@@ -1,8 +1,12 @@
 package com.example.OnlineSinema.domain;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Films")
@@ -12,15 +16,15 @@ public class Film extends BaseEntity {
     private LocalDateTime exitDate;
     private Integer duration;
     private double rating;
-    private List<Actors> actorsList;
-    private List<Directors> directorsList;
-    private List<Genres> genresList;
-    private List<Reviews> reviewsList;
-    private List<Ticket> ticketsList;
+    private Set<Actors> actorsList;
+    private Set<Directors> directorsList;
+    private Set<Genres> genresList;
+    private Set<Reviews> reviewsList;
+    private Set<Ticket> ticketsList;
 
     public Film(String title, LocalDateTime exitDate, int duration,
-                List<Genres> genres, List<Directors> directorsList,
-                List<Actors> actorsList, List<Reviews> reviews,
+                Set<Genres> genres, Set<Directors> directorsList,
+                Set<Actors> actorsList, Set<Reviews> reviews,
                 double rating) {
         this.title = title;
         this.exitDate = exitDate;
@@ -72,10 +76,10 @@ public class Film extends BaseEntity {
             joinColumns = @JoinColumn(name = "filmId"),
             inverseJoinColumns = @JoinColumn(name = "actorId")
     )
-    public List<Actors> getActors() {
+    public Set<Actors> getActors() {
         return actorsList;
     }
-    public void setActors(List<Actors> actors) {
+    public void setActors(Set<Actors> actors) {
         this.actorsList = actors;
     }
 
@@ -85,10 +89,10 @@ public class Film extends BaseEntity {
             joinColumns = @JoinColumn(name = "filmId"),
             inverseJoinColumns = @JoinColumn(name = "directorId")
     )
-    public List<Directors> getDirectors() {
+    public Set<Directors> getDirectors() {
         return directorsList;
     }
-    public void setDirectors(List<Directors> directors) {
+    public void setDirectors(Set<Directors> directors) {
         this.directorsList = directors;
     }
 
@@ -98,26 +102,26 @@ public class Film extends BaseEntity {
             joinColumns = @JoinColumn(name = "filmId"),
             inverseJoinColumns = @JoinColumn(name = "genreId")
     )
-    public List<Genres> getGenresList() {
+    public Set<Genres> getGenresList() {
         return genresList;
     }
-    public void setGenresList(List<Genres> genres) {
+    public void setGenresList(Set<Genres> genres) {
         this.genresList = genres;
     }
 
     @OneToMany(mappedBy = "film", cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<Reviews> getReviews() {
+    public Set<Reviews> getReviews() {
         return reviewsList;
     }
-    public void setReviews(List<Reviews> reviews) {
+    public void setReviews(Set<Reviews> reviews) {
         this.reviewsList = reviews;
     }
 
     @OneToMany(mappedBy = "film", cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<Ticket> getTicketsList() {
+    public Set<Ticket> getTicketsList() {
         return ticketsList;
     }
-    public void setTicketsList(List<Ticket> ticketsList) {
+    public void setTicketsList(Set<Ticket> ticketsList) {
         this.ticketsList = ticketsList;
     }
 }

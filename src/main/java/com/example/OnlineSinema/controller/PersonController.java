@@ -37,7 +37,7 @@ public class PersonController {
             return "actorDetails";
         } catch (ActorsNotFound e) {
             model.addAttribute("error", "Actor not found: " + e.getMessage());
-            return "404";
+            return "/main";
         }
     }
 
@@ -51,7 +51,7 @@ public class PersonController {
             return "directorDetails";
         } catch (DirectorsNotFound e) {
             model.addAttribute("error", "Director not found: " + e.getMessage());
-            return "404";
+            return "/main";
         }
     }
 }

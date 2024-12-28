@@ -13,7 +13,9 @@
 //
 //import java.time.LocalDateTime;
 //import java.util.List;
+//import java.util.Locale;
 //import java.util.Random;
+//import java.util.Set;
 //import java.util.concurrent.TimeUnit;
 //
 //@Component
@@ -127,13 +129,14 @@
 //            film.setExitDate(faker.date().past(10, TimeUnit.DAYS).toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime());
 //            film.setDuration(faker.number().numberBetween(60, 180));
 //            film.setRating(faker.number().randomDouble(1, 0, 10));
-//            film.setGenres(List.of(genres.get(new Random().nextInt(genres.size()))));
-//            film.setActors(List.of(actors.get(new Random().nextInt(actors.size()))));
-//            film.setDirectors(List.of(directors.get(new Random().nextInt(directors.size()))));
+//            film.setGenresList(Set.of(genres.get(new Random().nextInt(genres.size()))));
+//            film.setActors(Set.of(actors.get(new Random().nextInt(actors.size()))));
+//            film.setDirectors(Set.of(directors.get(new Random().nextInt(directors.size()))));
 //            filmRepository.save(film);
 //            logger.info("Фильм создан: {}", film);
 //
 //            // Создание отзывов
+//            Faker faker = new Faker(new Locale("ru"));
 //            for (int j = 0; j < 5; j++) {
 //                Reviews review = new Reviews();
 //                review.setComment(faker.lorem().sentence());

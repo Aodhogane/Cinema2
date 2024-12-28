@@ -1,5 +1,6 @@
 package com.example.OnlineSinema.service;
 
+import com.example.OnlineSinema.domain.Film;
 import com.example.OnlineSinema.dto.filmDTO.FilmCardDTO;
 import com.example.OnlineSinema.dto.filmDTO.FilmOutputDTO;
 import com.example.OnlineSinema.dto.filmDTO.FilmSalesDTO;
@@ -19,9 +20,9 @@ public interface FilmService {
     void update(int id, String title, List<String> genres);
     void deleteById(int id);
     List<FilmSalesDTO> getTop5FilmsBySales();
-    List<FilmOutputDTO> findTopFilmsByReviewCount(boolean isTop);
     void updateRatingFilm(int id_film);
     FilmOutputDTO findByTitle(String title);
     Page<FilmCardDTO> findByNameContainingAndByGenres(String filmPart, List<String> genres, int page, int size);
     List<String> getAllGenres();
+    Film findFilmWithDetails(int filmId);
 }
