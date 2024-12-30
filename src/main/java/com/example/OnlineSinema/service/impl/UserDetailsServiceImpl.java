@@ -25,14 +25,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         var user = userRepository.findByEmail(username);
 
-        if(username == null){
+        if(user == null){
             throw new UsernameNotFoundException("Client with email:" + username + " not found");
         }
-        return new CustomUser(user.getUsername(), user.getPassword(), Collections.singleton(new SimpleGrantedAuthority("ROLE_"+user.getAccess().getRegistered())),
-                user.getId(), user.getUsername());
+
+        return new CustomUser(
+                user.getUsername(),
+                user.getPassword(),
+                Collections.singleton(new SimpleGrantedAuthority(user.getAccess().getRegistered())),
+                user.getId(),
+                user.getUsername());
     }
 
-    public static class CustomUser extends User{
+    public static class CustomUser extends User {
         private final int id;
         private final String name;
 
@@ -42,11 +47,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             this.name = name;
         }
 
-        public CustomUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities, int id, String name) {
-            super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
-            this.id = id;
-            this.name = name;
-        }
+//        public CustomUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities, int id, String name) {
+//            super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
+//            this.id = id;
+//            this.name = name;
+//        }
 
         public int getId() {
             return id;

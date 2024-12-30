@@ -1,11 +1,13 @@
 package com.example.OnlineSinema.controller;
 
+import com.example.OnlineSinema.domain.User;
 import com.example.OnlineSinema.dto.filmDTO.FilmCardDTO;
 import com.example.OnlineSinema.service.FilmService;
 import com.example.OnlineSinema.service.impl.ElasticsearchFilmService;
 import com.example.OnlineSinema.service.impl.UserDetailsServiceImpl;
 import com.example.SinemaContract.VM.cards.BaseViewModel;
 import com.example.SinemaContract.controllers.MainController;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
@@ -44,10 +46,25 @@ public class MainPageController implements MainController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             Model model,
-            @AuthenticationPrincipal UserDetails userDetails
-    ) throws IOException {
+            @AuthenticationPrincipal UserDetails userDetails,
+            HttpServletRequest request) throws IOException {
+
         page = Math.max(page, 0);
         size = Math.max(size, 1);
+
+        String usernameCookie = "Guest";
+
+        if(userDetails == null){
+            Cookie[] cookies = request.getCookies();
+            if(cookies != null){
+                for (Cookie cookie : cookies){
+                    if ("username".equals(cookie.getName())){
+                        usernameCookie = cookie.getValue();
+                        break;
+                    }
+                }
+            }
+        }
 
         List<String> genres = filmService.getAllGenres();
 
@@ -63,6 +80,7 @@ public class MainPageController implements MainController {
             LOG.info("Fetching all films, page: {}, size: {}", page, size);
         }
 
+        String username = (userDetails != null) ? ((UserDetailsServiceImpl.CustomUser) userDetails).getName() : "Guest";
         BaseViewModel baseViewModel = createBaseVieModel("Main Page", userDetails);
 
         model.addAttribute("baseViewModel", baseViewModel);
@@ -76,6 +94,7 @@ public class MainPageController implements MainController {
         return "main";
     }
 
+
     @PostMapping("/logout")
     public String logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -88,13 +107,18 @@ public class MainPageController implements MainController {
 
     @Override
     public BaseViewModel createBaseVieModel(String title, UserDetails userDetails) {
-        if (userDetails == null){
-            return new BaseViewModel(title, -1, null);
-        } else if (userDetails instanceof UserDetailsServiceImpl.CustomUser) {
+        if (userDetails == null) {
+            return new BaseViewModel(title, -1, "Guest");
+        }
+
+        if (userDetails instanceof UserDetailsServiceImpl.CustomUser) {
             UserDetailsServiceImpl.CustomUser customUser = (UserDetailsServiceImpl.CustomUser) userDetails;
             return new BaseViewModel(title, customUser.getId(), customUser.getName());
-        } else {
-            return new BaseViewModel(title, -1, null);
+        } else if (userDetails instanceof User) {
+            User user = (User) userDetails;
+            return new BaseViewModel(title, -1, user.getUsername());
         }
+
+        return new BaseViewModel(title, -1, "Guest");
     }
 }
