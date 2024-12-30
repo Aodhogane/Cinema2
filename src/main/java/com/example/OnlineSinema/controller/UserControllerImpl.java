@@ -32,7 +32,7 @@ public class UserControllerImpl implements UserController {
     @GetMapping("/login")
     public String pageLogin(@RequestParam(value = "error", required = false) String error,
                             Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        String username = (userDetails != null) ? userDetails.getUsername() : "anonymous";
+        String username = (userDetails instanceof UserDetailsServiceImpl.CustomUser) ? ((UserDetailsServiceImpl.CustomUser) userDetails).getName() : "anonymous";
         LOG.info("Client '{}' requested the login page.", username);
 
         var baseView = createBaseVieModel("Authorization",userDetails);
@@ -68,18 +68,15 @@ public class UserControllerImpl implements UserController {
             model.addAttribute("error", ex.getMessage());
             return "register";
         }
-        userService.register(userDto.getName(), userDto.getEmail(), userDto.getPassword(), accessId);
 
         return "redirect:/user/login";
     }
 
     @Override
     public BaseViewModel createBaseVieModel(String title, UserDetails userDetails) {
-        if (userDetails == null){
-            return new BaseViewModel(title, -1, null);
-        }else{
-            UserDetailsServiceImpl.CustomUser customUser = (UserDetailsServiceImpl.CustomUser) userDetails;
+        if (userDetails instanceof UserDetailsServiceImpl.CustomUser customUser) {
             return new BaseViewModel(title, customUser.getId(), customUser.getName());
         }
+        return new BaseViewModel(title, -1, null);
     }
 }

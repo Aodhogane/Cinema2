@@ -1,6 +1,8 @@
 package com.example.OnlineSinema.config;
 
-import com.example.OnlineSinema.enums.UserRole;
+import com.example.OnlineSinema.domain.User;
+import com.example.OnlineSinema.exceptions.GenreNotFoundException;
+import com.example.OnlineSinema.exceptions.UserNotFound;
 import com.example.OnlineSinema.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -8,18 +10,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
-
-import static com.example.OnlineSinema.enums.UserRole.ADMIN;
 
 @Configuration
 public class AppSecurityConfiguration {
@@ -46,8 +45,8 @@ public class AppSecurityConfiguration {
                 .formLogin(formLogin ->
                         formLogin
                                 .loginPage("/user/login")
-                                .usernameParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY)
-                                .passwordParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY)
+                                .usernameParameter("username")
+                                .passwordParameter("password")
                                 .defaultSuccessUrl("/main", true)
                                 .failureUrl("/auth/login?error=error")
                 )
@@ -60,8 +59,8 @@ public class AppSecurityConfiguration {
                 .securityContext(securityContext ->
                         securityContext.securityContextRepository(securityContextRepository)
                 )
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 );
 
         return http.build();

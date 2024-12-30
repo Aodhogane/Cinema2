@@ -21,13 +21,13 @@ public class AppUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         com.example.OnlineSinema.domain.User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username + " was not found!"));
+                .orElseThrow(() -> new UsernameNotFoundException("User " + username + " was not found!"));
 
         if (user.getPassword() == null || user.getPassword().isEmpty()) {
             throw new UsernameNotFoundException("Password is null or empty for user: " + username);
         }
 
-        String role = user.getAccess() != null ? user.getAccess().getRegistered() : "USER";
+        String role = "ROLE_" + user.getAccess().getRegistered().toUpperCase();
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),

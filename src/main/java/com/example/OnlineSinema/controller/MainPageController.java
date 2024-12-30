@@ -52,25 +52,29 @@ public class MainPageController implements MainController {
         List<String> genres = filmService.getAllGenres();
 
         Page<FilmCardDTO> films;
-        if (query != null && !query.isEmpty()) {
+        if (!query.isEmpty()) {
             films = elasticsearchFilmService.searchFilms(query, page, size);
-            LOG.info("Searching films by query: '{}', page: {}, size: {}", query, page, size);
+            LOG.info("Searching films by query '{}', page {}, size {}", query, page, size);
         } else if (genre != null && !genre.isEmpty()) {
             films = filmService.findByGenre(genre, page, size);
-            LOG.info("Searching films by genre: '{}', page: {}, size: {}", genre, page, size);
+            LOG.info("Searching films by genre '{}', page {}, size {}", genre, page, size);
         } else {
             films = filmService.findAll(page, size);
-            LOG.info("Fetching all films, page: {}, size: {}", page, size);
+            LOG.info("Fetching all films, page {}, size {}", page, size);
         }
 
-        BaseViewModel baseViewModel = createBaseVieModel("Main Page", userDetails);
+        String username = (userDetails != null) ? userDetails.getUsername() : "Guest";
+
+        BaseViewModel baseViewModel = createBaseVieModel("Main Page", username);
+
+        LOG.info("BaseViewModel being passed to template: {}", baseViewModel);
 
         model.addAttribute("baseViewModel", baseViewModel);
         model.addAttribute("films", films);
         model.addAttribute("currentPage", page + 1);
         model.addAttribute("totalPages", films.getTotalPages());
         model.addAttribute("query", query);
-        model.addAttribute("genres", genres);
+        model.addAttribute("genres", filmService.getAllGenres());
         model.addAttribute("selectedGenre", genre);
 
         return "main";
@@ -87,14 +91,8 @@ public class MainPageController implements MainController {
     }
 
     @Override
-    public BaseViewModel createBaseVieModel(String title, UserDetails userDetails) {
-        if (userDetails == null){
-            return new BaseViewModel(title, -1, null);
-        } else if (userDetails instanceof UserDetailsServiceImpl.CustomUser) {
-            UserDetailsServiceImpl.CustomUser customUser = (UserDetailsServiceImpl.CustomUser) userDetails;
-            return new BaseViewModel(title, customUser.getId(), customUser.getName());
-        } else {
-            return new BaseViewModel(title, -1, null);
-        }
+    public BaseViewModel createBaseVieModel(String title, String username) {
+        LOG.info("Creating BaseViewModel with title: {} and username: {}", title, username);
+        return new BaseViewModel(title, -1, username);
     }
 }

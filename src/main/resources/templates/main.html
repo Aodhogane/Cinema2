@@ -9,22 +9,22 @@
 <header>
     <h1 th:text="${baseViewModel.title}">Main Page</h1>
     <div>
-        <span th:if="${baseViewModel.name != null}">
-            Welcome, <strong th:text="${baseViewModel.name}">User</strong>!
-        </span>
+        <p th:if="${baseViewModel.name != null}">
+            Добро пожаловать, <span th:text="${baseViewModel.name}"></span>!
+        </p>
+        <p th:if="${baseViewModel.name == null}">
+            Добро пожаловать, Guest!
+        </p>
     </div>
     <nav>
         <ul>
             <li><a th:href="@{/film/top-sales}">Top 5 Films by Sales</a></li>
         </ul>
     </nav>
-
     <div>
-        <span th:if="${baseViewModel.name != null}">
-            <form action="/user/logout" method="post">
-                <button type="submit">Log out</button>
-            </form>
-        </span>
+        <form th:if="${baseViewModel.name != null}" action="/user/logout" method="post">
+            <button type="submit">Log out</button>
+        </form>
     </div>
 </header>
 
