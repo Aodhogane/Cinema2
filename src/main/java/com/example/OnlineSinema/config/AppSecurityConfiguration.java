@@ -1,8 +1,5 @@
 package com.example.OnlineSinema.config;
 
-import com.example.OnlineSinema.domain.User;
-import com.example.OnlineSinema.exceptions.GenreNotFoundException;
-import com.example.OnlineSinema.exceptions.UserNotFound;
 import com.example.OnlineSinema.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
