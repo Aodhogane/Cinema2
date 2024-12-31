@@ -9,21 +9,12 @@
 <header>
     <h1 th:text="${baseViewModel.title}">Main Page</h1>
     <div>
-<<<<<<< HEAD
         <p th:if="${baseViewModel.name != null}">
             Добро пожаловать, <span th:text="${baseViewModel.name}"></span>!
         </p>
         <p th:if="${baseViewModel.name == null}">
             Добро пожаловать, Guest!
         </p>
-=======
-       <span th:if = "${baseViewModel.name != null && baseViewModel.name != 'Guest'}">
-           Welcome, <strong th:text = "${baseViewModel.name}">User</strong>!
-       </span>
-        <span th:if = "${baseViewModel.name == 'Guest'}">
-           Welcome, <strong th:text = "'Guest'">User</strong>!
-       </span>
->>>>>>> origin/main
     </div>
     <nav>
         <ul>
