@@ -87,7 +87,9 @@ public class MainPageController implements MainController {
             session.invalidate();
         }
 
-        return "redirect:/main";
+        LOG.info("User out!");
+
+        return "redirect:/login";
     }
 
     @Override
