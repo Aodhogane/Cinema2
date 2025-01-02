@@ -9,7 +9,7 @@ import com.example.OnlineSinema.dto.userDTO.UserOutputDTO;
 import com.example.OnlineSinema.exceptions.*;
 import com.example.OnlineSinema.repository.AccessRepository;
 import com.example.OnlineSinema.service.*;
-import com.example.OnlineSinema.service.impl.UserDetailsServiceImpl;
+import com.example.OnlineSinema.config.UserDetailsServiceImpl;
 import com.example.SinemaContract.VM.admin.AdminViewModelEntityEdit;
 import com.example.SinemaContract.VM.cards.BaseViewModel;
 import com.example.SinemaContract.VM.domain.user.UserEditForm;
@@ -273,7 +273,7 @@ public class AdminControllerEditImpl implements AdminControllerEdit {
         }
         else{
             UserDetailsServiceImpl.CustomUser customUser = (UserDetailsServiceImpl.CustomUser) userDetails;
-            return new BaseViewModel(title, customUser.getId(), customUser.getName());
+            return new BaseViewModel(title, customUser.getId(), customUser.getUsername());
         }
     }
 }

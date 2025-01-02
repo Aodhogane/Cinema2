@@ -136,4 +136,12 @@ public class UserRepositoryImpl implements UserRepository {
         }
         return Optional.of(users.get(0));
     }
+
+    @Override
+    public List<User> findByAccessId(int accessId) {
+        return entityManager.createQuery(
+                        "SELECT u FROM User u WHERE u.access.id = :access_id", User.class)
+                .setParameter("accessId", accessId)
+                .getResultList();
+    }
 }

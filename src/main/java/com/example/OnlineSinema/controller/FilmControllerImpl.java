@@ -2,14 +2,13 @@ package com.example.OnlineSinema.controller;
 
 import com.example.OnlineSinema.domain.Film;
 import com.example.OnlineSinema.dto.filmDTO.FilmCardDTO;
-import com.example.OnlineSinema.dto.filmDTO.FilmOutputDTO;
 import com.example.OnlineSinema.dto.filmDTO.FilmSalesDTO;
 import com.example.OnlineSinema.dto.reviewDTO.ReviewOutputDTO;
 import com.example.OnlineSinema.exceptions.FilmNotFounf;
 import com.example.OnlineSinema.service.FilmService;
 import com.example.OnlineSinema.service.ReviewsService;
 import com.example.OnlineSinema.service.UserService;
-import com.example.OnlineSinema.service.impl.UserDetailsServiceImpl;
+import com.example.OnlineSinema.config.UserDetailsServiceImpl;
 import com.example.SinemaContract.VM.cards.BaseViewModel;
 import com.example.SinemaContract.VM.domain.film.ReviewPageFormModel;
 import com.example.SinemaContract.VM.form.actor.ActorPageFM;
@@ -69,7 +68,7 @@ public class FilmControllerImpl implements FilmControllerMain {
             return new BaseViewModel(title, -1, null);
         } else {
             UserDetailsServiceImpl.CustomUser customUser = (UserDetailsServiceImpl.CustomUser) userDetails;
-            return new BaseViewModel(title, customUser.getId(), customUser.getName());
+            return new BaseViewModel(title, customUser.getId(), customUser.getUsername());
         }
     }
 

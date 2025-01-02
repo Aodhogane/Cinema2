@@ -24,7 +24,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.List;
@@ -106,10 +105,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserOutputDTO findByName(String name) {
-        User user = userRepository.findByName(name);
+    public UserOutputDTO findByName(String email) {
+        User user = userRepository.findByName(email);
         if (user == null) {
-            throw new UserNotFound("User not found with name: " + name);
+            throw new UserNotFound("User not found with email: " + email);
         }
         return modelMapper.map(user, UserOutputDTO.class);
     }
@@ -185,5 +184,10 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
 
         return new UserInfoDTO(user.getId(), user.getUsername(), reviews);
+    }
+
+    @Override
+    public List<User> findUsersByAccessId(int accessId){
+        return userRepository.findByAccessId(accessId);
     }
 }

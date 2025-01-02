@@ -3,7 +3,6 @@ package com.example.OnlineSinema.controller;
 import com.example.OnlineSinema.dto.filmDTO.FilmCardDTO;
 import com.example.OnlineSinema.service.FilmService;
 import com.example.OnlineSinema.service.impl.ElasticsearchFilmService;
-import com.example.OnlineSinema.service.impl.UserDetailsServiceImpl;
 import com.example.SinemaContract.VM.cards.BaseViewModel;
 import com.example.SinemaContract.controllers.MainController;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,13 +40,13 @@ public class MainPageController implements MainController {
     public String getMainPage(
             @RequestParam(required = false, defaultValue = "") String query,
             @RequestParam(required = false) String genre,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String pageParam,
+            @RequestParam(required = false) String sizeParam,
             Model model,
             @AuthenticationPrincipal UserDetails userDetails
     ) throws IOException {
-        page = Math.max(page, 0);
-        size = Math.max(size, 1);
+        int page = parseIntegerOrDefault(pageParam, 0, 0);
+        int size = parseIntegerOrDefault(sizeParam, 5, 1);
 
         List<String> genres = filmService.getAllGenres();
 
@@ -78,6 +77,14 @@ public class MainPageController implements MainController {
         model.addAttribute("selectedGenre", genre);
 
         return "main";
+    }
+
+    private int parseIntegerOrDefault(String param, int defaultValue, int minValue) {
+        try {
+            return Math.max(Integer.parseInt(param), minValue);
+        } catch (NumberFormatException | NullPointerException e) {
+            return defaultValue;
+        }
     }
 
     @PostMapping("/logout")

@@ -1,17 +1,22 @@
 package com.example.OnlineSinema.controller.AdminPanely;
 
+import com.example.OnlineSinema.dto.actorsDTO.ActorsOutputDTO;
+import com.example.OnlineSinema.dto.directorDTO.DirectorsInfoDto;
 import com.example.OnlineSinema.dto.reviewDTO.ReviewOutputDTO;
 import com.example.OnlineSinema.service.*;
-import com.example.OnlineSinema.service.impl.UserDetailsServiceImpl;
+import com.example.OnlineSinema.config.UserDetailsServiceImpl;
 import com.example.SinemaContract.VM.admin.AdminViewModelEntityList;
 import com.example.SinemaContract.VM.cards.BaseViewModel;
 import com.example.SinemaContract.VM.domain.film.ReviewPageFormModel;
+import com.example.SinemaContract.VM.form.actor.ActorPageFM;
+import com.example.SinemaContract.VM.form.director.DirectorPageFM;
 import com.example.SinemaContract.VM.form.film.FilmPageFM;
 import com.example.SinemaContract.VM.form.genre.GenrePageFM;
 import com.example.SinemaContract.VM.form.user.UserPageFM;
 import com.example.SinemaContract.controllers.admine.AdminController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -24,6 +29,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminControllerImpl implements AdminController {
 
     private final UserService userService;
@@ -115,13 +121,48 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
+    @GetMapping("/actors")
+    public String adinPanelActor(@ModelAttribute("actorForm") ActorPageFM actorPageFM, Model model,
+                                 @AuthenticationPrincipal UserDetails userDetails){
+        var page = actorPageFM.clientPage() != null ? actorPageFM.clientPage() : 1;
+        var size = actorPageFM.clientSize() != null ? actorPageFM.clientSize() : 10;
+        actorPageFM = new ActorPageFM(page, size);
+        Page<ActorsOutputDTO> actorsOutputDTOS = actorsServis.findAll(page -1, size);
+        List<ActorsOutputDTO> actor = actorsOutputDTOS.getContent();
+
+        var viewModel = new AdminViewModelEntityList<>(createBaseVieModel("Admin panel", userDetails),
+                actor.stream().toList(), actorPageFM, "actor", actorPageFM.clientPage());
+
+        model.addAttribute("model", viewModel);
+        return "admin-main";
+    }
+
+    @Override
+    @GetMapping("/director")
+    public String adminDirector(@ModelAttribute("directorForm") DirectorPageFM directorPageFM, Model model,
+                                @AuthenticationPrincipal UserDetails userDetails){
+        var page = directorPageFM.clientPage() != null ? directorPageFM.clientPage() : 1;
+        var size = directorPageFM.clientSize() != null ? directorPageFM.clientSize() : 10;
+        directorPageFM = new DirectorPageFM(page, size);
+        Page<DirectorsInfoDto> directorOutputDTOS = directorsService.findAll(page - 1, size);
+        List<DirectorsInfoDto> director = directorOutputDTOS.getContent();
+
+        var viewModel = new AdminViewModelEntityList<>(createBaseVieModel("Admin panel", userDetails),
+                director.stream().toList(), directorPageFM, "director", directorPageFM.clientPage());
+
+        model.addAttribute("model", viewModel);
+        return "admin-main";
+    }
+
+
+    @Override
     public BaseViewModel createBaseVieModel(String title, UserDetails userDetails) {
         if (userDetails == null){
             return new BaseViewModel(title, -1, null);
         }
         else{
             UserDetailsServiceImpl.CustomUser customUser = (UserDetailsServiceImpl.CustomUser) userDetails;
-            return new BaseViewModel(title, customUser.getId(),customUser.getName());
+            return new BaseViewModel(title, customUser.getId(),customUser.getUsername());
         }
     }
 }

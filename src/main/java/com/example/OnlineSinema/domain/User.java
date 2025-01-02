@@ -70,7 +70,7 @@ public class User extends BaseEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "accessId")
+    @JoinColumn(name = "access_id")
     public Access getAccess() {
         return access;
     }

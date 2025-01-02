@@ -4,6 +4,7 @@ package com.example.OnlineSinema.service.impl;
 import com.example.OnlineSinema.domain.Film;
 import com.example.OnlineSinema.domain.Reviews;
 import com.example.OnlineSinema.domain.User;
+import com.example.OnlineSinema.dto.filmDTO.FilmCardDTO;
 import com.example.OnlineSinema.dto.reviewDTO.ReviewOutputDTO;
 import com.example.OnlineSinema.exceptions.FilmNotFounf;
 import com.example.OnlineSinema.exceptions.ReviewNotFound;
@@ -26,7 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.LinkedHashSet;
 
 @Service
 @EnableCaching
@@ -62,33 +65,6 @@ public class ReviewServiceImpl implements ReviewsService {
                 review.getDateTime()
         );
     }
-
-//    @Override
-//    @Transactional
-//    @Caching(evict = {
-//            @CacheEvict(value = "CLIENT_PAGE", key = "#reviewInputDto.getClientId()"),
-//            @CacheEvict(value = "FILM_PAGE", key = "#reviewInputDto.getFilmId()")
-//    })
-//    public void save(ReviewOutputDTO reviewOutputDTO) {
-//
-//        User user = userRepository.findById(reviewOutputDTO.getUserId());
-//        if (user == null) {
-//            throw new UserNotFound("User with id: " + reviewOutputDTO.getUserId() + " not found");
-//        }
-//
-//        Film film = filmRepository.findById(reviewOutputDTO.getFilmId().intValue());
-//        if (film == null) {
-//            throw new FilmNotFounf("Film with id: " + reviewOutputDTO.getFilmId() + " not found");
-//        }
-//
-//        List<Reviews> reviews = reviewsRepository.findByFilmIdAndUserId(film.getId(), user.getId());
-//        if (!reviews.isEmpty()) {
-//            throw new ReviewNotFound("User with id: " + user.getId() + " already has a review for film with id: " + film.getId());
-//        }
-//
-//        Reviews review = new Reviews(user, film, reviewOutputDTO.getComment(), reviewOutputDTO.getEstimation(), LocalDateTime.now());
-//        reviewsRepository.save(review);
-//    }
 
     @Override
     @Transactional
@@ -251,5 +227,24 @@ public class ReviewServiceImpl implements ReviewsService {
             film.setRating(averageRating);
             filmRepository.save(film);
         }
+    }
+
+    @Override
+    public Set<FilmCardDTO> getReviewsByUserId(int id) {
+        List<Reviews> reviewsList = reviewsRepository.findByUserId(id);
+
+        return reviewsList.stream()
+                .map(reviews -> {
+                    Film film = reviews.getFilm();
+                    return new FilmCardDTO(
+                            film.getId(),
+                            reviews.getEstimation(),
+                            film.getGenresList(),
+                            film.getTitle(),
+                            reviews.getDateTime(),
+                            reviews.getComment()
+                    );
+                })
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

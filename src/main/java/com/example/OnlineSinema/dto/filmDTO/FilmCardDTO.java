@@ -4,21 +4,24 @@ import com.example.OnlineSinema.domain.Genres;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public class FilmCardDTO {
     private int id;
     private String title;
-    public LocalDateTime exitDate;
-    List<Genres> genres;
+    private LocalDateTime exitDate;
+    Set<Genres> genres;
     double rating;
+    private String comet;
 
-    public FilmCardDTO(int id, double rating, List<Genres> genres, String title,
-                       LocalDateTime exitDate) {
+    public FilmCardDTO(int id, double rating, Set<Genres> genres, String title,
+                       LocalDateTime exitDate, String comet) {
         this.id = id;
         this.rating = rating;
         this.genres = genres;
         this.title = title;
         this.exitDate = exitDate;
+        this.comet = comet;
     }
 
     protected FilmCardDTO(){
@@ -41,11 +44,11 @@ public class FilmCardDTO {
         this.rating = rating;
     }
 
-    public List<Genres> getGenres() {
+    public Set<Genres> getGenres() {
         return genres;
     }
 
-    public void setGenres(List<Genres> genres) {
+    public void setGenres(Set<Genres> genres) {
         this.genres = genres;
     }
 
@@ -63,5 +66,13 @@ public class FilmCardDTO {
 
     public void setExitDate(LocalDateTime exitDate) {
         this.exitDate = exitDate;
+    }
+
+    public String getComet() {
+        return comet;
+    }
+
+    public void setComet(String comet) {
+        this.comet = comet;
     }
 }

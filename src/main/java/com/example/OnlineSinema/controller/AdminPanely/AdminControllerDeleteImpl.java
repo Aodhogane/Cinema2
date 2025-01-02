@@ -2,7 +2,7 @@ package com.example.OnlineSinema.controller.AdminPanely;
 
 import com.example.OnlineSinema.exceptions.*;
 import com.example.OnlineSinema.service.*;
-import com.example.OnlineSinema.service.impl.UserDetailsServiceImpl;
+import com.example.OnlineSinema.config.UserDetailsServiceImpl;
 import com.example.SinemaContract.VM.cards.BaseViewModel;
 import com.example.SinemaContract.controllers.admine.AdminControllerDelete;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,7 +114,7 @@ public class AdminControllerDeleteImpl implements AdminControllerDelete {
         }
         else{
             UserDetailsServiceImpl.CustomUser customUser = (UserDetailsServiceImpl.CustomUser) userDetails;
-            return new BaseViewModel(title, customUser.getId(), customUser.getName());
+            return new BaseViewModel(title, customUser.getId(), customUser.getUsername());
         }
     }
 }

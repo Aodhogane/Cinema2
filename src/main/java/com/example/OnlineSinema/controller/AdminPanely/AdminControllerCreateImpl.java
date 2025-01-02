@@ -8,7 +8,7 @@ import com.example.OnlineSinema.exceptions.GenreAlreadyExistsException;
 import com.example.OnlineSinema.exceptions.GenreNotFoundException;
 import com.example.OnlineSinema.exceptions.UserNotFound;
 import com.example.OnlineSinema.service.*;
-import com.example.OnlineSinema.service.impl.UserDetailsServiceImpl;
+import com.example.OnlineSinema.config.UserDetailsServiceImpl;
 import com.example.SinemaContract.VM.cards.BaseViewModel;
 import com.example.SinemaContract.VM.form.actor.ActorFM;
 import com.example.SinemaContract.VM.form.director.DirectorFM;
@@ -18,6 +18,7 @@ import com.example.SinemaContract.VM.form.user.UserFM;
 import com.example.SinemaContract.controllers.admine.AdminControllerCreate;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -31,6 +32,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 
+@PreAuthorize("hasRole('ADMIN')")
 @Controller
 @RequestMapping("/admin/create")
 public class AdminControllerCreateImpl implements AdminControllerCreate {
@@ -233,7 +235,7 @@ public class AdminControllerCreateImpl implements AdminControllerCreate {
         }
         else{
             UserDetailsServiceImpl.CustomUser customUser = (UserDetailsServiceImpl.CustomUser) userDetails;
-            return new BaseViewModel(title, customUser.getId(), customUser.getName());
+            return new BaseViewModel(title, customUser.getId(), customUser.getUsername());
         }
     }
 }

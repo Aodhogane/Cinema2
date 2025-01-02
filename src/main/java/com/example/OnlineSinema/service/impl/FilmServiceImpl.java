@@ -122,9 +122,10 @@ public class FilmServiceImpl implements FilmService {
         return new FilmCardDTO(
                 film.getId(),
                 film.getRating(),
-                new ArrayList<>(film.getGenresList()),
+                new LinkedHashSet<>(film.getGenresList()),
                 film.getTitle(),
-                film.getExitDate()
+                film.getExitDate(),
+                film.getTitle()
         );
     }
 

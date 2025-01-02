@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity5">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,10 +9,18 @@
 <body>
 <header>
     <h1 th:text="${baseViewModel.title}">Main Page</h1>
-    <div>
+    <div sec:authorize="hasRole('ADMIN')">
+        <p th:if="${baseViewModel.name != null}">
+            Welcome, administrator <span th:text="${baseViewModel.name}"></span>!
+        </p>
+        <a th:href="@{/admin}" class="admin-link">Go to Admin Panel</a>
+    </div>
+    <div sec:authorize="hasRole('USER')">
         <p th:if="${baseViewModel.name != null}">
             Добро пожаловать, <span th:text="${baseViewModel.name}"></span>!
         </p>
+    </div>
+    <div>
         <p th:if="${baseViewModel.name == null}">
             Добро пожаловать, Guest!
         </p>
@@ -27,24 +36,27 @@
             <button type="submit">Log out</button>
         </form>
     </div>
+
+    <div>
+        <form th:if="${baseViewModel.name != null}" action="/user/profile" method="post">
+            <button type="submit">Profile</button>
+
+        </form>
+    </div>
 </header>
 
-<section>
-    <form action="/main" method="get">
-        <input type="text" name="query" placeholder="Search by title" th:value="${query}">
-
-        <select name="genre">
-            <option value="" th:text="'All Genres'"  th:selected="${selectedGenre == null || selectedGenre == ''}">All Genres</option>
-            <option th:each="genre : ${genres}"
-                    th:value="${genre}"
-                    th:text="${genre}"
-                    th:selected="${selectedGenre == genre}">
-            </option>
-        </select>
-
-        <button type="submit">Search</button>
-    </form>
-</section>
+<form action="/main" method="get">
+    <input type="text" name="query" placeholder="Search by title" th:value="${query ?: ''}">
+    <select name="genre">
+        <option value="" th:text="'All Genres'" th:selected="${selectedGenre == null || selectedGenre == ''}">All Genres</option>
+        <option th:each="genre : ${genres}"
+                th:value="${genre}"
+                th:text="${genre}"
+                th:selected="${selectedGenre == genre}">
+        </option>
+    </select>
+    <button type="submit">Search</button>
+</form>
 
 <section>
     <h2>Films</h2>
@@ -66,8 +78,10 @@
     <h2>Pages</h2>
     <div>
         <a th:if="${currentPage > 1}" th:href="@{'/main?page=' + (${currentPage - 1}) + '&size=' + ${size} + '&query=' + ${query} + '&genre=' + ${selectedGenre}}">Previous</a>
+
         <span th:text="${currentPage}">1</span>
-        <a th:if="${currentPage < totalPages}" th:href="@{'/main?page=' + (${currentPage}) + '&size=' + ${size} + '&query=' + ${query} + '&genre=' + ${selectedGenre}}">Next</a>
+
+        <a th:if="${currentPage < totalPages}" th:href="@{'/main?page=' + (${currentPage + 1}) + '&size=' + ${size} + '&query=' + ${query} + '&genre=' + ${selectedGenre}}">Next</a>
     </div>
 </section>
 
