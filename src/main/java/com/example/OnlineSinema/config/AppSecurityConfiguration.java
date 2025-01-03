@@ -34,7 +34,7 @@ public class AppSecurityConfiguration {
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .requestMatchers("/favicon.ico").permitAll()
                                 .requestMatchers("/main", "/search", "/film/{id}", "/user/{id}", "/auth/**").permitAll()
-                                .requestMatchers("/review/**", "/reaction/**", "/comment/**").authenticated()
+                                .requestMatchers("/review/**", "/reaction/**", "/comment/**", "/film/**").authenticated()
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )

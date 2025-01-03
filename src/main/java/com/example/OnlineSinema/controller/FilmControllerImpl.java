@@ -4,11 +4,11 @@ import com.example.OnlineSinema.domain.Film;
 import com.example.OnlineSinema.dto.filmDTO.FilmCardDTO;
 import com.example.OnlineSinema.dto.filmDTO.FilmSalesDTO;
 import com.example.OnlineSinema.dto.reviewDTO.ReviewOutputDTO;
+import com.example.OnlineSinema.dto.userDTO.UserInfoDTO;
 import com.example.OnlineSinema.exceptions.FilmNotFounf;
 import com.example.OnlineSinema.service.FilmService;
 import com.example.OnlineSinema.service.ReviewsService;
 import com.example.OnlineSinema.service.UserService;
-import com.example.OnlineSinema.config.UserDetailsServiceImpl;
 import com.example.SinemaContract.VM.cards.BaseViewModel;
 import com.example.SinemaContract.VM.domain.film.ReviewPageFormModel;
 import com.example.SinemaContract.VM.form.actor.ActorPageFM;
@@ -18,13 +18,13 @@ import com.example.SinemaContract.controllers.domeinController.FilmControllerMai
 import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,31 +45,31 @@ public class FilmControllerImpl implements FilmControllerMain {
         this.userService = userService;
     }
 
-
+    @Override
     @GetMapping("/top-sales")
-    public String getTopFilmsBySales(Model model) {
+    public String getTopFilmsBySales(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        String username = (userDetails != null) ? userDetails.getUsername() : "Guest";
+        BaseViewModel baseViewModel = createBaseVieModel("Top Sales", username);
+
         List<FilmSalesDTO> topFilms = filmService.getTop5FilmsBySales();
+        model.addAttribute("baseViewModel", baseViewModel);
         model.addAttribute("topFilms", topFilms);
+
         return "top-sales";
     }
 
-
+    @Override
     @GetMapping("/search")
-    public String searchFilms(@RequestParam String query, Model model) {
+    public String searchFilms(@RequestParam String query, Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        String username = (userDetails != null) ? userDetails.getUsername() : "Guest";
+        BaseViewModel baseViewModel = createBaseVieModel("Search Results", username);
+
         List<FilmCardDTO> searchResults = filmService.findByNameContaining(query);
+        model.addAttribute("baseViewModel", baseViewModel);
         model.addAttribute("films", searchResults);
         model.addAttribute("query", query);
-        return "search-results";
-    }
 
-    @Override
-    public BaseViewModel createBaseVieModel(String title, UserDetails userDetails) {
-        if (userDetails == null) {
-            return new BaseViewModel(title, -1, null);
-        } else {
-            UserDetailsServiceImpl.CustomUser customUser = (UserDetailsServiceImpl.CustomUser) userDetails;
-            return new BaseViewModel(title, customUser.getId(), customUser.getUsername());
-        }
+        return "search-results";
     }
 
     @Override
@@ -77,8 +77,13 @@ public class FilmControllerImpl implements FilmControllerMain {
     public String filmPage(ReviewPageFormModel reviewForm,
                            ActorPageFM actorForm,
                            DirectorPageFM directorForm,
-                           @PathVariable int id, Model model) {
+                           @PathVariable int id,
+                           Model model,
+                           @AuthenticationPrincipal UserDetails userDetails) {
         try {
+            String username = (userDetails != null) ? userDetails.getUsername() : "Guest";
+            BaseViewModel baseViewModel = createBaseVieModel("Film Details", username);
+
             Film film = filmService.findFilmWithDetails(id);
             List<ReviewOutputDTO> reviews = reviewsService.findByFilmId(film.getId())
                     .stream()
@@ -90,6 +95,7 @@ public class FilmControllerImpl implements FilmControllerMain {
                     .average()
                     .orElse(0.0);
 
+            model.addAttribute("baseViewModel", baseViewModel);
             model.addAttribute("film", film);
             model.addAttribute("reviews", reviews);
             model.addAttribute("averageRating", averageRating);
@@ -103,39 +109,66 @@ public class FilmControllerImpl implements FilmControllerMain {
     }
 
     @Override
-    @PostMapping("/films/{id}/review")
+    @PostMapping("/{id}/review")
     public String addReview(
             @PathVariable("id") int filmId,
             @Valid @ModelAttribute("reviewForm") ReviewFormModel reviewFM,
             BindingResult bindingResult,
             Model model,
-            Principal principal){
+            @AuthenticationPrincipal UserDetails userDetails) {
 
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             model.addAttribute("error", "Validation failed");
+            model.addAttribute("film", filmService.findById(filmId));
             return "film-detail";
         }
 
         try {
-            String username = principal.getName();
-            int userId = userService.findByUsername(username).getId();
+            String username = (userDetails != null) ? userDetails.getUsername() : "Guest";
+            BaseViewModel baseViewModel = createBaseVieModel("Film Review", username);
+            model.addAttribute("baseViewModel", baseViewModel);
+
+            UserInfoDTO user = userService.findByUsername(username);
+
+            if (user == null) {
+                throw new IllegalArgumentException("User not found");
+            }
+
+            int userId = user.getId();
 
             ReviewFormModel validForm = new ReviewFormModel(
                     userId,
                     username,
                     filmId,
                     reviewFM.nameFilm(),
-                    reviewFM.filmId(),
+                    reviewFM.rating(),
                     reviewFM.text()
             );
 
             reviewsService.save(validForm);
             filmService.updateRatingFilm(filmId);
 
-            return "redirect:/films/" + filmId;
-        } catch (Exception e){
+            return "redirect:/film/details/" + filmId;
+        } catch (Exception e) {
             model.addAttribute("error", "Failed to add review: " + e.getMessage());
             return "errorPage";
         }
+    }
+
+    @Override
+    public BaseViewModel createBaseVieModel(String title, String username) {
+        LOG.info("Creating BaseViewModel with title: {} and username: {}", title, username);
+
+        int userId = -1;
+        try {
+            UserInfoDTO user = userService.findByUsername(username);
+            if (user != null) {
+                userId = user.getId();
+            }
+        } catch (Exception e) {
+            LOG.warn("Failed to fetch user ID for username: {}", username, e);
+        }
+
+        return new BaseViewModel(title, userId, username);
     }
 }

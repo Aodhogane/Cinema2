@@ -1,67 +1,102 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity5">
 <head>
     <meta charset="UTF-8">
     <title th:text="${film.title}">Film Details</title>
 </head>
 <body>
 
-<h1 th:text="${film.title}"></h1>
-<p><strong>Rating:</strong> <span th:text="${film.rating}"></span></p>
-<p><strong>Release Date:</strong>
-    <span th:text="${film.exitDate != null ? #temporals.format(film.exitDate, 'yyyy-MM-dd') : 'Unknown'}"></span>
-</p>
+<header>
+    <h1 th:text="${film.title}"></h1>
+    <div sec:authorize="hasRole('ADMIN')">
+        <p th:if="${baseViewModel != null and baseViewModel.name != null}">
+            Welcome, administrator <span th:text="${baseViewModel.name}"></span>!
+        </p>
+    </div>
+    <div sec:authorize="hasRole('USER')">
+        <p th:if="${baseViewModel != null and baseViewModel.name != null}">
+            Welcome, <span th:text="${baseViewModel.name}"></span>!
+        </p>
+    </div>
+    <div>
+        <p th:if="${baseViewModel == null or baseViewModel.name == null}">
+            Welcome, Guest!
+        </p>
+    </div>
+    <div>
+        <form th:if="${baseViewModel != null and baseViewModel.name != null}" action="/user/logout" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit">Log out</button>
+        </form>
+    </div>
+    <div>
+        <form th:if="${baseViewModel != null and baseViewModel.name != null}" action="/user/profile" method="get">
+            <button type="submit">Profile</button>
+        </form>
+    </div>
+</header>
 
-<h3>Actors</h3>
-<ul>
-    <th:block th:if="${film.actors != null and !film.actors.isEmpty()}">
-        <th:block th:each="actor : ${film.actors}">
-            <li th:text="${actor}"></li>
-        </th:block>
-    </th:block>
-    <th:block th:unless="${film.actors != null and !film.actors.isEmpty()}">
-        <p>No actors available</p>
-    </th:block>
-</ul>
+<main>
+    <p><strong>Rating:</strong> <span th:text="${film.rating}"></span></p>
+    <p><strong>Release Date:</strong>
+        <span th:text="${film.exitDate != null ? #temporals.format(film.exitDate, 'yyyy-MM-dd') : 'Unknown'}"></span>
+    </p>
 
-<h3>Directors</h3>
-<ul>
-    <th:block th:if="${film.directors != null and !film.directors.isEmpty()}">
-        <th:block th:each="director : ${film.directors}">
-            <li th:text="${director}"></li>
+    <h3>Actors</h3>
+    <ul>
+        <th:block th:if="${film.actors != null and !film.actors.isEmpty()}">
+            <th:block th:each="actor : ${film.actors}">
+                <li th:text="${actor.name}"></li>
+            </th:block>
         </th:block>
-    </th:block>
-    <th:block th:unless="${film.directors != null and !film.directors.isEmpty()}">
-        <p>No directors available</p>
-    </th:block>
-</ul>
+        <th:block th:unless="${film.actors != null and !film.actors.isEmpty()}">
+            <p>No actors available</p>
+        </th:block>
+    </ul>
 
-<h3>Genres</h3>
-<ul>
-    <th:block th:if="${film.genresList != null and !film.genresList.isEmpty()}">
-        <th:block th:each="genresList : ${film.genresList}">
-            <li th:text="${genre}"></li>
+    <h3>Directors</h3>
+    <ul>
+        <th:block th:if="${film.directors != null and !film.directors.isEmpty()}">
+            <th:block th:each="director : ${film.directors}">
+                <li th:text="${director.name}"></li>
+            </th:block>
         </th:block>
-    </th:block>
-    <th:block th:unless="${film.genresList != null and !film.genresList.isEmpty()}">
-        <p>No genres available</p>
-    </th:block>
-</ul>
+        <th:block th:unless="${film.directors != null and !film.directors.isEmpty()}">
+            <p>No directors available</p>
+        </th:block>
+    </ul>
 
-<h3>Reviews</h3>
-<ul>
-    <th:block th:if="${reviews != null and !reviews.isEmpty()}">
-        <th:block th:each="review : ${reviews}">
-            <li>
-                <span th:text="${review.estimation}"></span> -
-                <span th:text="${review.comment}"></span>
-            </li>
+    <h3>Genres</h3>
+    <ul>
+        <th:block th:if="${film.genresList != null and !film.genresList.isEmpty()}">
+            <th:block th:each="genre : ${film.genresList}">
+                <li th:text="${genre}"></li>
+            </th:block>
         </th:block>
-    </th:block>
-    <th:block th:unless="${reviews != null and !reviews.isEmpty()}">
-        <p>No reviews available</p>
-    </th:block>
-</ul>
+        <th:block th:unless="${film.genresList != null and !film.genresList.isEmpty()}">
+            <p>No genres available</p>
+        </th:block>
+    </ul>
+
+    <h3>Reviews</h3>
+    <ul>
+        <th:block th:if="${reviews != null and !reviews.isEmpty()}">
+            <th:block th:each="review : ${reviews}">
+                <li>
+                    <span th:text="${review.estimation}"></span> -
+                    <span th:text="${review.comment}"></span>
+                </li>
+            </th:block>
+        </th:block>
+        <th:block th:unless="${reviews != null and !reviews.isEmpty()}">
+            <p>No reviews available</p>
+        </th:block>
+    </ul>
+</main>
+
+<footer>
+    <p>&copy; 2024 My Film Library</p>
+</footer>
 
 </body>
 </html>

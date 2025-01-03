@@ -44,7 +44,7 @@ public class UserControllerImpl implements UserController {
     public String pageLogin(@RequestParam(value = "error", required = false) String error,
                             Model model, @AuthenticationPrincipal UserDetails userDetails) {
         String username = (userDetails instanceof UserDetailsServiceImpl.CustomUser) ? ((UserDetailsServiceImpl.CustomUser) userDetails).getUsername() : "anonymous";
-        LOG.info("Client '{}' requested the login page.", username);
+        LOG.info("User '{}' requested the login page.", username);
 
         var baseView = createBaseVieModel("Authorization",userDetails);
         if (baseView.filmId() != -1){
