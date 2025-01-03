@@ -76,10 +76,10 @@ public class Film extends BaseEntity {
             joinColumns = @JoinColumn(name = "filmId"),
             inverseJoinColumns = @JoinColumn(name = "actorId")
     )
-    public Set<Actors> getActors() {
+    public Set<Actors> getActorsList() {
         return actorsList;
     }
-    public void setActors(Set<Actors> actors) {
+    public void setActorsList(Set<Actors> actors) {
         this.actorsList = actors;
     }
 
@@ -89,10 +89,10 @@ public class Film extends BaseEntity {
             joinColumns = @JoinColumn(name = "filmId"),
             inverseJoinColumns = @JoinColumn(name = "directorId")
     )
-    public Set<Directors> getDirectors() {
+    public Set<Directors> getDirectorsList() {
         return directorsList;
     }
-    public void setDirectors(Set<Directors> directors) {
+    public void setDirectorsList(Set<Directors> directors) {
         this.directorsList = directors;
     }
 

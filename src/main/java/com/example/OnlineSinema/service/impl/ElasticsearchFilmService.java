@@ -4,6 +4,7 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.ElasticsearchException;
 import com.example.OnlineSinema.controller.MainPageController;
 import com.example.OnlineSinema.dto.filmDTO.FilmCardDTO;
+import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Transactional
 public class ElasticsearchFilmService {
 
     private final ElasticsearchClient elasticsearchClient;

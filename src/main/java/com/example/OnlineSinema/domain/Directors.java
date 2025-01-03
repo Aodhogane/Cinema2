@@ -54,7 +54,7 @@ public class Directors extends BaseEntity {
         this.midlName = midlName;
     }
 
-    @ManyToMany(mappedBy = "directors")
+    @ManyToMany(mappedBy = "directorsList")
     public List<Film> getFilms() {return filmsList;}
     public void setFilms(List<Film> films) {this.filmsList = films;}
 }

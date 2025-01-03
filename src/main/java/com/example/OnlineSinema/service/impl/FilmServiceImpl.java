@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @EnableCaching
+@Transactional
 public class FilmServiceImpl implements FilmService {
 
     private final FilmRepository filmRepository;

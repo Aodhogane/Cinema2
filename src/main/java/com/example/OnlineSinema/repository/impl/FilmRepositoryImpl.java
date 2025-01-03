@@ -60,8 +60,8 @@ public class FilmRepositoryImpl implements FilmRepository {
         try {
             Film film = entityManager.createQuery(
                             "SELECT f FROM Film f " +
-                                    "LEFT JOIN FETCH f.actors " +
-                                    "LEFT JOIN FETCH f.directors " +
+                                    "LEFT JOIN FETCH f.actorsList " +
+                                    "LEFT JOIN FETCH f.directorsList " +
                                     "LEFT JOIN FETCH f.genresList " +
                                     "LEFT JOIN FETCH f.ticketsList " +
                                     "LEFT JOIN FETCH f.reviews " +

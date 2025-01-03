@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Director: ' + ${director.surname + ' ' + director.name + ' ' + director.midlName}">Director Details</title>
+</head>
+<body>
+<header>
+    <h1 th:text="'Director: ' + ${director.surname + ' ' + director.name + ' ' + director.midlName}"></h1>
+</header>
+<main>
+    <section>
+        <p><strong>Full Name:</strong>
+            <span th:text="${director.surname + ' ' + director.name + ' ' + director.midlName}"></span>
+        </p>
+    </section>
+
+    <section>
+        <h3>Films Directed by This Director</h3>
+        <ul>
+            <th:block th:if="${films != null and !films.isEmpty()}">
+                <th:block th:each="film : ${films}">
+                    <li>
+                        <a th:href="@{/film/{id}(id=${film.id})}" th:text="${film.title}"></a>
+                    </li>
+                </th:block>
+            </th:block>
+            <th:block th:unless="${films != null and !films.isEmpty()}">
+                <p>No films available for this director</p>
+            </th:block>
+        </ul>
+    </section>
+</main>
+<footer>
+    <p>&copy; 2024 My Film Library</p>
+</footer>
+</body>
+</html>

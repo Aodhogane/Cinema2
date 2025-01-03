@@ -44,24 +44,30 @@
 
     <h3>Actors</h3>
     <ul>
-        <th:block th:if="${film.actors != null and !film.actors.isEmpty()}">
-            <th:block th:each="actor : ${film.actors}">
-                <li th:text="${actor.name}"></li>
+        <th:block th:if="${film.actorsList != null and !film.actorsList.isEmpty()}">
+            <th:block th:each="actor : ${film.actorsList}">
+                <li>
+                    <a th:href="@{/people/actor/{id}(id=${actor.id})}"
+                       th:text="${actor.surname + ' ' + actor.name + ' ' + actor.midlName}"></a>
+                </li>
             </th:block>
         </th:block>
-        <th:block th:unless="${film.actors != null and !film.actors.isEmpty()}">
+        <th:block th:unless="${film.actorsList != null and !film.actorsList.isEmpty()}">
             <p>No actors available</p>
         </th:block>
     </ul>
 
     <h3>Directors</h3>
     <ul>
-        <th:block th:if="${film.directors != null and !film.directors.isEmpty()}">
-            <th:block th:each="director : ${film.directors}">
-                <li th:text="${director.name}"></li>
+        <th:block th:if="${film.directorsList != null and !film.directorsList.isEmpty()}">
+            <th:block th:each="director : ${film.directorsList}">
+                <li>
+                    <a th:href="@{/people/director/{id}(id=${director.id})}"
+                       th:text="${director.surname + ' ' + director.name + ' ' + director.midlName}"></a>
+                </li>
             </th:block>
         </th:block>
-        <th:block th:unless="${film.directors != null and !film.directors.isEmpty()}">
+        <th:block th:unless="${film.directorsList != null and !film.directorsList.isEmpty()}">
             <p>No directors available</p>
         </th:block>
     </ul>

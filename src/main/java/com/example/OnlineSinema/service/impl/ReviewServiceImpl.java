@@ -33,6 +33,7 @@ import java.util.LinkedHashSet;
 
 @Service
 @EnableCaching
+@Transactional
 public class ReviewServiceImpl implements ReviewsService {
 
     private final UserRepository userRepository;
