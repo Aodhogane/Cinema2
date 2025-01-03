@@ -21,7 +21,7 @@
             <th:block th:if="${films != null and !films.isEmpty()}">
                 <th:block th:each="film : ${films}">
                     <li>
-                        <a th:href="@{/film/{id}(id=${film.id})}" th:text="${film.title}"></a>
+                        <a th:href="@{/film/details/{id}(id=${film.id})}" th:text="${film.title}"></a>
                     </li>
                 </th:block>
             </th:block>
