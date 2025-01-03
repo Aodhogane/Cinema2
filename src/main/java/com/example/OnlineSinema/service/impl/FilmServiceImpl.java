@@ -28,27 +28,21 @@ import java.util.stream.Collectors;
 public class FilmServiceImpl implements FilmService {
 
     private final FilmRepository filmRepository;
+    private final ElasticsearchFilmService elasticsearchFilmService;
     private final GenreRepository genreRepository;
     private final ModelMapper modelMapper;
-    private final TicketRepository ticketRepository;
     private final ReviewsRepository reviewsRepository;
-    private final ActorRepository actorRepository;
-    private final DirectorRepository directorRepository;
     private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(UserControllerImpl.class);
 
     @Autowired
     public FilmServiceImpl(FilmRepository filmRepository, GenreRepository genreRepository,
-                           ModelMapper modelMapper, TicketRepository ticketRepository,
-                           ReviewsRepository reviewsRepository,
-                           ActorRepository actorRepository,
-                           DirectorRepository directorRepository) {
+                           ModelMapper modelMapper,
+                           ReviewsRepository reviewsRepository, ElasticsearchFilmService elasticsearchFilmService) {
         this.filmRepository = filmRepository;
         this.genreRepository = genreRepository;
         this.modelMapper = modelMapper;
-        this.ticketRepository = ticketRepository;
         this.reviewsRepository = reviewsRepository;
-        this.actorRepository = actorRepository;
-        this.directorRepository = directorRepository;
+        this.elasticsearchFilmService = elasticsearchFilmService;
     }
 
     @Override
@@ -251,5 +245,28 @@ public class FilmServiceImpl implements FilmService {
             throw new FilmNotFounf("Film with ID: " + filmId + " not found");
         }
         return film;
+    }
+
+    @Override
+    @Transactional
+    public Page<FilmCardDTO> searchByTitle(String title, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Film> films = filmRepository.findByTitleContainingIgnoreCase(title, pageable);
+        return films.map(film -> modelMapper.map(film, FilmCardDTO.class));
+    }
+
+    public Page<FilmCardDTO> searchFilmsByTitle(String title, int page, int size) {
+        return filmRepository.findByTitleContainingIgnoreCase(title, PageRequest.of(page, size))
+                .map(this::convertToFilmCardDTO);
+    }
+
+    public Page<FilmCardDTO> searchFilmsByGenres(List<Genres> genres, int page, int size) {
+        return filmRepository.findByGenres(genres, PageRequest.of(page, size))
+                .map(this::convertToFilmCardDTO);
+    }
+
+    public Page<FilmCardDTO> searchFilmsByTitleAndGenres(String title, List<Genres> genres, int page, int size) {
+        return filmRepository.findByTitleContainingAndGenres(title, genres, PageRequest.of(page, size))
+                .map(this::convertToFilmCardDTO);
     }
 }

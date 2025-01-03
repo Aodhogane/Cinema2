@@ -1,15 +1,4 @@
-  input {
-    file {
-    path => "D:/logs/spring.log"
-    start_position => "beginning"
-    }
-  }
-    output {
-    stdout {
-    codec => rubydebug
-    }
-    elasticsearch {
-    hosts => ["http://localhost:9200"]
-    index => "elkdemoindex"
-    }
-  }
+http.host: "0.0.0.0"
+path.config: "/usr/share/logstash/pipeline"
+path.data: /usr/share/logstash/data
+path.logs: /usr/share/logstash/logs

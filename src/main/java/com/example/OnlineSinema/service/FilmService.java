@@ -5,6 +5,7 @@ import com.example.OnlineSinema.dto.filmDTO.FilmCardDTO;
 import com.example.OnlineSinema.dto.filmDTO.FilmOutputDTO;
 import com.example.OnlineSinema.dto.filmDTO.FilmSalesDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,4 +26,5 @@ public interface FilmService {
     Page<FilmCardDTO> findByNameContainingAndByGenres(String filmPart, List<String> genres, int page, int size);
     List<String> getAllGenres();
     Film findFilmWithDetails(int filmId);
+    Page<FilmCardDTO> searchByTitle(String title, int page, int size);
 }

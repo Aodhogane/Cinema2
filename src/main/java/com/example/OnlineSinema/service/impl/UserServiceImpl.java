@@ -25,13 +25,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @EnableCaching
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -175,10 +174,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserInfoDTO findByUsername(String username) {
+        if (username == null || username.isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        }
+
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFound("User with username " + username + " not found"));
 
-        List<String> reviews = user.getReviewsList()
+        List<String> reviews = Optional.ofNullable(user.getReviewsList())
+                .orElse(Collections.emptyList())
                 .stream()
                 .map(Reviews::getComment)
                 .collect(Collectors.toList());

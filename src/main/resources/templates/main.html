@@ -17,12 +17,12 @@
     </div>
     <div sec:authorize="hasRole('USER')">
         <p th:if="${baseViewModel.name != null}">
-            Добро пожаловать, <span th:text="${baseViewModel.name}"></span>!
+            Welcome, <span th:text="${baseViewModel.name}"></span>!
         </p>
     </div>
     <div>
         <p th:if="${baseViewModel.name == null}">
-            Добро пожаловать, Guest!
+            Welcome, Guest!
         </p>
     </div>
     <nav>
@@ -38,7 +38,7 @@
     </div>
 
     <div>
-        <form th:if="${baseViewModel.name != null}" action="/user/profile" method="post">
+        <form th:if="${baseViewModel != null and baseViewModel.name != null}" action="/user/profile" method="get">
             <button type="submit">Profile</button>
 
         </form>
@@ -60,9 +60,9 @@
 
 <section>
     <h2>Films</h2>
-    <div th:if="${films.content.isEmpty()}">
-        <p>No films found.</p>
-    </div>
+    <th:block th:if="${films.getContent().isEmpty()}">
+        <p>No films found</p>
+    </th:block>
     <div th:each="film : ${films.content}">
         <div class="film-card">
             <a th:href="@{'/film/details/' + ${film.id}}" th:text="${film.title}">Film Title</a>
@@ -77,11 +77,13 @@
 <section th:if="${totalPages > 1}">
     <h2>Pages</h2>
     <div>
-        <a th:if="${currentPage > 1}" th:href="@{'/main?page=' + (${currentPage - 1}) + '&size=' + ${size} + '&query=' + ${query} + '&genre=' + ${selectedGenre}}">Previous</a>
+        <a th:if="${currentPage > 1}"
+           th:href="@{'/main?page=' + (${currentPage - 1}) + '&size=' + ${size} + '&query=' + ${query} + '&genre=' + ${selectedGenre}}">Previous</a>
 
         <span th:text="${currentPage}">1</span>
 
-        <a th:if="${currentPage < totalPages}" th:href="@{'/main?page=' + (${currentPage + 1}) + '&size=' + ${size} + '&query=' + ${query} + '&genre=' + ${selectedGenre}}">Next</a>
+        <a th:if="${currentPage < totalPages}"
+           th:href="@{'/main?page=' + (${currentPage + 1}) + '&size=' + ${size} + '&query=' + ${query} + '&genre=' + ${selectedGenre}}">Next</a>
     </div>
 </section>
 

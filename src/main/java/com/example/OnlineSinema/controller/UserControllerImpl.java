@@ -51,7 +51,7 @@ public class UserControllerImpl implements UserController {
             LOG.info("User '{}' is already authenticated. Redirecting to the home page.", username);
             return "redirect:/";
         }
-        model.addAttribute("model", baseView);
+        model.addAttribute("baseViewModel", baseView);
 
         model.addAttribute("loginForm", new UserLoginFM(null, null));
         LOG.info("Returning the login page for client '{}'.", username);
@@ -108,6 +108,7 @@ public class UserControllerImpl implements UserController {
         model.addAttribute("userName", user.getName());
         model.addAttribute("review", user.getReviews());
         model.addAttribute("reviewedFilms", reviewedFilms);
+        model.addAttribute("baseViewModel", createBaseVieModel("Profile", userDetails));
 
         LOG.info("Profile page loaded successfully for user: {}", username);
         return "profile";
@@ -140,10 +141,25 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
+    public BaseViewModel createBaseVieModel(String title, String username) {
+        LOG.info("Creating BaseViewModel with title: {} and username: {}", title, username);
+        return new BaseViewModel(title, -1, username);
+    }
+
+    @Override
     public BaseViewModel createBaseVieModel(String title, UserDetails userDetails) {
-        if (userDetails instanceof UserDetailsServiceImpl.CustomUser customUser) {
-            return new BaseViewModel(title, customUser.getId(), customUser.getUsername());
+        if (userDetails == null) {
+            return new BaseViewModel(title, -1, null);
         }
+
+        if (userDetails instanceof UserDetailsServiceImpl.CustomUser customUser) {
+            return new BaseViewModel(
+                    title,
+                    customUser.getId(),
+                    customUser.getUsername()
+            );
+        }
+
         return new BaseViewModel(title, -1, null);
     }
 }

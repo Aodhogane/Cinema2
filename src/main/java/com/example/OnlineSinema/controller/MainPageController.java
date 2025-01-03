@@ -51,7 +51,12 @@ public class MainPageController implements MainController {
         List<String> genres = filmService.getAllGenres();
 
         Page<FilmCardDTO> films;
-        if (!query.isEmpty()) {
+
+        if (query == null) {
+            query = "";
+        }
+
+        if (query != null && !query.isEmpty()) {
             films = elasticsearchFilmService.searchFilms(query, page, size);
             LOG.info("Searching films by query '{}', page {}, size {}", query, page, size);
         } else if (genre != null && !genre.isEmpty()) {
@@ -63,18 +68,19 @@ public class MainPageController implements MainController {
         }
 
         String username = (userDetails != null) ? userDetails.getUsername() : "Guest";
-
         BaseViewModel baseViewModel = createBaseVieModel("Main Page", username);
 
         LOG.info("BaseViewModel being passed to template: {}", baseViewModel);
 
         model.addAttribute("baseViewModel", baseViewModel);
         model.addAttribute("films", films);
-        model.addAttribute("currentPage", page + 1);
+        model.addAttribute("currentPage", films.getNumber() + 1);
         model.addAttribute("totalPages", films.getTotalPages());
         model.addAttribute("query", query);
-        model.addAttribute("genres", filmService.getAllGenres());
+        model.addAttribute("genres", genres);
+        model.addAttribute("size", size);
         model.addAttribute("selectedGenre", genre);
+        model.addAttribute("totalElements", films.getTotalElements());
 
         return "main";
     }

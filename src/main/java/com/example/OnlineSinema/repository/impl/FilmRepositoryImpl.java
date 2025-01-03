@@ -7,6 +7,7 @@ import com.example.OnlineSinema.repository.FilmRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
@@ -239,6 +240,26 @@ public class FilmRepositoryImpl implements FilmRepository {
     @Transactional
     public void update(Film film) {
         entityManager.merge(film);
+    }
+
+    @Override
+    @Transactional
+    public Page<Film> findByTitleContainingIgnoreCase(String title, Pageable pageable) {
+        String queryStr = "SELECT f FROM Film f WHERE LOWER(f.title) LIKE LOWER(:title)";
+        TypedQuery<Film> query = entityManager.createQuery(queryStr, Film.class);
+        query.setParameter("title", "%" + title + "%");
+
+        query.setFirstResult((int) pageable.getOffset());
+        query.setMaxResults(pageable.getPageSize());
+
+        List<Film> films = query.getResultList();
+
+        String countQueryStr = "SELECT COUNT(f) FROM Film f WHERE LOWER(f.title) LIKE LOWER(:title)";
+        TypedQuery<Long> countQuery = entityManager.createQuery(countQueryStr, Long.class);
+        countQuery.setParameter("title", "%" + title + "%");
+        long total = countQuery.getSingleResult();
+
+        return new PageImpl<>(films, pageable, total);
     }
 
     @Override

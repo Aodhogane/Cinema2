@@ -28,4 +28,5 @@ public interface FilmRepository {
     void save(Film film);
     void deleteById(int id);
     void update(Film film);
+    Page<Film> findByTitleContainingIgnoreCase(String title, Pageable pageable);
 }
