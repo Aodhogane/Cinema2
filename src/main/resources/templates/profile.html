@@ -26,13 +26,18 @@
     </div>
     <ul th:unless="${reviewedFilms.isEmpty()}">
         <li th:each="film : ${reviewedFilms}">
-            <h3 th:text="${film.title}">Film Title</h3>
-            <p><strong>Genres:</strong>
-                <span th:each="genre : ${film.genres}" th:text="${genre.name}">Genre</span>
+            <a th:href="@{'/film/details/' + ${film.id}}" th:text="${film.title}">Film Title</a>            <p><strong>Genres:</strong>
+                <span th:each="genre : ${film.genres}" th:text="${genre.genres}">Genre</span>
             </p>
             <p><strong>Rating:</strong> <span th:text="${film.rating}">5.0</span></p>
-            <p><strong>Comment:</strong> <span th:text="${film.comment}">Your comment here</span></p>
-            <p><strong>Reviewed On:</strong> <span th:text="${film.exitDate}">2024-01-01</span></p>
+<!--            <p><strong>Comment:</strong>-->
+<!--                <ul th:each="review : ${film.coment}">-->
+<!--                    <li th:text="${review.coment}">Your comment here</li>-->
+<!--                </ul>-->
+<!--            </p>-->
+<!--            <p><strong>Reviewed On:</strong>-->
+<!--                <span th:text="${#dates.format(film.exitDate, 'yyyy-MM-dd')}">2024-01-01</span>-->
+<!--            </p>-->
         </li>
     </ul>
 </section>
@@ -42,6 +47,11 @@
         <form th:if="${baseViewModel.name != null}" action="/logout" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <button type="submit">Log out</button>
+        </form>
+    </div>
+    <div>
+        <form th:if="${baseViewModel != null and baseViewModel.name != null}" action="/main" method="get">
+            <button type="submit">Go main</button>
         </form>
     </div>
 </footer>

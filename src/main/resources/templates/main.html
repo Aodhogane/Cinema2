@@ -61,7 +61,7 @@
 <section>
     <h2>Films</h2>
     <div th:each="film : ${films.content}">
-        <div class="film-card">
+        <div>
             <a th:href="@{'/film/details/' + ${film.id}}" th:text="${film.title}">Film Title</a>
             <p>Genres:
                 <span th:each="genre : ${film.genres}" th:text="${genre}"></span>

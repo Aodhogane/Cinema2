@@ -29,10 +29,15 @@
             <button type="submit">Profile</button>
         </form>
     </div>
+    <div>
+        <form th:if="${baseViewModel != null and baseViewModel.name != null}" action="/main" method="get">
+            <button type="submit">Go main</button>
+        </form>
+    </div>
 </header>
 
 <main>
-    <p><strong>Rating:</strong> <span th:text="${film.rating}"></span></p>
+    <p><strong>Rating:</strong> <span th:text="${#numbers.formatDecimal(film.rating, 1, 1)}"></span></p>
     <p><strong>Release Date:</strong>
         <span th:text="${film.exitDate != null ? #temporals.format(film.exitDate, 'yyyy-MM-dd') : 'Unknown'}"></span>
     </p>

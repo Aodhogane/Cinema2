@@ -7,6 +7,11 @@
 <body>
 
 <h1>Top 5 Films by Sales</h1>
+<div>
+    <form th:if="${baseViewModel != null and baseViewModel.name != null}" action="/main" method="get">
+        <button type="submit">Go main</button>
+    </form>
+</div>
 
 <div th:if="${topFilms != null}">
     <ul>
