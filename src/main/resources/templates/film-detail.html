@@ -89,6 +89,7 @@
         <th:block th:if="${reviews != null and !reviews.isEmpty()}">
             <th:block th:each="review : ${reviews}">
                 <li>
+                    <p><strong th:text="${review.userName}"></strong></p>
                     <span th:text="${review.estimation}"></span> -
                     <span th:text="${review.comment}"></span>
                 </li>
