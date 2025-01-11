@@ -78,6 +78,14 @@ public class DirectorRepositoryImpl implements DirectorRepository {
     }
 
     @Override
+    public List<Directors> findAllWithFilms() {
+        return entityManager.createQuery(
+                        "SELECT d FROM Directors d " +
+                                "LEFT JOIN FETCH d.films", Directors.class)
+                .getResultList();
+    }
+
+    @Override
     @Transactional
     public void deleteById(int id) {
         Directors director = findById(id);

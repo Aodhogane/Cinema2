@@ -92,8 +92,8 @@ public class Film extends BaseEntity {
     public Set<Directors> getDirectorsList() {
         return directorsList;
     }
-    public void setDirectorsList(Set<Directors> directors) {
-        this.directorsList = directors;
+    public void setDirectorsList(Set<Directors> directorsList) {
+        this.directorsList = directorsList;
     }
 
     @ManyToMany(fetch = FetchType.EAGER)

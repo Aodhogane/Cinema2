@@ -1,168 +1,165 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${model.baseViewModel.title}">Admin panel</title>
+    <title th:text="${model.baseViewModel.title}">Admin Panel</title>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
 <header>
-    <h1>Admin Panel</h1>
-    <p>Welcome, <strong th:text="${model.baseViewModel.name}">Admin</strong></p>
-    <nav>
-        <ul>
-            <li><a th:href="@{/admin/user}">Manage Users</a></li>
-            <li><a th:href="@{/admin/genre}">Manage Genres</a></li>
-            <li><a th:href="@{/admin/film}">Manage Films</a></li>
-            <li><a th:href="@{/admin/review}">Manage Reviews</a></li>
-            <li><a th:href="@{/admin/actors}">Manage Actors</a></li>
-            <li><a th:href="@{/admin/director}">Manage Directors</a></li>
-            <li><a th:href="@{/user/logout}">Logout</a></li>
-        </ul>
-    </nav>
+    <h1 th:text="${model.baseViewModel.title}">Admin Panel</h1>
+    <p>Welcome Admin, <span th:text="${model.baseViewModel.name}"></span></p>
 </header>
+
+<nav>
+    <ul>
+        <li><a href="/admin/user">Manage Users</a></li>
+        <li><a href="/admin/genre">Manage Genres</a></li>
+        <li><a href="/admin/film">Manage Films</a></li>
+        <li><a href="/admin/review">Manage Reviews</a></li>
+        <li><a href="/admin/actors">Manage Actors</a></li>
+        <li><a href="/admin/director">Manage Directors</a></li>
+    </ul>
+</nav>
+
 <main>
-
-    <section th:if="${model.entityType == 'user'}">
-        <h2>Manage Users</h2>
-        <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="user : ${model.entityList}">
-                <td th:text="${user.id}">1</td>
-                <td th:text="${user.name}">User Name</td>
-                <td th:text="${user.email}">user@example.com</td>
-            </tr>
-            </tbody>
-        </table>
-    </section>
-
-    <section th:if="${model.entityType == 'genre'}">
-        <h2>Manage Genres</h2>
-        <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Genre</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="genre : ${model.currentList}">
-                <td th:text="${genre.id}">1</td>
-                <td th:text="${genre.name}">Horror</td>
-            </tr>
-            </tbody>
-        </table>
-    </section>
-
-    <section th:if="${model.entityType == 'film'}">
-        <h2>Manage Films</h2>
-        <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Release Year</th>
-                <th>Genre</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="film : ${model.entityList}">
-                <td th:text="${film.id}">1</td>
-                <td th:text="${film.title}">Film Title</td>
-                <td th:text="${film.releaseYear}">2024</td>
-                <td th:text="${film.genre}">Genre</td>
-            </tr>
-            </tbody>
-        </table>
-    </section>
-
-    <section th:if="${model.entityType == 'review'}">
-        <h2>Manage Reviews</h2>
-        <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Reviewer</th>
-                <th>Comment</th>
-                <th>Rating</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="review : ${model.entityList}">
-                <td th:text="${review.id}">1</td>
-                <td th:text="${review.reviewerName}">Reviewer Name</td>
-                <td th:text="${review.comment}">Great Movie!</td>
-                <td th:text="${review.rating}">5</td>
-            </tr>
-            </tbody>
-        </table>
-    </section>
-
-    <section th:if="${model.entityType == 'actor'}">
-        <h2>Manage Actor</h2>
-        <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>MidlName</th>
-                <th>Name</th>
-                <th>Surname</th>
-            </tr>
-            </thead>
-        </table>
+    <table>
+        <p>Users</p>
+        <thead>
+        <tr>
+            <th>Coll</th>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Access</th>
+        </tr>
+        </thead>
         <tbody>
-            <tr th:each="director : ${model.entityList}">
-                <td th:text="${actor.id}">1</td>
-                <td th:text="${actor.midlName}">Ivanov</td>
-                <td th:text="${actor.name}">Ivan</td>
-                <td th:text="${actor.surname}">Ivanovich</td>
-            </tr>
-        </tbody>
-    </section>
-
-    <section th:if="${model.entityType == 'director'}">
-        <h2>Manage Director</h2>
-        <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>MidlName</th>
-                <th>Name</th>
-                <th>Surname</th>
-            </tr>
-            </thead>
-        </table>
-        <tbody>
-        <tr th:each="director : ${model.entityList}">
-            <td th:text="${director.id}">1</td>
-            <td th:text="${director.midlName}">Ivanov</td>
-            <td th:text="${director.name}">Ivan</td>
-            <td th:text="${director.surname}">Ivanovich</td>
+        <tr th:each="user, iterStat : ${usersList}">
+            <td th:text="${iterStat.index + 1}">1</td>
+            <td th:text="${user.id}">ID</td>
+            <td th:text="${user.username}">Username</td>
+            <td th:text="${user.email}">Email</td>
+            <td th:text="${user.access.registered}">Access</td>
         </tr>
         </tbody>
-    </section>
+    </table>
 
+    <table>
+        <p>Genres</p>
+        <thead>
+        <tr>
+            <th>Coll</th>
+            <th>ID</th>
+            <th>Genre</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="genre, iterStat : ${genresList}">
+            <td th:text="${iterStat.index + 1}">1</td>
+            <td th:text="${genre.id}">ID</td>
+            <td th:text="${genre.genres}">Genre</td>
+        </tr>
+        </tbody>
+    </table>
 
-    <section th:if="${totalPages > 1}">
-        <h2>Pages</h2>
-        <div>
-            <a th:if="${currentPage > 1}" th:href="@{'/main?page=' + (${currentPage - 1}) + '&size=' + ${size} + '&query=' + ${query} + '&genre=' + ${selectedGenre}}">Previous</a>
+    <table>
+        <p>Films</p>
+        <thead>
+        <tr>
+            <th>Coll</th>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Exit Date</th>
+            <th>Duration (min)</th>
+            <th>Rating</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="film, iterStat : ${filmsList}">
+            <td th:text="${iterStat.index + 1}">1</td>
+            <td th:text="${film.id}">ID</td>
+            <td th:text="${film.title}">Title</td>
+            <td th:text="${#dates.format(film.exitDate, 'dd-MM-yyyy')}">Exit Date</td>
+            <td th:text="${film.duration}">Duration</td>
+            <td th:text="${film.rating}">Rating</td>
+        </tr>
+        </tbody>
+    </table>
 
-            <span th:text="${currentPage}">1</span>
+    <table>
+        <p>Reviews</p>
+        <thead>
+        <tr>
+            <th>Coll</th>
+            <th>ID</th>
+            <th>Comment</th>
+            <th>Estimation</th>
+            <th>Date</th>
+            <th>Film</th>
+            <th>User</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="review, iterStat : ${reviewsList}">
+            <td th:text="${iterStat.index + 1}">1</td>
+            <td th:text="${review.id}">ID</td>
+            <td th:text="${review.comment}">Comment</td>
+            <td th:text="${review.estimation}">Estimation</td>
+            <td th:text="${#dates.format(review.dateTime, 'dd-MM-yyyy')}">Date</td>
+            <td th:text="${review.film.title}">Film</td>
+            <td th:text="${review.user.username}">User</td>
+        </tr>
+        </tbody>
+    </table>
 
-            <a th:if="${currentPage < totalPages}" th:href="@{'/main?page=' + (${currentPage + 1}) + '&size=' + ${size} + '&query=' + ${query} + '&genre=' + ${selectedGenre}}">Next</a>
-        </div>
-    </section>
+    <table>
+        <p>Actors</p>
+        <thead>
+        <tr>
+            <th>Coll</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Middle Name</th>
+            <th>Surname</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="actor, iterStat : ${actorsList}">
+            <td th:text="${iterStat.index + 1}">1</td>
+            <td th:text="${actor.id}">ID</td>
+            <td th:text="${actor.name}">Name</td>
+            <td th:text="${actor.midlName}">Middle Name</td>
+            <td th:text="${actor.surname}">Surname</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table>
+        <p>Directors</p>
+        <thead>
+        <tr>
+            <th>Coll</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Middle Name</th>
+            <th>Surname</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="director, iterStat : ${directorsList}">
+            <td th:text="${iterStat.index + 1}">1</td>
+            <td th:text="${director.id}">ID</td>
+            <td th:text="${director.name}">Name</td>
+            <td th:text="${director.midlName}">Middle Name</td>
+            <td th:text="${director.surname}">Surname</td>
+        </tr>
+        </tbody>
+    </table>
 </main>
+
 <footer>
-    <p>&copy; 2024 Admin Panel</p>
+    <p>&copy; 2025 Admin Panel</p>
 </footer>
 </body>
 </html>

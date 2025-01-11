@@ -13,6 +13,7 @@ public interface DirectorRepository {
     List<Directors> findAll();
     Page<Directors> findAll(Pageable pageable);
     List<Directors> findByFilmId(int id);
+    List<Directors> findAllWithFilms();
     void deleteById(int id);
     void update(Directors directors);
 }

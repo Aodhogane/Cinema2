@@ -5,6 +5,7 @@ import com.example.OnlineSinema.domain.Film;
 import com.example.OnlineSinema.domain.Reviews;
 import com.example.OnlineSinema.domain.User;
 import com.example.OnlineSinema.dto.filmDTO.FilmCardDTO;
+import com.example.OnlineSinema.dto.reviewDTO.ReviewInputDTO;
 import com.example.OnlineSinema.dto.reviewDTO.ReviewOutputDTO;
 import com.example.OnlineSinema.exceptions.FilmNotFounf;
 import com.example.OnlineSinema.exceptions.ReviewNotFound;
@@ -13,7 +14,6 @@ import com.example.OnlineSinema.repository.FilmRepository;
 import com.example.OnlineSinema.repository.ReviewsRepository;
 import com.example.OnlineSinema.repository.UserRepository;
 import com.example.OnlineSinema.service.ReviewsService;
-import com.example.SinemaContract.VM.form.review.ReviewFormModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.LinkedHashSet;
+
 
 @Service
 @EnableCaching
@@ -70,19 +71,18 @@ public class ReviewServiceImpl implements ReviewsService {
     @Override
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = "CLIENT_PAGE", key = "#reviewInputDto.getClientId()"),
-            @CacheEvict(value = "FILM_PAGE", key = "#reviewInputDto.getFilmId()")
+            @CacheEvict(value = "CLIENT_PAGE", key = "#reviewInputDTO.userId"),
+            @CacheEvict(value = "FILM_PAGE", key = "#reviewInputDTO.filmId")
     })
-    public void save(ReviewFormModel reviewFormModel) {
-
-        User user = userRepository.findById(reviewFormModel.userId());
-        if (user == null) {
-            throw new UserNotFound("User with id: " + reviewFormModel.userId() + " not found");
+    public void save(ReviewInputDTO reviewInputDTO) {
+        User user = userRepository.findById(reviewInputDTO.getUserId());
+        if (user == null){
+            throw new UserNotFound("User with id: " + reviewInputDTO.getUserId() + " not found");
         }
 
-        Film film = filmRepository.findById(reviewFormModel.filmId());
-        if (film == null) {
-            throw new FilmNotFounf("Film with id: " + reviewFormModel.filmId() + " not found");
+        Film film = filmRepository.findById(reviewInputDTO.getFilmId());
+        if (film == null){
+            throw new FilmNotFounf("Film with id: " + reviewInputDTO.getFilmId() + " not found");
         }
 
         List<Reviews> reviews = reviewsRepository.findByFilmIdAndUserId(film.getId(), user.getId());
@@ -90,7 +90,14 @@ public class ReviewServiceImpl implements ReviewsService {
             throw new ReviewNotFound("User with id: " + user.getId() + " already has a review for film with id: " + film.getId());
         }
 
-        Reviews review = new Reviews(user, film, reviewFormModel.text(), reviewFormModel.rating(), LocalDateTime.now());
+        Reviews review = new Reviews(
+                user,
+                film,
+                reviewInputDTO.getComment(),
+                reviewInputDTO.getEstimation(),
+                LocalDateTime.now()
+        );
+
         reviewsRepository.save(review);
 
         updateRatingFilm(film.getId());

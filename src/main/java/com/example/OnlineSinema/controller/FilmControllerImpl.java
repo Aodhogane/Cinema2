@@ -109,53 +109,6 @@ public class FilmControllerImpl implements FilmControllerMain {
     }
 
     @Override
-    @PostMapping("/{id}/review")
-    public String addReview(
-            @PathVariable("id") int filmId,
-            @Valid @ModelAttribute("reviewForm") ReviewFormModel reviewFM,
-            BindingResult bindingResult,
-            Model model,
-            @AuthenticationPrincipal UserDetails userDetails) {
-
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("error", "Validation failed");
-            model.addAttribute("film", filmService.findById(filmId));
-            return "film-detail";
-        }
-
-        try {
-            String username = (userDetails != null) ? userDetails.getUsername() : "Guest";
-            BaseViewModel baseViewModel = createBaseVieModel("Film Review", username);
-            model.addAttribute("baseViewModel", baseViewModel);
-
-            UserInfoDTO user = userService.findByUsername(username);
-
-            if (user == null) {
-                throw new IllegalArgumentException("User not found");
-            }
-
-            int userId = user.getId();
-
-            ReviewFormModel validForm = new ReviewFormModel(
-                    userId,
-                    username,
-                    filmId,
-                    reviewFM.nameFilm(),
-                    reviewFM.rating(),
-                    reviewFM.text()
-            );
-
-            reviewsService.save(validForm);
-            filmService.updateRatingFilm(filmId);
-
-            return "redirect:/film/details/" + filmId;
-        } catch (Exception e) {
-            model.addAttribute("error", "Failed to add review: " + e.getMessage());
-            return "errorPage";
-        }
-    }
-
-    @Override
     public BaseViewModel createBaseVieModel(String title, String username) {
         LOG.info("Creating BaseViewModel with title: {} and username: {}", title, username);
 

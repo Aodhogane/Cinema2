@@ -15,5 +15,6 @@ public interface DirectorsService {
     void deleteById(int id);
     void update(int id, String surname, String name, String MiddleName);
     Page<DirectorsInfoDto> findAll(int page, int size);
+    List<DirectorOutputDTO> findAllWithFilms();
     List<FilmOutputDTO> findFilmsByDirectorId(int directorId);
 }

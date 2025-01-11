@@ -60,9 +60,6 @@
 
 <section>
     <h2>Films</h2>
-    <th:block th:if="${films.getContent().isEmpty()}">
-        <p>No films found</p>
-    </th:block>
     <div th:each="film : ${films.content}">
         <div class="film-card">
             <a th:href="@{'/film/details/' + ${film.id}}" th:text="${film.title}">Film Title</a>
