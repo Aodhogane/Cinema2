@@ -85,8 +85,13 @@ public class AdminControllerImpl implements AdminController {
 
         LOG.info("User '{}' requested user management list with pagination - Page: {}, Size: {}.", userDetails.getUsername(), page, size);
 
-        model.addAttribute("model", new AdminViewModelEntityList<>(createBaseVieModel("User Management", userDetails),
-                users.stream().toList(), userFM, "user", users.getTotalPages()));
+        model.addAttribute("model",
+                new AdminViewModelEntityList<>(createBaseVieModel(
+                        "User Management", userDetails),
+                users.stream().toList(),
+                        userFM,
+                        "user",
+                        users.getTotalPages()));
 
         LOG.info("Returned user management view to client '{}'.", userDetails.getUsername());
         return "admin-main";

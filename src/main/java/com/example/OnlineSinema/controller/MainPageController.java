@@ -2,7 +2,6 @@ package com.example.OnlineSinema.controller;
 
 import com.example.OnlineSinema.dto.filmDTO.FilmCardDTO;
 import com.example.OnlineSinema.service.FilmService;
-import com.example.OnlineSinema.service.impl.ElasticsearchFilmService;
 import com.example.SinemaContract.VM.cards.BaseViewModel;
 import com.example.SinemaContract.controllers.MainController;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,13 +25,11 @@ import java.util.List;
 public class MainPageController implements MainController {
 
     private final FilmService filmService;
-    private final ElasticsearchFilmService elasticsearchFilmService;
     private static final Logger LOG = LogManager.getLogger(MainPageController.class);
 
     @Autowired
-    public MainPageController(FilmService filmService, ElasticsearchFilmService elasticsearchFilmService) {
+    public MainPageController(FilmService filmService) {
         this.filmService = filmService;
-        this.elasticsearchFilmService = elasticsearchFilmService;
     }
 
     @Override
@@ -44,7 +41,7 @@ public class MainPageController implements MainController {
             @RequestParam(required = false) String sizeParam,
             Model model,
             @AuthenticationPrincipal UserDetails userDetails
-    ) throws IOException {
+    ) {
         int page = parseIntegerOrDefault(pageParam, 1, 1);
         int size = parseIntegerOrDefault(sizeParam, 5, 1);
         String GenreWork = genre == null ? "" : genre;
@@ -55,10 +52,7 @@ public class MainPageController implements MainController {
 
         Page<FilmCardDTO> films;
 
-        if (query != null && !query.isEmpty()) {
-            films = elasticsearchFilmService.searchFilms(query, page, size);
-            LOG.info("Searching films by query '{}', page {}, size {}", query, page, size);
-        } else if (genre != null && !genre.isEmpty()) {
+        if (genre != null && !genre.isEmpty()) {
             films = filmService.findByGenre(GenreWork, page, size);
             LOG.info("Searching films by genre '{}', page {}, size {}", GenreWork, page, size);
         } else {
@@ -83,6 +77,7 @@ public class MainPageController implements MainController {
 
         return "main";
     }
+
 
     private int parseIntegerOrDefault(String param, int defaultValue, int minValue) {
         try {

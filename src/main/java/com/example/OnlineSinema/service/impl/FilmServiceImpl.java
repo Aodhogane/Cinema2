@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 public class FilmServiceImpl implements FilmService {
 
     private final FilmRepository filmRepository;
-    private final ElasticsearchFilmService elasticsearchFilmService;
     private final GenreRepository genreRepository;
     private final ModelMapper modelMapper;
     private final ReviewsRepository reviewsRepository;
@@ -38,12 +37,11 @@ public class FilmServiceImpl implements FilmService {
     @Autowired
     public FilmServiceImpl(FilmRepository filmRepository, GenreRepository genreRepository,
                            ModelMapper modelMapper,
-                           ReviewsRepository reviewsRepository, ElasticsearchFilmService elasticsearchFilmService) {
+                           ReviewsRepository reviewsRepository) {
         this.filmRepository = filmRepository;
         this.genreRepository = genreRepository;
         this.modelMapper = modelMapper;
         this.reviewsRepository = reviewsRepository;
-        this.elasticsearchFilmService = elasticsearchFilmService;
     }
 
     @Override
@@ -102,7 +100,7 @@ public class FilmServiceImpl implements FilmService {
     @Override
     @Transactional
     public Page<FilmCardDTO> findByGenre(String genre, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page - 1, size);
 
         Genres genreObj = genreRepository.findByName(genre);
         if (genreObj == null) {
