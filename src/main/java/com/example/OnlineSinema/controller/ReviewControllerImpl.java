@@ -75,6 +75,14 @@ public class ReviewControllerImpl implements ReviewsController {
     }
 
     @Override
+    @GetMapping("/edit/{id}")
+    public String editReview(@PathVariable int id, Model model) {
+        ReviewOutputDTO review = reviewsService.findById(id);
+        model.addAttribute("review", review);
+        return "edit-review";
+    }
+
+    @Override
     @PostMapping("/update")
     public String updateReview(@RequestParam("id") int id,
                                @Valid @ModelAttribute("updateReview") ReviewFormModel reviewFormModel,

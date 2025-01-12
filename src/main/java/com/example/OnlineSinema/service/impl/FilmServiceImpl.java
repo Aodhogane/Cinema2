@@ -138,7 +138,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Page<FilmCardDTO> findAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page - 1, size);
         Page<Film> filmPage = filmRepository.findAll(pageable);
         return filmPage.map(film -> modelMapper.map(film, FilmCardDTO.class));
     }

@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${model.baseViewModel.title}">Admin Panel</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
@@ -31,16 +30,14 @@
             <th>ID</th>
             <th>Username</th>
             <th>Email</th>
-            <th>Access</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="user, iterStat : ${usersList}">
             <td th:text="${iterStat.index + 1}">1</td>
             <td th:text="${user.id}">ID</td>
-            <td th:text="${user.username}">Username</td>
+            <td th:text="${user.name}">Username</td>
             <td th:text="${user.email}">Email</td>
-            <td th:text="${user.access.registered}">Access</td>
         </tr>
         </tbody>
     </table>
@@ -55,7 +52,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="genre, iterStat : ${genresList}">
+        <tr th:each="genre : ${genresList}">
             <td th:text="${iterStat.index + 1}">1</td>
             <td th:text="${genre.id}">ID</td>
             <td th:text="${genre.genres}">Genre</td>

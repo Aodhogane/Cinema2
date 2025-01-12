@@ -45,23 +45,22 @@ public class MainPageController implements MainController {
             Model model,
             @AuthenticationPrincipal UserDetails userDetails
     ) throws IOException {
-        int page = parseIntegerOrDefault(pageParam, 0, 0);
+        int page = parseIntegerOrDefault(pageParam, 1, 1);
         int size = parseIntegerOrDefault(sizeParam, 5, 1);
-
-        List<String> genres = filmService.getAllGenres();
-
-        Page<FilmCardDTO> films;
-
+        String GenreWork = genre == null ? "" : genre;
         if (query == null) {
             query = "";
         }
+        List<String> genres = filmService.getAllGenres();
+
+        Page<FilmCardDTO> films;
 
         if (query != null && !query.isEmpty()) {
             films = elasticsearchFilmService.searchFilms(query, page, size);
             LOG.info("Searching films by query '{}', page {}, size {}", query, page, size);
         } else if (genre != null && !genre.isEmpty()) {
-            films = filmService.findByGenre(genre, page, size);
-            LOG.info("Searching films by genre '{}', page {}, size {}", genre, page, size);
+            films = filmService.findByGenre(GenreWork, page, size);
+            LOG.info("Searching films by genre '{}', page {}, size {}", GenreWork, page, size);
         } else {
             films = filmService.findAll(page, size);
             LOG.info("Fetching all films, page {}, size {}", page, size);
@@ -74,12 +73,12 @@ public class MainPageController implements MainController {
 
         model.addAttribute("baseViewModel", baseViewModel);
         model.addAttribute("films", films);
-        model.addAttribute("currentPage", films.getNumber() + 1);
+        model.addAttribute("currentPage", films.getNumber());
         model.addAttribute("totalPages", films.getTotalPages());
         model.addAttribute("query", query);
         model.addAttribute("genres", genres);
         model.addAttribute("size", size);
-        model.addAttribute("selectedGenre", genre);
+        model.addAttribute("selectedGenre", GenreWork);
         model.addAttribute("totalElements", films.getTotalElements());
 
         return "main";

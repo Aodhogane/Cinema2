@@ -86,15 +86,20 @@
 
     <h3>Reviews</h3>
     <ul>
-        <th:block th:if="${reviews != null and !reviews.isEmpty()}">
-            <th:block th:each="review : ${reviews}">
-                <li>
-                    <p><strong th:text="${review.userName}"></strong></p>
-                    <span th:text="${review.estimation}"></span> -
-                    <span th:text="${review.comment}"></span>
-                </li>
+        <ul>
+            <th:block th:if="${reviews != null and !reviews.isEmpty()}">
+                <th:block th:each="review : ${reviews}">
+                    <li>
+                        <p><strong th:text="${review.userName}"></strong></p>
+                        <span th:text="${review.estimation}"></span> -
+                        <span th:text="${review.comment}"></span>
+                    </li>
+                </th:block>
             </th:block>
-        </th:block>
+            <th:block th:unless="${reviews != null and !reviews.isEmpty()}">
+                <p>No reviews available</p>
+            </th:block>
+        </ul>
         <th:block th:unless="${reviews != null and !reviews.isEmpty()}">
             <p>No reviews available</p>
         </th:block>
