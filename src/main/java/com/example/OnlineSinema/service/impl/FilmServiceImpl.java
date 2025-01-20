@@ -45,7 +45,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    @Transactional
+    @CacheEvict(cacheNames = "FILM_TOP", allEntries = true)
     public void save(FilmOutputDTO filmOutputDTO) {
         Film filmSearch = filmRepository.findByTitle(filmOutputDTO.getTitle());
         if (filmSearch != null) {
@@ -67,7 +67,6 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    @Transactional
     public List<FilmCardDTO> findAll() {
         return filmRepository.findAll().stream()
                 .map(film -> modelMapper.map(film, FilmCardDTO.class))
@@ -82,7 +81,6 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    @Transactional
     public List<FilmCardDTO> findByGenres(List<String> genres) {
         List<Genres> genresList = new ArrayList<>();
         for (String s : genres) {
@@ -98,7 +96,6 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    @Transactional
     public Page<FilmCardDTO> findByGenre(String genre, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
 
@@ -123,7 +120,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    @Cacheable(value = "FILM_PAGE", key = "#id")
+    @Cacheable(value = "FILM_PAGE")
     public FilmOutputDTO findById(int id) {
         Film film = filmRepository.findById(id);
         if (film == null) {
@@ -143,7 +140,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     @Transactional
-    @CacheEvict(value = "FILM_PAGE", key = "#id")
+    @CacheEvict(value = "FILM_PAGE")
     public void update(int id, String title, List<String> genres) {
         Film film = filmRepository.findById(id);
         if (film == null) {
@@ -213,7 +210,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     @Transactional
-    @CacheEvict(value = "FILM_PAGE", key = "#id")
+    @CacheEvict(value = "FILM_PAGE")
     public void deleteById(int id) {
         Film film = filmRepository.findById(id);
         if (film == null) {
@@ -231,6 +228,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    @Cacheable("FILM_TOP")
     public List<String> getAllGenres() {
         return genreRepository.findAll().stream()
                 .map(Genres::getGenres)
@@ -252,20 +250,5 @@ public class FilmServiceImpl implements FilmService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Film> films = filmRepository.findByTitleContainingIgnoreCase(title, pageable);
         return films.map(film -> modelMapper.map(film, FilmCardDTO.class));
-    }
-
-    public Page<FilmCardDTO> searchFilmsByTitle(String title, int page, int size) {
-        return filmRepository.findByTitleContainingIgnoreCase(title, PageRequest.of(page, size))
-                .map(this::convertToFilmCardDTO);
-    }
-
-    public Page<FilmCardDTO> searchFilmsByGenres(List<Genres> genres, int page, int size) {
-        return filmRepository.findByGenres(genres, PageRequest.of(page, size))
-                .map(this::convertToFilmCardDTO);
-    }
-
-    public Page<FilmCardDTO> searchFilmsByTitleAndGenres(String title, List<Genres> genres, int page, int size) {
-        return filmRepository.findByTitleContainingAndGenres(title, genres, PageRequest.of(page, size))
-                .map(this::convertToFilmCardDTO);
     }
 }

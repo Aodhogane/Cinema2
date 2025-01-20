@@ -74,12 +74,11 @@
 <section>
     <h2>Pages</h2>
     <nav th:if="${totalPages > 1}" aria-label="Page navigation">
-        <h2>Pages</h2>
-        <ul class="pagination justify-content-center my-5">
-            <li class="page-item"
+        <ul>
+            <li
                 th:each="pageNumber : ${#numbers.sequence(1, totalPages)}"
                 th:classappend="${pageNumber == currentPage} ? 'active'">
-                <a class="page-link"
+                <a
                    th:href="@{/main(pageParam = ${pageNumber}, sizeParam=${size}, query=${query}, genre=${selectedGenre})}"
                    th:text="${pageNumber}"></a>
             </li>
