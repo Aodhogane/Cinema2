@@ -102,12 +102,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean authenticateUser(String username, String password) {
-        User user = userRepository.findByName(username);
-        return passwordEncoder.matches(password, user.getPassword());
-    }
-
-    @Override
     public Page<UserInfoDTO> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<User> users = userRepository.findAll(pageable);
@@ -163,10 +157,5 @@ public class UserServiceImpl implements UserService {
                 .toList();
 
         return new UserInfoDTO(user.getId(), user.getUsername(), reviews);
-    }
-
-    @Override
-    public List<User> findUsersByAccessId(int accessId){
-        return userRepository.findByAccessId(accessId);
     }
 }

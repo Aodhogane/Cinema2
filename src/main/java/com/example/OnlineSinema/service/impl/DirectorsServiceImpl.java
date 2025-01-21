@@ -99,15 +99,6 @@ public class DirectorsServiceImpl implements DirectorsService {
     }
 
     @Override
-    public List<DirectorOutputDTO> findAllWithFilms(){
-        List<Directors> directors = directorsRepository.findAllWithFilms();
-        return directors.stream()
-                .map(director -> modelMapper.map(
-                        director, DirectorOutputDTO.class))
-                .toList();
-    }
-
-    @Override
     public List<FilmOutputDTO> findFilmsByDirectorId(int directorId) {
         Directors director = directorsRepository.findById(directorId);
         List<Film> films = filmRepository.findFilmsByDirectorId(directorId);

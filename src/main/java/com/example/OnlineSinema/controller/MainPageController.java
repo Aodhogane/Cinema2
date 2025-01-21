@@ -34,7 +34,6 @@ public class MainPageController implements MainController {
     @Override
     @GetMapping("/main")
     public String getMainPage(
-            @RequestParam(required = false, defaultValue = "") String query,
             @RequestParam(required = false) String genre,
             @RequestParam(required = false) String pageParam,
             @RequestParam(required = false) String sizeParam,
@@ -43,10 +42,9 @@ public class MainPageController implements MainController {
     ) {
         int page = parseIntegerOrDefault(pageParam, 1, 1);
         int size = parseIntegerOrDefault(sizeParam, 5, 1);
+
         String GenreWork = genre == null ? "" : genre;
-        if (query == null) {
-            query = "";
-        }
+
         List<String> genres = filmService.getAllGenres();
 
         Page<FilmCardDTO> films;
@@ -68,7 +66,6 @@ public class MainPageController implements MainController {
         model.addAttribute("films", films);
         model.addAttribute("currentPage", films.getNumber());
         model.addAttribute("totalPages", films.getTotalPages());
-        model.addAttribute("query", query);
         model.addAttribute("genres", genres);
         model.addAttribute("size", size);
         model.addAttribute("selectedGenre", GenreWork);

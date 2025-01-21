@@ -14,11 +14,8 @@ public interface UserService {
     UserInfoDTO findById(int id);
     void update(UserOutputDTO userOutputDTO);
     UserOutputDTO findByName(String email);
-    boolean authenticateUser(String username, String password);
     Page<UserInfoDTO> findAll(int page, int size);
     void delete(int id);
     void register(String username, String email, String password, int accessId);
     UserInfoDTO findByUsername(String username);
-
-    List<User> findUsersByAccessId(int accessId);
 }
