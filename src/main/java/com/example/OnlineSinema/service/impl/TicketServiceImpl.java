@@ -90,7 +90,7 @@ public class TicketServiceImpl implements TicketService {
         List<Ticket> tickets = ticketRepository.findByUserId(userId);
         return tickets.stream()
                 .map(ticket -> modelMapper.map(ticket, TicketOutputDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -98,6 +98,6 @@ public class TicketServiceImpl implements TicketService {
         List<Ticket> tickets = ticketRepository.findByFilmId(filmId);
         return tickets.stream()
                 .map(ticket -> modelMapper.map(ticket, TicketOutputDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

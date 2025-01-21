@@ -88,7 +88,7 @@ public class FilmControllerImpl implements FilmControllerMain {
             List<ReviewOutputDTO> reviews = reviewsService.findByFilmId(film.getId())
                     .stream()
                     .sorted(Comparator.comparing(ReviewOutputDTO::getDateTime).reversed())
-                    .collect(Collectors.toList());
+                    .toList();
 
             double averageRating = reviews.stream()
                     .mapToDouble(ReviewOutputDTO::getEstimation)

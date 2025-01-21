@@ -1,13 +1,13 @@
 package com.example.OnlineSinema.controller;
 
 
+import com.example.OnlineSinema.config.AppUserDetailsService;
 import com.example.OnlineSinema.domain.User;
 import com.example.OnlineSinema.dto.filmDTO.FilmCardDTO;
 import com.example.OnlineSinema.dto.userDTO.UserInfoDTO;
 import com.example.OnlineSinema.dto.userDTO.UserOutputDTO;
 import com.example.OnlineSinema.service.ReviewsService;
 import com.example.OnlineSinema.service.UserService;
-import com.example.OnlineSinema.config.UserDetailsServiceImpl;
 import com.example.SinemaContract.VM.cards.BaseViewModel;
 import com.example.SinemaContract.VM.form.user.UserLoginFM;
 import com.example.SinemaContract.controllers.domeinController.UserController;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/user")
@@ -43,7 +42,7 @@ public class UserControllerImpl implements UserController {
     @GetMapping("/login")
     public String pageLogin(@RequestParam(value = "error", required = false) String error,
                             Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        String username = (userDetails instanceof UserDetailsServiceImpl.CustomUser) ? ((UserDetailsServiceImpl.CustomUser) userDetails).getUsername() : "anonymous";
+        String username = userDetails != null ? userDetails.getUsername() : "anonymous";
         LOG.info("User '{}' requested the login page.", username);
 
         var baseView = createBaseVieModel("Authorization",userDetails);
@@ -125,7 +124,7 @@ public class UserControllerImpl implements UserController {
                         user.getPassword(),
                         user.getPassword(),
                         user.getAccess().getRegistered()))
-                .collect(Collectors.toList());
+                .toList();
         return ResponseEntity.ok(userDTOs);
     }
 
@@ -152,14 +151,9 @@ public class UserControllerImpl implements UserController {
             return new BaseViewModel(title, -1, null);
         }
 
-        if (userDetails instanceof UserDetailsServiceImpl.CustomUser customUser) {
-            return new BaseViewModel(
-                    title,
-                    customUser.getId(),
-                    customUser.getUsername()
-            );
-        }
+        String username = userDetails.getUsername();
+        UserInfoDTO user = userService.findByUsername(username);
 
-        return new BaseViewModel(title, -1, null);
+        return new BaseViewModel(title, user != null ? user.getId() : -1, username);
     }
 }

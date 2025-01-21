@@ -138,13 +138,13 @@ public class ReviewServiceImpl implements ReviewsService {
     @Override
     public List<ReviewOutputDTO> findByUserId(int id) {
         List<Reviews> reviews = reviewsRepository.findByUserId(id);
-        return reviews.stream().map(this::createReviewOutputDto).collect(Collectors.toList());
+        return reviews.stream().map(this::createReviewOutputDto).toList();
     }
 
     @Override
     public List<ReviewOutputDTO> findByFilmId(int id) {
         List<Reviews> reviews = reviewsRepository.findByFilmId(id);
-        return reviews.stream().map(this::createReviewOutputDto).collect(Collectors.toList());
+        return reviews.stream().map(this::createReviewOutputDto).toList();
     }
 
     @Override
@@ -154,7 +154,7 @@ public class ReviewServiceImpl implements ReviewsService {
                 .sorted((r1, r2) -> r2.getDateTime().compareTo(r1.getDateTime()))
                 .limit(count)
                 .map(this::createReviewOutputDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -179,7 +179,7 @@ public class ReviewServiceImpl implements ReviewsService {
     @Override
     public List<ReviewOutputDTO> findByRating(int filmId, float rating) {
         List<Reviews> reviews = reviewsRepository.findByFilmIdAndRating(filmId, rating);
-        return reviews.stream().map(this::createReviewOutputDto).collect(Collectors.toList());
+        return reviews.stream().map(this::createReviewOutputDto).toList();
     }
 
     @Override
@@ -194,7 +194,7 @@ public class ReviewServiceImpl implements ReviewsService {
     @Override
     public List<ReviewOutputDTO> findAll() {
         List<Reviews> reviews = reviewsRepository.findAll();
-        return reviews.stream().map(this::createReviewOutputDto).collect(Collectors.toList());
+        return reviews.stream().map(this::createReviewOutputDto).toList();
     }
 
     @Override
@@ -214,7 +214,7 @@ public class ReviewServiceImpl implements ReviewsService {
                         review.getFilm().getTitle(),
                         review.getDateTime()
                 ))
-                .collect(Collectors.toList());
+                .toList();
 
         return new PageImpl<>(reviewOutputDTOList, pageable, reviewsPage.getTotalElements());
     }

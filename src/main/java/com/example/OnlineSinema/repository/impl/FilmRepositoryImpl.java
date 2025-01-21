@@ -84,7 +84,7 @@ public class FilmRepositoryImpl implements FilmRepository {
 
         return films.stream()
                 .filter(f -> f.getGenresList().contains(genresList))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

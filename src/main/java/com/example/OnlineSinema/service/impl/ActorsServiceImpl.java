@@ -46,7 +46,7 @@ public class ActorsServiceImpl implements ActorsServis {
     public List<ActorsOutputDTO> findAll() {
         return actorRepository.findAll().stream()
                 .map(actors -> modelMapper.map(actors, ActorsOutputDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -82,7 +82,7 @@ public class ActorsServiceImpl implements ActorsServis {
 
         return actors.stream()
                 .map(actors1 -> modelMapper.map(actors1, ActorsOutputDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -114,6 +114,6 @@ public class ActorsServiceImpl implements ActorsServis {
 
         return films.stream()
                 .map(film -> modelMapper.map(film, FilmOutputDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

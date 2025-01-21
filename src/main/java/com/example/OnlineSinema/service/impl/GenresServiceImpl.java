@@ -48,7 +48,7 @@ public class GenresServiceImpl implements GenresService {
     public List<GenresOutputDTO> findAll() {
         return genreRepository.findAll().stream()
                 .map(genres -> modelMapper.map(genres, GenresOutputDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

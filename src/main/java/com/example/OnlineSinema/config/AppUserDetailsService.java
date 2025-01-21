@@ -1,5 +1,6 @@
 package com.example.OnlineSinema.config;
 
+import com.example.OnlineSinema.domain.User;
 import com.example.OnlineSinema.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.Collections;
 
 public class AppUserDetailsService implements UserDetailsService {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public AppUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -31,12 +32,10 @@ public class AppUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("Invalid role for user: " + username);
         }
 
-        return new UserDetailsServiceImpl.CustomUser(
+        return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority(role)),
-                user.getId(),
-                user.getUsername()
+                Collections.singletonList(new SimpleGrantedAuthority(role))
         );
     }
 }

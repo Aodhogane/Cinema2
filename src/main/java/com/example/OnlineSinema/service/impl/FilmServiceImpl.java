@@ -70,14 +70,14 @@ public class FilmServiceImpl implements FilmService {
     public List<FilmCardDTO> findAll() {
         return filmRepository.findAll().stream()
                 .map(film -> modelMapper.map(film, FilmCardDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public List<FilmCardDTO> findByNameContaining(String title) {
         return filmRepository.findByTitleContaining(title).stream()
                 .map(film -> modelMapper.map(film, FilmCardDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -92,7 +92,7 @@ public class FilmServiceImpl implements FilmService {
         }
         return filmRepository.findByGenres(genresList).stream()
                 .map(film -> modelMapper.map(film, FilmCardDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -201,7 +201,7 @@ public class FilmServiceImpl implements FilmService {
                     }
                     return genre;
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         Page<Film> filmPage = filmRepository.findByTitleContainingAndGenres(filmPart, genresList, pageable);
 
@@ -224,7 +224,7 @@ public class FilmServiceImpl implements FilmService {
         List<Film> topFilms = filmRepository.findTop5FilmsBySales();
         return topFilms.stream()
                 .map(film -> new FilmSalesDTO(film.getTitle(), film.getTicketsList().size()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -232,7 +232,7 @@ public class FilmServiceImpl implements FilmService {
     public List<String> getAllGenres() {
         return genreRepository.findAll().stream()
                 .map(Genres::getGenres)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

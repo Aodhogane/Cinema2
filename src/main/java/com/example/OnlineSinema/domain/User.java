@@ -18,7 +18,7 @@ public class User extends BaseEntity {
     public User() {
     }
 
-    public User(String username, Access access, String email, String password, List<Reviews> reviewsList, List<Ticket> ticketsList) {
+    public User(String username, Access access, String email, String password, List<Reviews> reviewsList) {
         this();
 
         this.username = username;
@@ -26,7 +26,6 @@ public class User extends BaseEntity {
         this.email = email;
         this.password = password;
         this.reviewsList = reviewsList;
-        this.ticketsList = ticketsList;
     }
 
     @Column(name = "username", nullable = false)

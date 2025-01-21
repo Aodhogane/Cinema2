@@ -47,7 +47,7 @@ public class DirectorsServiceImpl implements DirectorsService {
     public List<DirectorOutputDTO> findAll() {
         return directorsRepository.findAll().stream()
                 .map(director -> modelMapper.map(director, DirectorOutputDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -60,7 +60,7 @@ public class DirectorsServiceImpl implements DirectorsService {
 
         return directors.stream()
                 .map(director -> modelMapper.map(director, DirectorOutputDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -110,7 +110,7 @@ public class DirectorsServiceImpl implements DirectorsService {
         return directors.stream()
                 .map(director -> modelMapper.map(
                         director, DirectorOutputDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -124,6 +124,6 @@ public class DirectorsServiceImpl implements DirectorsService {
 
         return films.stream()
                 .map(film -> modelMapper.map(film, FilmOutputDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

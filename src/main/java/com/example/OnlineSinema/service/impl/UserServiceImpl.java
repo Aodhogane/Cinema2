@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
     public List<UserOutputDTO> findAll() {
         return userRepository.findAll().stream()
                 .map(user -> modelMapper.map(user, UserOutputDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -82,8 +82,8 @@ public class UserServiceImpl implements UserService {
 
         List<String> reviews = reviewsService.findByUserId(user.getId())
                 .stream()
-                .map(review -> review.getComment())
-                .collect(Collectors.toList());
+                .map(ReviewOutputDTO::getComment)
+                .toList();
 
         return new UserInfoDTO(user.getId(), user.getUsername(), reviews);
     }
@@ -130,7 +130,7 @@ public class UserServiceImpl implements UserService {
             List<String> reviews = reviewsService.findByUserId(user.getId())
                     .stream()
                     .map(ReviewOutputDTO::getComment)
-                    .collect(Collectors.toList());
+                    .toList();
 
             return new UserInfoDTO(user.getId(), user.getUsername(), reviews);
         });
@@ -185,7 +185,7 @@ public class UserServiceImpl implements UserService {
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(Reviews::getComment)
-                .collect(Collectors.toList());
+                .toList();
 
         return new UserInfoDTO(user.getId(), user.getUsername(), reviews);
     }
