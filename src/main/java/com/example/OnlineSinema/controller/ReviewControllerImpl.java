@@ -71,6 +71,7 @@ public class ReviewControllerImpl implements ReviewsController {
         try {
             reviewsService.deleteById(reviewId);
             redirectAttributes.addFlashAttribute("successMessage", "Review deleted successfully.");
+            reviewsService.updateRatingFilm(filmId);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while deleting the review.");
         }
