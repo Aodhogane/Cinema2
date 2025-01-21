@@ -108,41 +108,9 @@ public class UserControllerImpl implements UserController {
         model.addAttribute("review", user.getReviews());
         model.addAttribute("reviewedFilms", reviewedFilms);
         model.addAttribute("baseViewModel", createBaseVieModel("Profile", userDetails));
-
         LOG.info("Profile page loaded successfully for user: {}", username);
+
         return "profile";
-    }
-
-    @GetMapping("/by_role")
-    public ResponseEntity<List<UserOutputDTO>> getUsersByRole(@RequestParam String role){
-        int accessId = getAccessIdByRole(role);
-        List<User> users = userService.findUsersByAccessId(accessId);
-        List<UserOutputDTO> userDTOs = users.stream()
-                .map(user -> new UserOutputDTO(
-                        user.getId(),
-                        user.getUsername(),
-                        user.getPassword(),
-                        user.getPassword(),
-                        user.getAccess().getRegistered()))
-                .toList();
-        return ResponseEntity.ok(userDTOs);
-    }
-
-    private int getAccessIdByRole (String role){
-        switch (role.toUpperCase()){
-            case "ADMIN":
-                return 1;
-            case "USER":
-                return 2;
-            default:
-                throw new IllegalArgumentException("Invalid role: " + role);
-        }
-    }
-
-    @Override
-    public BaseViewModel createBaseVieModel(String title, String username) {
-        LOG.info("Creating BaseViewModel with title: {} and username: {}", title, username);
-        return new BaseViewModel(title, -1, username);
     }
 
     @Override
@@ -154,6 +122,6 @@ public class UserControllerImpl implements UserController {
         String username = userDetails.getUsername();
         UserInfoDTO user = userService.findByUsername(username);
 
-        return new BaseViewModel(title, user != null ? user.getId() : -1, username);
+        return new BaseViewModel(title,-1, username);
     }
 }

@@ -37,7 +37,6 @@ public class DirectorsServiceImpl implements DirectorsService {
     }
 
     @Override
-    @Transactional
     public void save(DirectorOutputDTO directorInputDTO) {
         Directors directors = modelMapper.map(directorInputDTO, Directors.class);
         directorsRepository.save(directors);
@@ -73,7 +72,6 @@ public class DirectorsServiceImpl implements DirectorsService {
     }
 
     @Override
-    @Transactional
     public void deleteById(int id) {
         Directors directors = directorsRepository.findById(id);
         if (directors == null) {
@@ -83,7 +81,6 @@ public class DirectorsServiceImpl implements DirectorsService {
     }
 
     @Override
-    @Transactional
     public void update(int id, String name, String surname, String middleName) {
         Directors directors = directorsRepository.findById(id);
         if (directors == null) {

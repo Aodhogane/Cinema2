@@ -36,7 +36,6 @@ public class ActorsServiceImpl implements ActorsServis {
     }
 
     @Override
-    @Transactional
     public void save(ActorsOutputDTO actorsInputDto) {
         Actors actors = modelMapper.map(actorsInputDto, Actors.class);
         actorRepository.save(actors);
@@ -59,7 +58,6 @@ public class ActorsServiceImpl implements ActorsServis {
     }
 
     @Override
-    @Transactional
     public void update(int id, String name, String surname, String middleName) {
         Actors actors = actorRepository.findById(id);
         if (actors == null) {
@@ -94,7 +92,6 @@ public class ActorsServiceImpl implements ActorsServis {
     }
 
     @Override
-    @Transactional
     public void deleteById(int id) {
         Actors actors = actorRepository.findById(id);
         if (actors == null) {

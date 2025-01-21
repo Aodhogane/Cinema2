@@ -30,14 +30,6 @@
                 <span th:each="genre : ${film.genres}" th:text="${genre.genres}">Genre</span>
             </p>
             <p><strong>Rating:</strong> <span th:text="${film.rating}">5.0</span></p>
-<!--            <p><strong>Comment:</strong>-->
-<!--                <ul th:each="review : ${film.coment}">-->
-<!--                    <li th:text="${review.coment}">Your comment here</li>-->
-<!--                </ul>-->
-<!--            </p>-->
-<!--            <p><strong>Reviewed On:</strong>-->
-<!--                <span th:text="${#dates.format(film.exitDate, 'yyyy-MM-dd')}">2024-01-01</span>-->
-<!--            </p>-->
         </li>
     </ul>
 </section>

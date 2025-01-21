@@ -59,7 +59,7 @@ public class ReviewServiceImpl implements ReviewsService {
         return new ReviewOutputDTO(
                 review.getId(),
                 user.getId(),
-                Long.valueOf(film.getId()),
+                (long) film.getId(),
                 review.getEstimation(),
                 review.getComment(),
                 user.getUsername(),
@@ -69,7 +69,6 @@ public class ReviewServiceImpl implements ReviewsService {
     }
 
     @Override
-    @Transactional
     @Caching(evict = {
             @CacheEvict(value = "CLIENT_PAGE", key = "#reviewInputDTO.userId"),
             @CacheEvict(value = "FILM_PAGE", key = "#reviewInputDTO.filmId")
@@ -113,7 +112,6 @@ public class ReviewServiceImpl implements ReviewsService {
     }
 
     @Override
-    @Transactional
     public void deleteById(int id) {
         Reviews review = reviewsRepository.findById(id);
         if (review == null) {
@@ -123,7 +121,6 @@ public class ReviewServiceImpl implements ReviewsService {
     }
 
     @Override
-    @Transactional
     public void update(int id, ReviewOutputDTO reviewOutputDTO) {
         Reviews review = reviewsRepository.findById(id);
         if (review == null) {
@@ -220,7 +217,6 @@ public class ReviewServiceImpl implements ReviewsService {
     }
 
     @Override
-    @Transactional
     public void updateRatingFilm(int id) {
         List<Reviews> reviews = reviewsRepository.findByFilmId(id);
 

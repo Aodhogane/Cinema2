@@ -139,7 +139,6 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    @Transactional
     @CacheEvict(value = "FILM_PAGE")
     public void update(int id, String title, List<String> genres) {
         Film film = filmRepository.findById(id);
@@ -171,7 +170,7 @@ public class FilmServiceImpl implements FilmService {
        double averageRating  = reviews.stream()
                .mapToInt(Reviews::getEstimation)
                .average()
-               .orElse(0);
+               .orElse(1);
 
        Film film = filmRepository.findById(id);
        if(film != null){
@@ -209,7 +208,6 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    @Transactional
     @CacheEvict(value = "FILM_PAGE")
     public void deleteById(int id) {
         Film film = filmRepository.findById(id);
@@ -245,7 +243,6 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    @Transactional
     public Page<FilmCardDTO> searchByTitle(String title, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Film> films = filmRepository.findByTitleContainingIgnoreCase(title, pageable);
