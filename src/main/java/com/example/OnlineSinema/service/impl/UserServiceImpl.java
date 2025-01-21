@@ -56,7 +56,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public void save(UserOutputDTO userOutputDTO) {
         User user = userRepository.findByEmail(userOutputDTO.getEmail());
         if (user != null) {
@@ -76,9 +75,6 @@ public class UserServiceImpl implements UserService {
     @Cacheable(value = "USER_PAGE", key = "#id")
     public UserInfoDTO findById(int id) {
         User user = userRepository.findById(id);
-        if (user == null) {
-            throw new UserNotFound("User not found with id: " + id);
-        }
 
         List<String> reviews = reviewsService.findByUserId(user.getId())
                 .stream()
@@ -89,13 +85,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     @CacheEvict(value = "USER_PAGE", key = "#id")
     public void update(UserOutputDTO userOutputDTO) {
         User user = userRepository.findById(userOutputDTO.getId());
-        if (user == null) {
-            throw new UserNotFound("User not found with id: " + userOutputDTO.getId());
-        }
 
         user.setUsername(userOutputDTO.getName());
         user.setEmail(userOutputDTO.getEmail());
@@ -106,18 +98,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserOutputDTO findByName(String email) {
         User user = userRepository.findByName(email);
-        if (user == null) {
-            throw new UserNotFound("User not found with email: " + email);
-        }
         return modelMapper.map(user, UserOutputDTO.class);
     }
 
     @Override
     public boolean authenticateUser(String username, String password) {
         User user = userRepository.findByName(username);
-        if (user == null) {
-            throw new UserNotFound("User not found with email: " + username);
-        }
         return passwordEncoder.matches(password, user.getPassword());
     }
 
@@ -137,47 +123,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public void delete(int id) {
         User user = userRepository.findById(id);
         if (user == null) {
-            throw new UserNotFound("User not found with id: " + id);
+            throw new UserNotFound("Director with ID: " + id + " not found");
         }
         userRepository.deleteById(id);
     }
 
     @Override
-    @Transactional
     public void register(String username, String email, String password, int accessId) {
         if (userRepository.existsByEmail(email)) {
             LOG.warn("Attempt to register an existing email: {}", email);
             throw new IllegalArgumentException("Email already exists");
         }
-
         User user = new User();
+
         user.setUsername(username);
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
 
         int defaultAccessId = 2;
         Access userAccess = accessRepository.findById(defaultAccessId);
-        if (userAccess == null) {
-            throw new RuntimeException("Access with id " + defaultAccessId + " not found");
-        }
 
         user.setAccess(userAccess);
-
         userRepository.save(user);
-
         LOG.info("User successfully registered: {} with email: {}", username, email);
     }
 
     @Override
     public UserInfoDTO findByUsername(String username) {
-        if (username == null || username.isEmpty()) {
-            throw new IllegalArgumentException("Username cannot be null or empty");
-        }
-
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFound("User with username " + username + " not found"));
 

@@ -74,7 +74,7 @@ public class ReviewOutputDTO {
         this.estimation = estimation;
     }
 
-    public Long getFilmId() {
+    public long getFilmId() {
         return filmId;
     }
 

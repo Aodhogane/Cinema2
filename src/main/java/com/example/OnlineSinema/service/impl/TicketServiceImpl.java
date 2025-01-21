@@ -37,7 +37,6 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    @Transactional
     public void save(TicketOutputDTO ticketOutputDTO) {
         User user = userRepository.findById(ticketOutputDTO.getUserId());
         if (user == null) {
@@ -63,7 +62,6 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    @Transactional
     public void update(int id, Float price, LocalDateTime purchaseDate) {
         Ticket ticket = ticketRepository.findById(id);
         if (ticket == null) {
@@ -76,7 +74,6 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    @Transactional
     public void deleteById(int id) {
         Ticket ticket = ticketRepository.findById(id);
         if (ticket == null) {

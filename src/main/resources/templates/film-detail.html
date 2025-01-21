@@ -67,9 +67,6 @@
                 </li>
             </th:block>
         </th:block>
-        <th:block th:unless="${film.directorsList != null and !film.directorsList.isEmpty()}">
-            <p>No directors available</p>
-        </th:block>
     </ul>
 
     <h3>Genres</h3>
@@ -79,52 +76,48 @@
                 <li th:text="${genre}"></li>
             </th:block>
         </th:block>
-        <th:block th:unless="${film.genresList != null and !film.genresList.isEmpty()}">
-            <p>No genres available</p>
-        </th:block>
     </ul>
 
     <h3>Reviews</h3>
     <ul>
-        <ul>
-            <th:block th:if="${reviews != null and !reviews.isEmpty()}">
-                <th:block th:each="review : ${reviews}">
-                    <li>
-                        <p><strong th:text="${review.userName}"></strong></p>
-                        <span th:text="${review.estimation}"></span> -
-                        <span th:text="${review.comment}"></span>
-                    </li>
-                </th:block>
+        <th:block th:if="${reviews != null and !reviews.isEmpty()}">
+            <th:block th:each="review : ${reviews}">
+                <li>
+                    <p><strong th:text="${review.userName}"></strong></p>
+                    <span th:text="${review.estimation}"></span> -
+                    <span th:text="${review.comment}"></span>
+
+                    <th:block th:if="${review.userName == baseViewModel.name}">
+                        <form th:action="@{/review/delete}" method="post" style="display:inline;">
+                            <input type="hidden" name="reviewId" th:value="${review.id}" />
+                            <input type="hidden" name="filmId" th:value="${film.id}" />
+                            <button type="submit">Delete</button>
+                        </form>
+                    </th:block>
+                </li>
             </th:block>
-            <th:block th:unless="${reviews != null and !reviews.isEmpty()}">
-                <p>No reviews available</p>
-            </th:block>
-        </ul>
-        <th:block th:unless="${reviews != null and !reviews.isEmpty()}">
-            <p>No reviews available</p>
         </th:block>
     </ul>
 
-    <h3>Add a Review</h3>
-    <form th:action="@{/review}" method="post">
+    <h3 th:if = "${reviewToEdit == null}">Add a Review</h3>
+    <h3 th:if = "${reviewToEdit != null}">Update a Review</h3>
+    <form th:action="${reviewToEdit == null ? '/review' : '/review/update'}" method="post">
+        <input type="hidden" name="id" th:value="${reviewToEdit?.id}" />
         <input type="hidden" name="filmId" th:value="${film.id}" />
         <input type="hidden" name="userId" th:value="${baseViewModel.filmId}" />
         <input type="hidden" name="nameFilm" th:value="${film.title}" />
         <input type="hidden" name="name" th:value="${baseViewModel.name}" />
 
         <label for="rating">Rating:</label>
-        <input type="number" id="rating" name="rating" min="0" max="10" required />
+        <input type="number" id="rating" name="rating" min="0" max="10"
+              th:value="${reviewToEdit?.rating ?: ''}" required />
         <br />
         <label for="text">Comment:</label>
-        <textarea id="text" name="text" rows="4" required></textarea>
+        <textarea id="text" name="text" rows="4"
+                  th:value="${reviewToEdit?.comment ?: ''}" required></textarea>
         <br />
-        <button type="submit">Submit Review</button>
+        <button type="submit" th:text="${reviewToEdit == null} ? 'Submit Review' : 'Update Review'">Submit Review</button>
     </form>
 </main>
-
-<footer>
-    <p>&copy; 2024 My Film Library</p>
-</footer>
-
 </body>
 </html>

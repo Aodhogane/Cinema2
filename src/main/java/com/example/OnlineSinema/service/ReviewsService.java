@@ -19,11 +19,6 @@ public interface ReviewsService {
     void deleteById(int id);
     List<ReviewOutputDTO> findByFilmId(int id);
     List<ReviewOutputDTO> findByUserId(int id);
-    List<ReviewOutputDTO> getLastReviewsByUserId(int id, int count);
-    Page<ReviewOutputDTO> getLastReviewsByFilmId(int id, int reviewPage, int reviewSize);
-    Page<ReviewOutputDTO> getReviewsByUserId(int id, int reviewPage, int reviewSize);
-    List<ReviewOutputDTO> findByRating(int filmId, float rating);
-    ReviewOutputDTO findByUserIdFilmId(int userId, int filmId);
     List<ReviewOutputDTO> findAll();
     Page<ReviewOutputDTO> findAll(int page, int size);
     void updateRatingFilm(int id);

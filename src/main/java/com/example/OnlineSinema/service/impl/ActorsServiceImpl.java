@@ -51,18 +51,13 @@ public class ActorsServiceImpl implements ActorsServis {
     @Override
     public ActorsOutputDTO findById(int id) {
         Actors actors = actorRepository.findById(id);
-        if (actors == null) {
-            throw new ActorsNotFound("Actors with ID: " + id + " not found");
-        }
+
         return modelMapper.map(actors, ActorsOutputDTO.class);
     }
 
     @Override
     public void update(int id, String name, String surname, String middleName) {
         Actors actors = actorRepository.findById(id);
-        if (actors == null) {
-            throw new ActorsNotFound("Actors with ID: " + id + " not found");
-        }
 
         actors.setName(name);
         actors.setSurname(surname);

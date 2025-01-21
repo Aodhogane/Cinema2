@@ -1,5 +1,6 @@
 package com.example.OnlineSinema.controller;
 
+import com.example.OnlineSinema.domain.Film;
 import com.example.OnlineSinema.dto.reviewDTO.ReviewInputDTO;
 import com.example.OnlineSinema.dto.reviewDTO.ReviewOutputDTO;
 import com.example.OnlineSinema.service.ReviewsService;
@@ -64,43 +65,32 @@ public class ReviewControllerImpl implements ReviewsController {
 
     @Override
     @PostMapping("/delete")
-    public String deleteReview(@RequestParam("reviewId") int reviewId, RedirectAttributes redirectAttributes) {
+    public String deleteReview(@RequestParam("reviewId") int reviewId,
+                               @RequestParam("filmId") int filmId,
+                               RedirectAttributes redirectAttributes) {
         try {
             reviewsService.deleteById(reviewId);
             redirectAttributes.addFlashAttribute("successMessage", "Review deleted successfully.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while deleting the review.");
         }
-        return "redirect:/film/details/";
+        return "redirect:/film/details/" + filmId;
     }
 
     @Override
     @GetMapping("/edit/{id}")
-    public String editReview(@PathVariable int id, Model model) {
+    public String editReview(@PathVariable int id,
+                             @RequestParam("filmId") long filmId,
+                             Model model) {
         ReviewOutputDTO review = reviewsService.findById(id);
-        model.addAttribute("review", review);
-        return "edit-review";
-    }
 
-    @Override
-    @PostMapping("/update")
-    public String updateReview(@RequestParam("id") int id,
-                               @Valid @ModelAttribute("updateReview") ReviewFormModel reviewFormModel,
-                               BindingResult bindingResult,
-                               RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Validation failed.");
-            return "redirect:/film/details/" + reviewFormModel.filmId();
-        }
+        model.addAttribute("reviewToEdit", review);
 
-        try {
-            ReviewInputDTO reviewInputDTO = mapToInputDTO(reviewFormModel);
-            redirectAttributes.addFlashAttribute("successMessage", "Review updated successfully.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while updating the review.");
-        }
-        return "redirect:/film/details/" + reviewFormModel.filmId();
-    }
+        model.addAttribute("film", reviewsService.findById((int) filmId));
+        model.addAttribute("reviews", reviewsService.findByFilmId((int) filmId));
+        return "film-detail";
+}
+
 
     @Override
     public BaseViewModel createBaseVieModel(String title, UserDetails userDetails) {

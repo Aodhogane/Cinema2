@@ -52,10 +52,6 @@ public class ReviewServiceImpl implements ReviewsService {
         User user = review.getUser();
         Film film = review.getFilm();
 
-        if (user == null || film == null) {
-            throw new IllegalArgumentException("Review must have both user and film");
-        }
-
         return new ReviewOutputDTO(
                 review.getId(),
                 user.getId(),
@@ -75,19 +71,10 @@ public class ReviewServiceImpl implements ReviewsService {
     })
     public void save(ReviewInputDTO reviewInputDTO) {
         User user = userRepository.findById(reviewInputDTO.getUserId());
-        if (user == null){
-            throw new UserNotFound("User with id: " + reviewInputDTO.getUserId() + " not found");
-        }
 
         Film film = filmRepository.findById(reviewInputDTO.getFilmId());
-        if (film == null){
-            throw new FilmNotFounf("Film with id: " + reviewInputDTO.getFilmId() + " not found");
-        }
 
         List<Reviews> reviews = reviewsRepository.findByFilmIdAndUserId(film.getId(), user.getId());
-        if (!reviews.isEmpty()) {
-            throw new ReviewNotFound("User with id: " + user.getId() + " already has a review for film with id: " + film.getId());
-        }
 
         Reviews review = new Reviews(
                 user,
@@ -105,28 +92,17 @@ public class ReviewServiceImpl implements ReviewsService {
     @Override
     public ReviewOutputDTO findById(int id) {
         Reviews review = reviewsRepository.findById(id);
-        if (review == null) {
-            throw new ReviewNotFound("Review with id: " + id + " not found");
-        }
         return createReviewOutputDto(review);
     }
 
     @Override
     public void deleteById(int id) {
-        Reviews review = reviewsRepository.findById(id);
-        if (review == null) {
-            throw new ReviewNotFound("Review with id: " + id + " not found");
-        }
         reviewsRepository.deleteById(id);
     }
 
     @Override
     public void update(int id, ReviewOutputDTO reviewOutputDTO) {
         Reviews review = reviewsRepository.findById(id);
-        if (review == null) {
-            throw new ReviewNotFound("Review with id: " + id + " not found");
-        }
-
         review.setComment(reviewOutputDTO.getComment());
         review.setEstimation(reviewOutputDTO.getEstimation());
         reviewsRepository.save(review);
@@ -142,50 +118,6 @@ public class ReviewServiceImpl implements ReviewsService {
     public List<ReviewOutputDTO> findByFilmId(int id) {
         List<Reviews> reviews = reviewsRepository.findByFilmId(id);
         return reviews.stream().map(this::createReviewOutputDto).toList();
-    }
-
-    @Override
-    public List<ReviewOutputDTO> getLastReviewsByUserId(int id, int count) {
-        List<Reviews> reviews = reviewsRepository.getLastReviewsByUserId(id, count);
-        return reviews.stream()
-                .sorted((r1, r2) -> r2.getDateTime().compareTo(r1.getDateTime()))
-                .limit(count)
-                .map(this::createReviewOutputDto)
-                .toList();
-    }
-
-    @Override
-    public Page<ReviewOutputDTO> getLastReviewsByFilmId(int id, int reviewPage, int reviewSize) {
-        Pageable pageable = PageRequest.of(reviewPage, reviewSize);
-        Page<Reviews> reviews = reviewsRepository.getLatestReviewsByFilmId(id, pageable);
-        return reviews.map(this::createReviewOutputDto);
-    }
-
-    @Override
-    public Page<ReviewOutputDTO> getReviewsByUserId(int id, int reviewPage, int reviewSize) {
-        Pageable pageable = PageRequest.of(reviewPage, reviewSize);
-        List<Reviews> reviewsList = reviewsRepository.findByUserId(id);
-
-        int start = Math.min((int) pageable.getOffset(), reviewsList.size());
-        int end = Math.min((start + pageable.getPageSize()), reviewsList.size());
-
-        Page<Reviews> reviewsPage = new PageImpl<>(reviewsList.subList(start, end), pageable, reviewsList.size());
-        return reviewsPage.map(this::createReviewOutputDto);
-    }
-
-    @Override
-    public List<ReviewOutputDTO> findByRating(int filmId, float rating) {
-        List<Reviews> reviews = reviewsRepository.findByFilmIdAndRating(filmId, rating);
-        return reviews.stream().map(this::createReviewOutputDto).toList();
-    }
-
-    @Override
-    public ReviewOutputDTO findByUserIdFilmId(int userId, int filmId) {
-        List<Reviews> reviews = reviewsRepository.findByFilmIdAndUserId(filmId, userId);
-        if (reviews.isEmpty()) {
-            throw new ReviewNotFound("Review for user with id: " + userId + " and film with id: " + filmId + " not found");
-        }
-        return createReviewOutputDto(reviews.get(0));
     }
 
     @Override
@@ -219,7 +151,6 @@ public class ReviewServiceImpl implements ReviewsService {
     @Override
     public void updateRatingFilm(int id) {
         List<Reviews> reviews = reviewsRepository.findByFilmId(id);
-
 
         double averageRating  = reviews.stream()
                 .mapToInt(Reviews::getEstimation)

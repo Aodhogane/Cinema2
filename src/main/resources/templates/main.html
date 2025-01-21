@@ -20,11 +20,6 @@
             Welcome, <span th:text="${baseViewModel.name}"></span>!
         </p>
     </div>
-    <div>
-        <p th:if="${baseViewModel.name == null}">
-            Welcome, Guest!
-        </p>
-    </div>
     <nav>
         <ul>
             <li><a th:href="@{/film/top-sales}">Top 5 Films by Sales</a></li>
@@ -84,9 +79,5 @@
         </ul>
     </nav>
 </section>
-
-<footer>
-    <p>&copy; 2024 My Film Library</p>
-</footer>
 </body>
 </html>

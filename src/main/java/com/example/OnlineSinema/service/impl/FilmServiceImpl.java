@@ -5,6 +5,7 @@ import com.example.OnlineSinema.domain.*;
 import com.example.OnlineSinema.dto.filmDTO.FilmCardDTO;
 import com.example.OnlineSinema.dto.filmDTO.FilmOutputDTO;
 import com.example.OnlineSinema.dto.filmDTO.FilmSalesDTO;
+import com.example.OnlineSinema.exceptions.DirectorsNotFound;
 import com.example.OnlineSinema.exceptions.FilmNotFounf;
 import com.example.OnlineSinema.exceptions.GenreNotFoundException;
 import com.example.OnlineSinema.repository.*;
@@ -48,16 +49,10 @@ public class FilmServiceImpl implements FilmService {
     @CacheEvict(cacheNames = "FILM_TOP", allEntries = true)
     public void save(FilmOutputDTO filmOutputDTO) {
         Film filmSearch = filmRepository.findByTitle(filmOutputDTO.getTitle());
-        if (filmSearch != null) {
-            throw new FilmNotFounf("Film with title: " + filmOutputDTO.getTitle() + " already exists");
-        }
 
         Set<Genres> genresList = new LinkedHashSet<>();
         for (String s : filmOutputDTO.getGenres()) {
             Genres genre = genreRepository.findByName(s);
-            if (genre == null) {
-                throw new GenreNotFoundException("Genre with name: " + s + " not found");
-            }
             genresList.add(genre);
         }
 
@@ -85,9 +80,7 @@ public class FilmServiceImpl implements FilmService {
         List<Genres> genresList = new ArrayList<>();
         for (String s : genres) {
             Genres genre = genreRepository.findByName(s);
-            if (genre == null) {
-                throw new GenreNotFoundException("Genre with name: " + s + " not found");
-            }
+
             genresList.add(genre);
         }
         return filmRepository.findByGenres(genresList).stream()
@@ -100,9 +93,6 @@ public class FilmServiceImpl implements FilmService {
         Pageable pageable = PageRequest.of(page - 1, size);
 
         Genres genreObj = genreRepository.findByName(genre);
-        if (genreObj == null) {
-            throw new GenreNotFoundException("Genre with name: " + genre + " not found");
-        }
 
         Page<Film> films = filmRepository.findByGenres(Collections.singletonList(genreObj), pageable);
         return films.map(this::convertToFilmCardDTO);
@@ -142,10 +132,6 @@ public class FilmServiceImpl implements FilmService {
     @CacheEvict(value = "FILM_PAGE")
     public void update(int id, String title, List<String> genres) {
         Film film = filmRepository.findById(id);
-        if (film == null) {
-            throw new FilmNotFounf("Film with ID: " + id + " not found");
-        }
-
         film.setTitle(title);
 
         Set<Genres> genresList = new LinkedHashSet<>();
@@ -166,7 +152,6 @@ public class FilmServiceImpl implements FilmService {
     public void updateRatingFilm(int id) {
        List<Reviews> reviews = reviewsRepository.findByFilmId(id);
 
-
        double averageRating  = reviews.stream()
                .mapToInt(Reviews::getEstimation)
                .average()
@@ -182,9 +167,6 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public FilmOutputDTO findByTitle(String title) {
         Film film = filmRepository.findByTitle(title);
-        if (film == null) {
-            throw new FilmNotFounf("Film with title: " + title + " not found");
-        }
         return modelMapper.map(film, FilmOutputDTO.class);
     }
 
@@ -212,7 +194,7 @@ public class FilmServiceImpl implements FilmService {
     public void deleteById(int id) {
         Film film = filmRepository.findById(id);
         if (film == null) {
-            throw new FilmNotFounf("Film with ID: " + id + " not found");
+            throw new DirectorsNotFound("Director with ID: " + id + " not found");
         }
         filmRepository.deleteById(id);
     }
@@ -236,9 +218,6 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public Film findFilmWithDetails(int filmId) {
         Film film = filmRepository.findFilmWithDetails(filmId);
-        if (film == null) {
-            throw new FilmNotFounf("Film with ID: " + filmId + " not found");
-        }
         return film;
     }
 

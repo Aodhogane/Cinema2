@@ -83,9 +83,6 @@ public class DirectorsServiceImpl implements DirectorsService {
     @Override
     public void update(int id, String name, String surname, String middleName) {
         Directors directors = directorsRepository.findById(id);
-        if (directors == null) {
-            throw new DirectorsNotFound("Director with ID: " + id + " not found");
-        }
 
         directors.setName(name);
         directors.setSurname(surname);
@@ -113,10 +110,6 @@ public class DirectorsServiceImpl implements DirectorsService {
     @Override
     public List<FilmOutputDTO> findFilmsByDirectorId(int directorId) {
         Directors director = directorsRepository.findById(directorId);
-        if (director == null) {
-            throw new DirectorsNotFound("Director with ID: " + directorId + " not found");
-        }
-
         List<Film> films = filmRepository.findFilmsByDirectorId(directorId);
 
         return films.stream()

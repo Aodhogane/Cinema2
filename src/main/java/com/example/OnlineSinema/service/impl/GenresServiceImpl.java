@@ -37,9 +37,6 @@ public class GenresServiceImpl implements GenresService {
     @Override
     @Transactional
     public void save(GenresOutputDTO genresOutputDTO) {
-        if (genreRepository.findByName(genresOutputDTO.getGenres()) != null) {
-            throw new GenreAlreadyExistsException("Genre with name: " + genresOutputDTO.getGenres() + " already exists");
-        }
         Genres genres = modelMapper.map(genresOutputDTO, Genres.class);
         genreRepository.save(genres);
     }
@@ -54,19 +51,12 @@ public class GenresServiceImpl implements GenresService {
     @Override
     public GenresOutputDTO findById(int id) {
         var genre = genreRepository.findById(id);
-        if (genre == null) {
-            throw new GenreNotFoundException("Genre with ID: " + id + " not found");
-        }
         return modelMapper.map(genre, GenresOutputDTO.class);
     }
 
     @Override
-    @Transactional
     public void deleteById(int id) {
         var genre = genreRepository.findById(id);
-        if (genre == null) {
-            throw new GenreNotFoundException("Genre with ID: " + id + " not found");
-        }
 
         genre.getFilms().forEach(film -> {
             film.getGenresList().remove(genre);
@@ -79,13 +69,8 @@ public class GenresServiceImpl implements GenresService {
     }
 
     @Override
-    @Transactional
     public void update(int id, String name) {
         var genre = genreRepository.findById(id);
-        if (genre == null) {
-            throw new GenreNotFoundException("Genre with ID: " + id + " not found");
-        }
-
         if (genreRepository.findByName(name) != null && !genre.getGenres().equals(name)) {
             throw new GenreAlreadyExistsException("Genre with name: " + name + " already exists");
         }
