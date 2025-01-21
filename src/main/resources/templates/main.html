@@ -13,7 +13,7 @@
         <p th:if="${baseViewModel.name != null}">
             Welcome, administrator <span th:text="${baseViewModel.name}"></span>!
         </p>
-        <a th:href="@{/admin}" class="admin-link">Go to Admin Panel</a>
+        <a th:href="@{/admin}">Go to Admin Panel</a>
     </div>
     <div sec:authorize="hasRole('USER')">
         <p th:if="${baseViewModel.name != null}">
@@ -46,7 +46,6 @@
 </header>
 
 <form action="/main" method="get">
-    <input type="text" name="query" placeholder="Search by title" th:value="${query ?: ''}">
     <select name="genre">
         <option value="" th:text="'All Genres'" th:selected="${selectedGenre == null || selectedGenre == ''}">All Genres</option>
         <option th:each="genre : ${genres}"
