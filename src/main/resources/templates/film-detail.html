@@ -99,24 +99,20 @@
         </th:block>
     </ul>
 
-    <h3 th:if = "${reviewToEdit == null}">Add a Review</h3>
-    <h3 th:if = "${reviewToEdit != null}">Update a Review</h3>
-    <form th:action="${reviewToEdit == null ? '/review' : '/review/update'}" method="post">
-        <input type="hidden" name="id" th:value="${reviewToEdit?.id}" />
+    <h3>Add a Review</h3>
+    <form th:action="@{/review}" method="post">
         <input type="hidden" name="filmId" th:value="${film.id}" />
         <input type="hidden" name="userId" th:value="${baseViewModel.filmId}" />
         <input type="hidden" name="nameFilm" th:value="${film.title}" />
         <input type="hidden" name="name" th:value="${baseViewModel.name}" />
 
         <label for="rating">Rating:</label>
-        <input type="number" id="rating" name="rating" min="0" max="10"
-              th:value="${reviewToEdit?.rating ?: ''}" required />
+        <input type="number" id="rating" name="rating" min="0" max="10" required />
         <br />
         <label for="text">Comment:</label>
-        <textarea id="text" name="text" rows="4"
-                  th:value="${reviewToEdit?.comment ?: ''}" required></textarea>
+        <textarea id="text" name="text" rows="4" required></textarea>
         <br />
-        <button type="submit" th:text="${reviewToEdit == null} ? 'Submit Review' : 'Update Review'">Submit Review</button>
+        <button type="submit">Submit Review</button>
     </form>
 </main>
 </body>
