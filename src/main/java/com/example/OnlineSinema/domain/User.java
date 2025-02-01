@@ -1,5 +1,6 @@
 package com.example.OnlineSinema.domain;
 
+import com.example.OnlineSinema.enums.UserRoles;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -7,42 +8,24 @@ import java.util.List;
 @Entity
 @Table(name = "Users")
 public class User extends BaseEntity {
-
-    private String username;
     private String email;
     private String password;
-    private Access access;
-    private List<Reviews> reviewsList;
-    private List<Ticket> ticketsList;
+    private UserRoles userRoles;
+    private Client client;
+    private Actors actors;
+    private Directors directors;
 
-    public User() {
-    }
+    protected User() {}
 
-    public User(String username, Access access, String email, String password, List<Reviews> reviewsList) {
-        this();
-
-        this.username = username;
-        this.access = access;
+    public User(String email, String password, UserRoles userRoles) {
         this.email = email;
         this.password = password;
-        this.reviewsList = reviewsList;
+        this.userRoles = userRoles;
     }
 
     @Column(name = "username", nullable = false)
-    public String getUsername() {
-        return username;
-    }
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    @Column(name = "Email", nullable = false, unique = true)
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getEmail() {return email;}
+    public void setEmail(String email) {this.email = email;}
 
     @Column(name = "password", nullable = false)
     public String getPassword() {
@@ -52,28 +35,28 @@ public class User extends BaseEntity {
         this.password = password;
     }
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    public List<Reviews> getReviewsList() {
-        return reviewsList;
+    @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    public UserRoles getUserRoles() {
+        return userRoles;
     }
-    public void setReviewsList(List<Reviews> reviewsList) {
-        this.reviewsList = reviewsList;
-    }
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    public List<Ticket> getTicketsList() {
-        return ticketsList;
-    }
-    public void setTicketsList(List<Ticket> ticketsList) {
-        this.ticketsList = ticketsList;
+    public void setUserRoles(UserRoles userRoles) {
+        this.userRoles = userRoles;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "access_id")
-    public Access getAccess() {
-        return access;
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    public Client getClient() {
+        return client;
     }
-    public void setAccess(Access access) {
-        this.access = access;
+    public void setClient(Client client) {
+        this.client = client;
     }
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    public Actors getActors() {return actors;}
+    public void setActors(Actors actors) {this.actors = actors;}
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    public Directors getDirectors() {return directors;}
+    public void setDirectors(Directors directors) {this.directors = directors;}
 }

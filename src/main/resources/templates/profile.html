@@ -1,51 +1,62 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
+    <title>Client Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<header>
-    <div sec:authorize="hasRole('ADMIN')">
-        <p th:if="${baseViewModel.name != null}">
-            Welcome, administrator <span th:text="${baseViewModel.name}"></span>!
-        </p>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">FilmApp</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item" th:if="${model.base.username != null}">
+                    <a class="nav-link" href="/profile" th:text="${model.base.username}"></a>
+                </li>
+                <li class="nav-item" th:if="${model.base.username == null}">
+                    <a class="nav-link" href="/login">Login</a>
+                </li>
+            </ul>
+        </div>
     </div>
-    <div sec:authorize="hasRole('USER')">
-        <p th:if="${baseViewModel.name != null}">
-            Welcome, <span th:text="${baseViewModel.name}"></span>!
-        </p>
-    </div>
-</header>
+</nav>
 
-<section>
-    <h2>Your Reviews</h2>
-    <div th:if="${reviewedFilms.isEmpty()}">
-        <p>You haven't reviewed any films yet.</p>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h2 th:text="${model.name}"></h2>
+                </div>
+                <div class="card-body">
+                    <h4>Reviews</h4>
+                    <div class="list-group">
+                        <div class="list-group-item" th:each="review : ${model.review}">
+                            <h5 class="mb-1" th:text="${review.name}"></h5>
+                            <p class="mb-1">
+                                <strong>Comment: </strong>
+                                <span th:text="${review.coment}"></span>
+                            </p>
+                            <p class="mb-1">
+                                <strong>Rating: </strong>
+                                <span th:text="${review.reating}"></span>
+                            </p>
+                            <p class="mb-1">
+                                <strong>Date: </strong>
+                                <span th:text="${#temporals.format(review.data, 'dd MMM yyyy HH:mm')}"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <ul th:unless="${reviewedFilms.isEmpty()}">
-        <li th:each="film : ${reviewedFilms}">
-            <a th:href="@{'/film/details/' + ${film.id}}" th:text="${film.title}">Film Title</a>            <p><strong>Genres:</strong>
-                <span th:each="genre : ${film.genres}" th:text="${genre.genres}">Genre</span>
-            </p>
-            <p><strong>Rating:</strong> <span th:text="${film.rating}">5.0</span></p>
-        </li>
-    </ul>
-</section>
+</div>
 
-<footer>
-    <div>
-        <form th:if="${baseViewModel.name != null}" action="/logout" method="post">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <button type="submit">Log out</button>
-        </form>
-    </div>
-    <div>
-        <form th:if="${baseViewModel != null and baseViewModel.name != null}" action="/main" method="get">
-            <button type="submit">Go main</button>
-        </form>
-    </div>
-</footer>
 </body>
 </html>

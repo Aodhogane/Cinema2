@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity5">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<header>
+    <h1>Films</h1>
+    <p>Manage all films in the database.</p>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="/admin/user">Manage Users</a></li>
+        <li><a href="/admin/genre">Manage Genres</a></li>
+        <li><a href="/admin/film">Manage Films</a></li>
+        <li><a href="/admin/review">Manage Reviews</a></li>
+        <li><a href="/admin/actors">Manage Actors</a></li>
+        <li><a href="/admin/director">Manage Directors</a></li>
+    </ul>
+</nav>
+
+<main>
+    <table>
+        <caption>Films</caption>
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>Title</th>
+            <th>Exit Date</th>
+            <th>Duration (min)</th>
+            <th>Rating</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="film : ${model.list}">
+            <td th:text="${film.id}">id</td>
+            <td th:text="${film.title}">Title</td>
+            <td th:text="${film.exitDate}">Exit Date</td>
+            <td th:text="${film.duration}">Duration</td>
+            <td th:text="${film.rating}">Rating</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <nav th:if="${model.totalPages > 1}" aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:each="pageNumber : ${#numbers.sequence(1, model.totalPages)}" th:classappend="${pageNumber == filter.page} ? 'active'">
+                <a class="page-link" th:href="@{/admin/film(page=${pageNumber}, size=${filter.size})}" th:text="${pageNumber}">1</a>
+            </li>
+        </ul>
+    </nav>
+</main>
+
+</body>
+</html>

@@ -2,37 +2,32 @@ package com.example.OnlineSinema.domain;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Directors")
 public class Directors extends BaseEntity {
-
     private String name;
     private String surname;
     private String midlName;
-    private List<Film> filmsList;
+    private Set<Film> filmsList;
+    private User user;
 
-    public Directors(String name, List<Film> filmsList, String midlName, String surname) {
+    public Directors(String name, String surname, String midlName, Set<Film> filmsList) {
         this.name = name;
+        this.surname = surname;
+        this.midlName = midlName;
         this.filmsList = filmsList;
-        this.midlName = midlName;
-        this.surname = surname;
     }
 
-    public Directors() {}
-
-    public Directors(String name, String surname, String midlName) {
-        this.name = name;
-        this.surname = surname;
-        this.midlName = midlName;
-    }
+    protected Directors() {}
 
     @Column(name = "name")
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -41,7 +36,6 @@ public class Directors extends BaseEntity {
     public String getSurname() {
         return surname;
     }
-
     public void setSurname(String surname) {
         this.surname = surname;
     }
@@ -54,7 +48,20 @@ public class Directors extends BaseEntity {
         this.midlName = midlName;
     }
 
-    @ManyToMany(mappedBy = "directorsList", fetch = FetchType.EAGER)
-    public List<Film> getFilms() {return filmsList;}
-    public void setFilms(List<Film> films) {this.filmsList = films;}
+    @OneToMany(mappedBy = "directors", fetch = FetchType.LAZY)
+    public Set<Film> getFilmsList() {
+        return filmsList;
+    }
+    public void setFilmsList(Set<Film> filmsList) {
+        this.filmsList = filmsList;
+    }
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

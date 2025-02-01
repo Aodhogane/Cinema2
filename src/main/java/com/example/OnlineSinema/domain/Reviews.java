@@ -10,18 +10,16 @@ public class Reviews extends BaseEntity {
     private String comment;
     private int estimation;
     private LocalDateTime dateTime;
-    private User user;
+    private Client client;
     private Film film;
 
-    public Reviews(User user, Film film, String comment, int estimation, LocalDateTime dateTime) {
-        this.user = user;
-        this.film = film;
+    public Reviews(String comment, int estimation, LocalDateTime dateTime) {
         this.comment = comment;
         this.estimation = estimation;
         this.dateTime = dateTime;
     }
 
-    public Reviews() {}
+    protected Reviews() {}
 
     @Column(name = "comment")
     public String getComment() {
@@ -47,17 +45,21 @@ public class Reviews extends BaseEntity {
         this.dateTime = dateTime;
     }
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "usersId", referencedColumnName = "id")
-    public User getUser() {
-        return user;
+    @ManyToOne(optional = false,
+            fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id",
+            referencedColumnName = "id")
+    public Client getClient() {
+        return client;
     }
-    public void setUser(User user) {
-        this.user = user;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "filmId", referencedColumnName = "id")
+    @ManyToOne(optional = false,
+            fetch = FetchType.LAZY)
+    @JoinColumn(name = "film_id",
+            referencedColumnName = "id")
     public Film getFilm() {
         return film;
     }

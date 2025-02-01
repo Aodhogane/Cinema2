@@ -1,5 +1,6 @@
 package com.example.OnlineSinema.domain;
 
+import com.example.OnlineSinema.enums.Genres;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -11,32 +12,27 @@ import java.util.Set;
 @Entity
 @Table(name = "Films")
 public class Film extends BaseEntity {
-
     private String title;
     private LocalDateTime exitDate;
-    private Integer duration;
     private double rating;
-    private Set<Actors> actorsList;
-    private Set<Directors> directorsList;
-    private Set<Genres> genresList;
+    private Directors directors;
+    private Genres genres;
     private Set<Reviews> reviewsList;
-    private Set<Ticket> ticketsList;
+    private Set<FilmActor> filmActors;
 
-    public Film(String title, LocalDateTime exitDate, int duration,
-                Set<Genres> genres, Set<Directors> directorsList,
-                Set<Actors> actorsList, Set<Reviews> reviews,
-                double rating) {
+    public Film(String title, LocalDateTime exitDate, double rating,
+                Directors directors, Genres genres,
+                Set<Reviews> reviewsList, Set<FilmActor> filmActors) {
         this.title = title;
         this.exitDate = exitDate;
-        this.duration = duration;
-        this.genresList = genres;
-        this.directorsList = directorsList;
-        this.actorsList = actorsList;
-        this.reviewsList = reviews;
         this.rating = rating;
+        this.directors = directors;
+        this.genres = genres;
+        this.reviewsList = reviewsList;
+        this.filmActors = filmActors;
     }
 
-    public Film() {}
+    protected Film() {}
 
     @Column(name = "title")
     public String getTitle() {
@@ -54,14 +50,6 @@ public class Film extends BaseEntity {
         this.exitDate = exitDate;
     }
 
-    @Column(name = "duration")
-    public Integer getDuration() {
-        return duration;
-    }
-    public void setDuration(Integer duration) {
-        this.duration = duration;
-    }
-
     @Column(name = "rating")
     public double getRating() {
         return rating;
@@ -70,58 +58,29 @@ public class Film extends BaseEntity {
         this.rating = rating;
     }
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "FilmActors",
-            joinColumns = @JoinColumn(name = "filmId"),
-            inverseJoinColumns = @JoinColumn(name = "actorId")
-    )
-    public Set<Actors> getActorsList() {
-        return actorsList;
+    @Column(name = "genre")
+    @Enumerated(EnumType.STRING)
+    public Genres getGenres() {
+        return genres;
     }
-    public void setActorsList(Set<Actors> actors) {
-        this.actorsList = actors;
+    public void setGenres(Genres genres) {
+        this.genres = genres;
     }
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "FilmDirector",
-            joinColumns = @JoinColumn(name = "filmId"),
-            inverseJoinColumns = @JoinColumn(name = "directorId")
-    )
-    public Set<Directors> getDirectorsList() {
-        return directorsList;
+    @OneToMany(mappedBy = "film", fetch = FetchType.LAZY)
+    public Set<FilmActor> getFilmActors() {
+        return filmActors;
     }
-    public void setDirectorsList(Set<Directors> directorsList) {
-        this.directorsList = directorsList;
+    public void setFilmActors(Set<FilmActor> filmActors) {
+        this.filmActors = filmActors;
     }
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "FilmGenre",
-            joinColumns = @JoinColumn(name = "filmId"),
-            inverseJoinColumns = @JoinColumn(name = "genreId")
-    )
-    public Set<Genres> getGenresList() {
-        return genresList;
-    }
-    public void setGenresList(Set<Genres> genres) {
-        this.genresList = genres;
-    }
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "directors_id", referencedColumnName = "id")
+    public Directors getDirectors() {return directors;}
+    public void setDirectors(Directors directors) {this.directors = directors;}
 
-    @OneToMany(mappedBy = "film", cascade = CascadeType.ALL, orphanRemoval = true)
-    public Set<Reviews> getReviews() {
-        return reviewsList;
-    }
-    public void setReviews(Set<Reviews> reviews) {
-        this.reviewsList = reviews;
-    }
-
-    @OneToMany(mappedBy = "film", cascade = CascadeType.ALL, orphanRemoval = true)
-    public Set<Ticket> getTicketsList() {
-        return ticketsList;
-    }
-    public void setTicketsList(Set<Ticket> ticketsList) {
-        this.ticketsList = ticketsList;
-    }
+    @OneToMany(mappedBy = "film", fetch = FetchType.LAZY)
+    public Set<Reviews> getReviewsList() {return reviewsList;}
+    public void setReviewsList(Set<Reviews> reviewsList) {this.reviewsList = reviewsList;}
 }

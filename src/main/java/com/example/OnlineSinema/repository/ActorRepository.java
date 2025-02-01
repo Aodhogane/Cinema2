@@ -2,17 +2,18 @@ package com.example.OnlineSinema.repository;
 
 import com.example.OnlineSinema.domain.Actors;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface ActorRepository {
-    void save(Actors actor);
-    Actors findById(int id);
-    Actors findByName(String name, String surname, String middleName);
-    List<Actors> findAll();
-    List<Actors> findByFilmId(int id);
-    void deleteById(int id);
-    Page<Actors> findAll(Pageable pageable);
-    void update(Actors actor);
+    List<Actors> getAll(Class<Actors> entityClass);
+    Page<Actors> findAllPage(Class<Actors> entityClass, int page, int size);
+    Actors findById(Class<Actors> entityClass, int id);
+    void create(Actors entity);
+    void update(Actors entity);
+    void delete(Actors entity);
+
+    List<Actors> findActorsByFilmId(int filmId);
+
+    Actors findActorById(int actorId);
 }
