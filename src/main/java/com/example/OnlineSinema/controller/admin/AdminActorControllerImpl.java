@@ -53,8 +53,7 @@ public class AdminActorControllerImpl implements AdminActorController {
            UserDTO userDTO = userService.findById(actorDTO.getUserId());
 
            AdminActorViewModel adminActor = new AdminActorViewModel( actorDTO.getId(),
-                   actorDTO.getName(), actorDTO.getSurname(), actorDTO.getMidlName(), userDTO.getEmail(),
-                   userDTO.getUserRoles().getValue());
+                   actorDTO.getName(), actorDTO.getSurname(), actorDTO.getMidlName(), userDTO.getEmail());
 
            list.add(adminActor);
        }
