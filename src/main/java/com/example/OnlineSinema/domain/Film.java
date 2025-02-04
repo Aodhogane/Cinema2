@@ -2,11 +2,8 @@ package com.example.OnlineSinema.domain;
 
 import com.example.OnlineSinema.enums.Genres;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,16 +17,10 @@ public class Film extends BaseEntity {
     private Set<Reviews> reviewsList;
     private Set<FilmActor> filmActors;
 
-    public Film(String title, LocalDateTime exitDate, double rating,
-                Directors directors, Genres genres,
-                Set<Reviews> reviewsList, Set<FilmActor> filmActors) {
+    public Film(String title, LocalDateTime exitDate, double rating) {
         this.title = title;
         this.exitDate = exitDate;
         this.rating = rating;
-        this.directors = directors;
-        this.genres = genres;
-        this.reviewsList = reviewsList;
-        this.filmActors = filmActors;
     }
 
     protected Film() {}
@@ -42,7 +33,7 @@ public class Film extends BaseEntity {
         this.title = title;
     }
 
-    @Column(name = "exitDate")
+    @Column(name = "exit_date")
     public LocalDateTime getExitDate() {
         return exitDate;
     }
@@ -67,14 +58,6 @@ public class Film extends BaseEntity {
         this.genres = genres;
     }
 
-    @OneToMany(mappedBy = "film", fetch = FetchType.LAZY)
-    public Set<FilmActor> getFilmActors() {
-        return filmActors;
-    }
-    public void setFilmActors(Set<FilmActor> filmActors) {
-        this.filmActors = filmActors;
-    }
-
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "directors_id", referencedColumnName = "id")
     public Directors getDirectors() {return directors;}
@@ -83,4 +66,12 @@ public class Film extends BaseEntity {
     @OneToMany(mappedBy = "film", fetch = FetchType.LAZY)
     public Set<Reviews> getReviewsList() {return reviewsList;}
     public void setReviewsList(Set<Reviews> reviewsList) {this.reviewsList = reviewsList;}
+
+    @OneToMany(mappedBy = "film", fetch = FetchType.LAZY)
+    public Set<FilmActor> getFilmActors() {
+        return filmActors;
+    }
+    public void setFilmActors(Set<FilmActor> filmActors) {
+        this.filmActors = filmActors;
+    }
 }

@@ -1,28 +1,22 @@
-package com.example.OnlineSinema.DTO;
+package com.example.OnlineSinema.DTO.inputDTO;
 
-public class DirectorDTO {
-    private int id;
+public class DirectorInputDTO {
+
     private String name;
     private String surname;
     private String midlName;
-    private int userId;
-    private int filmId;
+    private String email;
+    private String password;
 
-    public DirectorDTO(String name, String surname, String midlName) {
+    public DirectorInputDTO(String name, String surname, String midlName, String email, String password) {
         this.name = name;
         this.surname = surname;
         this.midlName = midlName;
+        this.email = email;
+        this.password = password;
     }
 
-    public DirectorDTO(){}
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+    public DirectorInputDTO(){}
 
     public String getName() {
         return name;
@@ -48,19 +42,19 @@ public class DirectorDTO {
         this.midlName = midlName;
     }
 
-    public int getUserId() {
-        return userId;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public int getFilmId() {
-        return filmId;
+    public String getPassword() {
+        return password;
     }
 
-    public void setFilmId(int filmId) {
-        this.filmId = filmId;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

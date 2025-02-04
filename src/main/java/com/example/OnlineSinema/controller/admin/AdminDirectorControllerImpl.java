@@ -2,7 +2,7 @@ package com.example.OnlineSinema.controller.admin;
 
 import com.example.OnlineSinema.DTO.DirectorDTO;
 import com.example.OnlineSinema.DTO.UserDTO;
-import com.example.OnlineSinema.domain.User;
+import com.example.OnlineSinema.DTO.inputDTO.DirectorInputDTO;
 import com.example.OnlineSinema.service.DirectorService;
 import com.example.OnlineSinema.service.UserService;
 import com.example.SinemaContract.controllers.admin.AdminDirectorController;
@@ -10,13 +10,15 @@ import com.example.SinemaContract.viewModel.BaseViewModel;
 import com.example.SinemaContract.viewModel.admin.AdminDirectorViewModel;
 import com.example.SinemaContract.viewModel.admin.AdminViewModel;
 import com.example.SinemaContract.viewModel.form.PageForm;
+import com.example.SinemaContract.viewModel.form.admin.director.DirectorCreateForm;
+import com.example.SinemaContract.viewModel.form.admin.director.DirectorUpdateForm;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -67,6 +69,73 @@ public class AdminDirectorControllerImpl implements AdminDirectorController {
 
         return "admin/director/adminDirector";
 
+    }
+
+    @Override
+    @GetMapping("/create")
+    public String adminCreate(
+            Principal principal, Model model){
+
+        model.addAttribute("form", new DirectorCreateForm("", "", "", "", ""));
+
+        return "admin/director/adminDirectorCreate";
+    }
+
+    @Override
+    @PostMapping("/create")
+    public String adminCreate(@Valid @ModelAttribute("form") DirectorCreateForm form,
+                              BindingResult bindingResult, Principal principal, Model model){
+
+        if(bindingResult.hasErrors()){
+            model.addAttribute("form", form);
+            return "admin/director/adminDirectorCreate";
+        }
+
+        DirectorInputDTO directorInputDTO = new DirectorInputDTO(form.name(), form.surname(),
+                form.midlName(), form.email(), form.password());
+
+        directorService.create(directorInputDTO);
+
+        return "redirect:/admin/director";
+    }
+
+    @Override
+    @GetMapping("/update/{directorId}")
+    public String adminUpdate(@PathVariable int directorId,
+                              Principal principal,
+                              Model model){
+
+        DirectorDTO directorDTO = directorService.findById(directorId);
+
+        model.addAttribute("form", new DirectorUpdateForm(directorId,
+                directorDTO.getName(), directorDTO.getSurname(), directorDTO.getMidlName()));
+
+        return "admin/director/adminDirectorUpdate";
+    }
+
+    @Override
+    @PostMapping("/update/{directorId}")
+    public String adminUpdate(@PathVariable int directorId,
+                              @Valid @ModelAttribute("form") DirectorUpdateForm form,
+                              BindingResult bindingResult, Principal principal, Model model){
+        if (bindingResult.hasErrors()){
+            model.addAttribute("form", form);
+            return "admin/director/adminDirectorUpdate";
+        }
+
+        DirectorDTO directorDTO = new DirectorDTO(form.name(), form.surname(), form.midlName());
+        directorService.update(directorDTO, directorId);
+
+        return "redirect:/admin/director";
+    }
+
+    @Override
+    @GetMapping("/delete/{directorId}")
+    public String adminDelete(@PathVariable int directorId,
+                              Principal principal, Model model){
+        directorService.delete(directorId);
+
+        return "redirect:/admin/director";
     }
 
 

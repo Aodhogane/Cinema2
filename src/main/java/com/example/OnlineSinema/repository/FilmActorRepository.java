@@ -1,5 +1,6 @@
 package com.example.OnlineSinema.repository;
 
+import com.example.OnlineSinema.domain.Actors;
 import com.example.OnlineSinema.domain.FilmActor;
 import org.springframework.data.domain.Page;
 

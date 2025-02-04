@@ -14,7 +14,6 @@ import com.example.SinemaContract.viewModel.BaseViewModel;
 import com.example.SinemaContract.viewModel.admin.AdminReviewViewModel;
 import com.example.SinemaContract.viewModel.admin.AdminViewModel;
 import com.example.SinemaContract.viewModel.form.PageForm;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -31,9 +30,9 @@ import java.util.List;
 @RequestMapping("admin/review")
 public class AdminReviewControllerImpl implements AdminReviewController {
 
-    private ReviewService reviewService;
-    private FilmService filmService;
-    private ClientService clientService;
+    private final ReviewService reviewService;
+    private final FilmService filmService;
+    private final ClientService clientService;
 
 
     @Autowired

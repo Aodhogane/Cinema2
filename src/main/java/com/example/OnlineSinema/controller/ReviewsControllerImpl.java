@@ -4,6 +4,7 @@ import com.example.OnlineSinema.DTO.ActorDTO;
 import com.example.OnlineSinema.DTO.DirectorDTO;
 import com.example.OnlineSinema.DTO.FilmDTO;
 import com.example.OnlineSinema.DTO.ReviewDTO;
+import com.example.OnlineSinema.DTO.inputDTO.ReviewInputDTO;
 import com.example.OnlineSinema.service.*;
 import com.example.SinemaContract.viewModel.BaseViewModel;
 import com.example.SinemaContract.viewModel.ReviewViewModel;
@@ -99,13 +100,13 @@ public class ReviewsControllerImpl implements ReviewController {
             return "addReview";
         }
 
-        ReviewDTO reviewDTO = new ReviewDTO();
-        reviewDTO.setComment(form.comment());
-        reviewDTO.setEstimation(form.estimation());
-        reviewDTO.setFilmId(filmId);
-        reviewDTO.setClientId(clientId);
+        ReviewInputDTO reviewInputDTO = new ReviewInputDTO();
+        reviewInputDTO.setComment(form.comment());
+        reviewInputDTO.setEstimation(form.estimation());
+        reviewInputDTO.setFilmId(filmId);
+        reviewInputDTO.setClientId(clientId);
 
-        reviewService.addReview(reviewDTO);
+        reviewService.create(reviewInputDTO);
 
         return "redirect:/film/" + filmId;
     }

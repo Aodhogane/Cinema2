@@ -44,7 +44,7 @@ public class MainPageControllerImpl implements MainController {
 
         List<FilmCardViewModel> filmCard = new ArrayList<>();
         for (FilmDTO filmDTO : filmDTOPage){
-            FilmCardViewModel filmCardWork = new FilmCardViewModel(filmDTO.getTitle(), filmDTO.getExitDate(), filmDTO.getGenres().toString());
+            FilmCardViewModel filmCardWork = new FilmCardViewModel(filmDTO.getTitle(), filmDTO.getExitDate(), filmDTO.getGenres());
             filmCard.add(filmCardWork);
         }
 

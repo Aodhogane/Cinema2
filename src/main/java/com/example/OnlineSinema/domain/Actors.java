@@ -1,9 +1,7 @@
 package com.example.OnlineSinema.domain;
 
-import com.example.OnlineSinema.enums.UserRoles;
 import jakarta.persistence.*;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -50,7 +48,7 @@ public class Actors extends BaseEntity {
         this.midlName = midlName;
     }
 
-    @OneToMany(mappedBy = "actors", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "actors", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     public Set<FilmActor> getFilmActors() {return filmActors;}
     public void setFilmActors(Set<FilmActor> filmActors) {this.filmActors = filmActors;}
 

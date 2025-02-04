@@ -1,9 +1,8 @@
 package com.example.OnlineSinema.service.Impl;
 
 import com.example.OnlineSinema.DTO.ReviewDTO;
-import com.example.OnlineSinema.domain.Client;
-import com.example.OnlineSinema.domain.Film;
-import com.example.OnlineSinema.domain.Reviews;
+import com.example.OnlineSinema.DTO.inputDTO.ReviewInputDTO;
+import com.example.OnlineSinema.domain.*;
 import com.example.OnlineSinema.repository.ClientRepository;
 import com.example.OnlineSinema.repository.FilmRepository;
 import com.example.OnlineSinema.repository.ReviewRepository;
@@ -73,19 +72,6 @@ public class ReviewServiceImpl implements ReviewService {
         return modelMapper.map(reviews, ReviewDTO.class);
     }
 
-    @Override
-    @Transactional
-    public void addReview(ReviewDTO reviewDTO){
-        // TODO: тут надо как-то проверить на валидность reviewDTO
-        Reviews review = modelMapper.map(reviewDTO, Reviews.class);
-        Film film = filmRepository.findById(Film.class, reviewDTO.getFilmId());
-        Client client = clientRepository.findById(Client.class, reviewDTO.getClientId());
-        review.setFilm(film);
-        review.setClient(client);
-        review.setDateTime(LocalDateTime.now());
-        filmService.updateRating(reviewDTO.getFilmId());
-        reviewRepository.create(review);
-    }
 
     @Override
     public Page<ReviewDTO> findAllPage(int page, int size){
@@ -98,5 +84,38 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         return new PageImpl<>(reviewDTOS, PageRequest.of(page - 1, size), reviews.getTotalElements());
+    }
+
+    @Override
+    public void update(ReviewDTO reviewDTO, int reviewId){
+
+        Reviews reviewOld = reviewRepository.findById(Reviews.class, reviewId);
+        Reviews reviews = modelMapper.map(reviewDTO, Reviews.class);
+
+        reviews.setClient(reviewOld.getClient());
+        reviews.setFilm(reviewOld.getFilm());
+
+        reviews.setId(reviewId);
+        reviewRepository.update(reviews);
+    }
+
+    @Override
+    @Transactional
+    public void create(ReviewInputDTO reviewInputDTO) {
+        // TODO: тут надо как-то проверить на валидность reviewDTO
+        Reviews review = modelMapper.map(reviewInputDTO, Reviews.class);
+        Film film = filmRepository.findById(Film.class, reviewInputDTO.getFilmId());
+        Client client = clientRepository.findById(Client.class, reviewInputDTO.getClientId());
+        review.setFilm(film);
+        review.setClient(client);
+        review.setDateTime(LocalDateTime.now());
+        filmService.updateRating(reviewInputDTO.getFilmId());
+        reviewRepository.create(review);
+    }
+
+    @Override
+    public void delete(int reviewId){
+        Reviews reviews = reviewRepository.findById(Reviews.class, reviewId);
+        reviewRepository.delete(reviews);
     }
 }

@@ -3,20 +3,14 @@ package com.example.OnlineSinema.domain;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "filmActor")
-public class FilmActor extends BaseEntity{
-
+@Table(name = "FilmActor")
+public class FilmActor extends BaseEntity {
     private Film film;
     private Actors actors;
 
-    public FilmActor(Film film, Actors actors) {
-        this.film = film;
-        this.actors = actors;
-    }
-
     protected FilmActor(){}
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "film_id", referencedColumnName = "id")
     public Film getFilm() {
         return film;

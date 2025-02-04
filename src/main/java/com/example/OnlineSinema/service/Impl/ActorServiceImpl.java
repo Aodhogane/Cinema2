@@ -1,14 +1,16 @@
 package com.example.OnlineSinema.service.Impl;
 
 import com.example.OnlineSinema.DTO.ActorDTO;
+import com.example.OnlineSinema.DTO.inputDTO.ActorInputDTO;
 import com.example.OnlineSinema.domain.Actors;
-import com.example.OnlineSinema.domain.Film;
-import com.example.OnlineSinema.domain.FilmActor;
+import com.example.OnlineSinema.domain.User;
+import com.example.OnlineSinema.enums.UserRoles;
 import com.example.OnlineSinema.exceptions.ActorsNotFound;
 import com.example.OnlineSinema.exceptions.FilmNotFounf;
 import com.example.OnlineSinema.repository.ActorRepository;
 import com.example.OnlineSinema.repository.FilmActorRepository;
 import com.example.OnlineSinema.repository.FilmRepository;
+import com.example.OnlineSinema.repository.UserRepository;
 import com.example.OnlineSinema.service.ActorService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,21 +30,26 @@ public class ActorServiceImpl implements ActorService {
     private final ModelMapper modelMapper;
     private final FilmActorRepository filmActorRepository;
     private final FilmRepository filmRepository;
+    private final UserRepository userRepository;
+    private final FilmActorRepository actorFilmRepository;
 
     @Autowired
     public ActorServiceImpl(ActorRepository actorRepository, ModelMapper modelMapper,
-                            FilmActorRepository filmActorRepository, FilmRepository filmRepository) {
+                            FilmActorRepository filmActorRepository,
+                            FilmRepository filmRepository, UserRepository userRepository, FilmActorRepository actorFilmRepository) {
         this.actorRepository = actorRepository;
         this.modelMapper = modelMapper;
         this.filmActorRepository = filmActorRepository;
         this.filmRepository = filmRepository;
+        this.userRepository = userRepository;
+        this.actorFilmRepository = actorFilmRepository;
     }
 
     @Override
     public List<ActorDTO> findActorsByFilmId(int filmId){
         List<Actors> actors = actorRepository.findActorsByFilmId(filmId);
 
-        if (actors == null){
+        if (actors.isEmpty()) {
             throw new ActorsNotFound();
         }
 
@@ -84,20 +91,20 @@ public class ActorServiceImpl implements ActorService {
         Actors actors = modelMapper.map(actorDTO, Actors.class);
 
         actors.setFilmActors(actorsOld.getFilmActors());
+        actors.setUser(actorsOld.getUser());
         actors.setId(actorId);
         actorRepository.update(actors);
     }
 
     @Override
     @Transactional
-    public void create(ActorDTO actorDTO){
-        Actors actors = modelMapper.map(actorDTO, Actors.class);
-        Film film = filmRepository.findById(Film.class, actorDTO.getFilmId());
+    public void create(ActorInputDTO actorInputDTO){
+        User user = new User(actorInputDTO.getEmail(), actorInputDTO.getPassword(), UserRoles.ACTOR);
+        Actors actors = modelMapper.map(actorInputDTO, Actors.class);
 
+        userRepository.create(user);
+        actors.setUser(user);
         actorRepository.create(actors);
-
-        FilmActor filmActor = new FilmActor(film, actors);
-        filmActorRepository.create(filmActor);
     }
 
     @Override

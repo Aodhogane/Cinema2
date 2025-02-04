@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Actor</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Update Actor</h1>
+    <form th:action="@{/admin/actor/update/{actorId}(actorId=${form.id})}" th:object="${form}" method="post">
+        <div class="form-group">
+            <label for="id">ID</label>
+            <input type="text" class="form-control" id="id" th:field="*{id}" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Enter name">
+            <small class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</small>
+        </div>
+
+        <div class="form-group">
+            <label for="surname">Surname</label>
+            <input type="text" class="form-control" id="surname" th:field="*{surname}" placeholder="Enter surname">
+            <small class="text-danger" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">Surname error</small>
+        </div>
+
+        <div class="form-group">
+            <label for="midlName">Middle Name</label>
+            <input type="text" class="form-control" id="midlName" th:field="*{midlName}" placeholder="Enter middle name">
+            <small class="text-danger" th:if="${#fields.hasErrors('midlName')}" th:errors="*{midlName}">Middle name error</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a type="submit" content="btn btn-primary"
+           th:href="@{/admin/actor/delete/{actorId}(actorId=${form.id})}">Delete</a>
+    </form>
+</div>
+</body>
+</html>

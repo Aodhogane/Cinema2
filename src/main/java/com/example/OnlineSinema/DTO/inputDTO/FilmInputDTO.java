@@ -1,36 +1,26 @@
-package com.example.OnlineSinema.DTO;
+package com.example.OnlineSinema.DTO.inputDTO;
 
-import com.example.OnlineSinema.domain.Directors;
 import com.example.OnlineSinema.enums.Genres;
 
 import java.time.LocalDateTime;
 
-public class FilmDTO {
-    private int id;
+public class FilmInputDTO {
+
     private String title;
     private LocalDateTime exitDate;
     private double rating;
     private String genres;
-    private int directorsId;
-    private int actorId;
+    private int directorId;
 
-    public FilmDTO(String title, LocalDateTime exitDate, double rating, String genres, int directorsId) {
+    public FilmInputDTO(String title, LocalDateTime exitDate, double rating, String genres, int directorId) {
         this.title = title;
         this.exitDate = exitDate;
         this.rating = rating;
         this.genres = genres;
-        this.directorsId = directorsId;
+        this.directorId = directorId;
     }
 
-    public FilmDTO() {}
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+    private FilmInputDTO(){}
 
     public String getTitle() {
         return title;
@@ -56,6 +46,7 @@ public class FilmDTO {
         this.rating = rating;
     }
 
+
     public String getGenres() {
         return genres;
     }
@@ -64,19 +55,11 @@ public class FilmDTO {
         this.genres = genres;
     }
 
-    public int getDirectorsId() {
-        return directorsId;
+    public int getDirectorId() {
+        return directorId;
     }
 
-    public void setDirectorsId(int directorsId) {
-        this.directorsId = directorsId;
-    }
-
-    public int getActorId() {
-        return actorId;
-    }
-
-    public void setActorId(int actorId) {
-        this.actorId = actorId;
+    public void setDirectorId(int directorId) {
+        this.directorId = directorId;
     }
 }

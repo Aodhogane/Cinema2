@@ -45,10 +45,8 @@ public class Reviews extends BaseEntity {
         this.dateTime = dateTime;
     }
 
-    @ManyToOne(optional = false,
-            fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id",
-            referencedColumnName = "id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id", referencedColumnName = "id")
     public Client getClient() {
         return client;
     }
@@ -56,10 +54,8 @@ public class Reviews extends BaseEntity {
         this.client = client;
     }
 
-    @ManyToOne(optional = false,
-            fetch = FetchType.LAZY)
-    @JoinColumn(name = "film_id",
-            referencedColumnName = "id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "film_id", referencedColumnName = "id")
     public Film getFilm() {
         return film;
     }

@@ -1,11 +1,14 @@
 package com.example.OnlineSinema.service.Impl;
 
 import com.example.OnlineSinema.DTO.FilmDTO;
-import com.example.OnlineSinema.domain.Film;
-import com.example.OnlineSinema.domain.Reviews;
+import com.example.OnlineSinema.DTO.inputDTO.FilmInputDTO;
+import com.example.OnlineSinema.domain.*;
+import com.example.OnlineSinema.enums.Genres;
 import com.example.OnlineSinema.exceptions.FilmNotFounf;
+import com.example.OnlineSinema.repository.DirectorsRepository;
 import com.example.OnlineSinema.repository.FilmRepository;
 import com.example.OnlineSinema.repository.ReviewRepository;
+import com.example.OnlineSinema.repository.UserRepository;
 import com.example.OnlineSinema.service.FilmService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +26,18 @@ public class FilmServiceImpl implements FilmService {
 
     private final FilmRepository filmRepository;
     private final ReviewRepository reviewRepository;
+    private final DirectorsRepository directorsRepository;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public FilmServiceImpl(FilmRepository filmRepository, ReviewRepository reviewRepository, ModelMapper modelMapper) {
+    public FilmServiceImpl(FilmRepository filmRepository, ReviewRepository reviewRepository,
+                           DirectorsRepository directorsRepository, ModelMapper modelMapper) {
         this.filmRepository = filmRepository;
         this.reviewRepository = reviewRepository;
+        this.directorsRepository = directorsRepository;
         this.modelMapper = modelMapper;
     }
+
 
     @Override
     public Page<FilmDTO> findAllPage(int page, int size){
@@ -111,15 +119,6 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public void update(FilmDTO filmDTO, int filmId){
-        Film film = modelMapper.map(filmDTO, Film.class);
-        Film filmOld = filmRepository.findById(Film.class, filmId);
-        film.setDirectors(filmOld.getDirectors());
-        film.setId(filmId);
-        filmRepository.update(film);
-    }
-
-    @Override
     public List<FilmDTO> findFilmsByActorsId(int actorsId){
         List<Film> films = filmRepository.findFilmByActorsId(actorsId);
 
@@ -151,5 +150,37 @@ public class FilmServiceImpl implements FilmService {
         }
 
         return filmDTOS;
+    }
+
+    @Override
+    public void update(FilmDTO filmDTO, int filmId){
+        Film film = modelMapper.map(filmDTO, Film.class);
+        Film filmOld = filmRepository.findById(Film.class, filmId);
+
+        Genres genres = Genres.of(filmDTO.getGenres());
+        film.setGenres(genres);
+        film.setDirectors(filmOld.getDirectors());
+        film.setId(filmId);
+        filmRepository.update(film);
+    }
+
+    @Override
+    public void create(FilmInputDTO filmInputDTO){
+//        Film film = modelMapper.map(filmInputDTO, Film.class);
+        Film film = new Film(filmInputDTO.getTitle(), filmInputDTO.getExitDate(), filmInputDTO.getRating());
+        Directors directors = directorsRepository.findById(Directors.class, filmInputDTO.getDirectorId());
+
+        Genres genres = Genres.of(filmInputDTO.getGenres());
+        film.setGenres(genres);
+
+        film.setDirectors(directors);
+
+        filmRepository.create(film);
+    }
+
+    @Override
+    public void delete(int filmId) {
+        Film film = filmRepository.findById(Film.class, filmId);
+        filmRepository.delete(film);
     }
 }

@@ -16,6 +16,5 @@ public interface FilmRepository {
     Page<Film> findFilmByTitle(String title, int page, int size);
     Page<Film> findFilmByGenres(String genre, int page, int size);
     List<Film> findFilmByActorsId(int actorsId);
-
     List<Film> findFilmsByDirectorsId(int directorsId);
 }
