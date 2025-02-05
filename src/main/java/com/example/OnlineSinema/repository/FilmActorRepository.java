@@ -13,4 +13,6 @@ public interface FilmActorRepository {
     void create(FilmActor entity);
     void update(FilmActor entity);
     void delete(FilmActor entity);
+
+    FilmActor findFilmActorByFilmIdAndActorId(int filmId, int actorId);
 }

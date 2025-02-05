@@ -12,7 +12,6 @@ public class FilmDTO {
     private double rating;
     private String genres;
     private int directorsId;
-    private int actorId;
 
     public FilmDTO(String title, LocalDateTime exitDate, double rating, String genres, int directorsId) {
         this.title = title;
@@ -70,13 +69,5 @@ public class FilmDTO {
 
     public void setDirectorsId(int directorsId) {
         this.directorsId = directorsId;
-    }
-
-    public int getActorId() {
-        return actorId;
-    }
-
-    public void setActorId(int actorId) {
-        this.actorId = actorId;
     }
 }

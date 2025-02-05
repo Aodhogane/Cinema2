@@ -44,14 +44,14 @@ public class FilmRepositoryImpl extends BaseRepository<Film> implements FilmRepo
 
     @Override
     public List<Film> findFilmByActorsId(int actorsId){
-        return entityManager.createQuery("select f from FilmActorRepository fa join fa.film f where fa.actors.id =: actorsId", Film.class)
+        return entityManager.createQuery("select f from FilmActorRepository fa join fa.film f where fa.actors.id = :actorsId", Film.class)
                 .setParameter("actorsId", actorsId)
                 .getResultList();
     }
 
     @Override
     public List<Film> findFilmsByDirectorsId(int directorsId){
-        return entityManager.createQuery("select f from Film f where f.directors.id =: directorsId", Film.class)
+        return entityManager.createQuery("select f from Film f where f.directors.id = :directorsId", Film.class)
                 .setParameter("directorsId", directorsId)
                 .getResultList();
     }

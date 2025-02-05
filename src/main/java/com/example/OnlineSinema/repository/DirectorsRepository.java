@@ -15,4 +15,6 @@ public interface DirectorsRepository {
 
 
     Directors findDirectorById(int directorId);
+
+    Directors findDirectorsByUserId(int userId);
 }

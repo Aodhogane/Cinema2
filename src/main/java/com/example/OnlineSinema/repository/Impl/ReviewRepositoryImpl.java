@@ -16,14 +16,14 @@ public class ReviewRepositoryImpl extends BaseRepository<Reviews> implements Rev
 
     @Override
     public List<Reviews> findReviewByFilmId(int filmId){
-        return entityManager.createQuery("select r from Reviews r where r.film.id =: filmId", Reviews.class)
+        return entityManager.createQuery("select r from Reviews r where r.film.id = :filmId", Reviews.class)
                 .setParameter("filmId", filmId)
                 .getResultList();
     }
 
     @Override
     public List<Reviews> findReviewByClientId(int clientId){
-        return entityManager.createQuery("select r from Reviews r where r.client.id =: clientId", Reviews.class)
+        return entityManager.createQuery("select r from Reviews r where r.client.id = :clientId", Reviews.class)
                 .setParameter("clientId", clientId)
                 .getResultList();
     }

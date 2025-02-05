@@ -15,5 +15,5 @@ public interface ActorRepository {
 
     List<Actors> findActorsByFilmId(int filmId);
 
-    Actors findActorById(int actorId);
+    Actors findActorsByUserId(int userId);
 }

@@ -12,4 +12,6 @@ public interface ClientRepository {
     void create(Client entity);
     void update(Client entity);
     void delete(Client entity);
+
+    Client findClientByUserId(int userId);
 }

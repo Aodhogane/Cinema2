@@ -12,4 +12,13 @@ public enum UserRoles {
     public String getValue() {
         return value;
     }
+
+    public static UserRoles of(String value) {
+        for (UserRoles userRoles : UserRoles.values()) {
+            if (userRoles.getValue().equals(value.toUpperCase())) {
+                return userRoles;
+            }
+        }
+        throw new IllegalArgumentException("Unknown user roles: " + value);
+    }
 }

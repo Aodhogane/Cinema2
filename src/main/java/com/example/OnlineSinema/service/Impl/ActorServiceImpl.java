@@ -49,10 +49,6 @@ public class ActorServiceImpl implements ActorService {
     public List<ActorDTO> findActorsByFilmId(int filmId){
         List<Actors> actors = actorRepository.findActorsByFilmId(filmId);
 
-        if (actors.isEmpty()) {
-            throw new ActorsNotFound();
-        }
-
         List<ActorDTO> actorDTOS = new ArrayList<>();
         for(Actors actors1 : actors){
             ActorDTO var = modelMapper.map(actors1, ActorDTO.class);

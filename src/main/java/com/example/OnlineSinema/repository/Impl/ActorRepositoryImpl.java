@@ -16,15 +16,15 @@ public class ActorRepositoryImpl extends BaseRepository<Actors> implements Actor
 
     @Override
     public List<Actors> findActorsByFilmId(int filmId){
-        return entityManager.createQuery("SELECT fa.actors FROM FilmActor fa WHERE fa.film.id =: filmId", Actors.class)
+        return entityManager.createQuery("SELECT fa.actors FROM FilmActor fa WHERE fa.film.id = :filmId", Actors.class)
                 .setParameter("filmId", filmId)
                 .getResultList();
     }
 
     @Override
-    public Actors findActorById(int actorId){
-        return entityManager.createQuery("select a from Actors a where a.id =: actorId", Actors.class)
-                .setParameter("actorId", actorId)
+    public Actors findActorsByUserId(int userId) {
+        return entityManager.createQuery("select a from Actors a where a.user.id = :userId", Actors.class)
+                .setParameter("userId", userId)
                 .getSingleResult();
     }
 }

@@ -1,6 +1,7 @@
 package com.example.OnlineSinema.controller;
 
 import com.example.OnlineSinema.DTO.FilmDTO;
+import com.example.OnlineSinema.service.AuthService;
 import com.example.OnlineSinema.service.FilmService;
 import com.example.SinemaContract.viewModel.BaseViewModel;
 import com.example.SinemaContract.viewModel.MainViewModel;
@@ -25,10 +26,12 @@ import java.util.List;
 public class MainPageControllerImpl implements MainController {
 
     private final FilmService filmService;
+    private final AuthService authService;
 
     @Autowired
-    public MainPageControllerImpl(FilmService filmService) {
+    public MainPageControllerImpl(FilmService filmService, AuthService authService) {
         this.filmService = filmService;
+        this.authService = authService;
     }
 
     @Override
@@ -58,7 +61,7 @@ public class MainPageControllerImpl implements MainController {
     @Override
     public BaseViewModel createBaseVieModel(Principal principal) {
         if (principal != null){
-            return new BaseViewModel(principal.getName());
+            return new BaseViewModel(authService.getUser(principal.getName()).getName());
         }
         return new BaseViewModel(null);
     }

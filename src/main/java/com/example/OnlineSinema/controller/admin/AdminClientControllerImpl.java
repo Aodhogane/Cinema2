@@ -76,7 +76,6 @@ public class AdminClientControllerImpl implements AdminClientController {
             Principal principal, Model model){
 
         model.addAttribute("form", new ClientCreateForm("", "", ""));
-
         return "admin/client/adminClientCreate";
     }
 
@@ -84,16 +83,13 @@ public class AdminClientControllerImpl implements AdminClientController {
     @PostMapping("/create")
     public String adminCreate(@Valid @ModelAttribute("form") ClientCreateForm form,
                               BindingResult bindingResult, Principal principal, Model model){
-
         if(bindingResult.hasErrors()){
             model.addAttribute("form", form);
             return "admin/client/adminClientCreate";
         }
 
         ClientInputDTO clientInputDTO = new ClientInputDTO(form.name(), form.email(), form.password());
-
         clientService.create(clientInputDTO);
-
         return "redirect:/admin/client";
     }
 
@@ -117,16 +113,13 @@ public class AdminClientControllerImpl implements AdminClientController {
     public String adminUpdate(@PathVariable int clientId,
                               @Valid @ModelAttribute("form") ClientUpdateForm form,
                               BindingResult bindingResult, Principal principal, Model model){
-
         if (bindingResult.hasErrors()){
             model.addAttribute("form", form);
             return "admin/client/adminClientUpdate";
         }
 
         ClientDTO clientDTO = new ClientDTO(form.name());
-
         clientService.update(clientDTO, clientId);
-
         return "redirect:/admin/client";
     }
 
@@ -134,9 +127,7 @@ public class AdminClientControllerImpl implements AdminClientController {
     @GetMapping("/delete/{clientId}")
     public String adminDelete(@PathVariable int clientId,
                               Principal principal, Model model){
-
         clientService.delete(clientId);
-
         return "redirect:/admin/client";
     }
 

@@ -12,4 +12,6 @@ public interface UserRepository {
     void create(User entity);
     void update(User entity);
     void delete(User entity);
+
+    User findUserByEmail(String emailUser);
 }

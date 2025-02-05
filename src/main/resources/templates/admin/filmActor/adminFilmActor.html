@@ -1,4 +1,4 @@
-``<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity5">
 <head>
     <meta charset="UTF-8">
@@ -39,8 +39,8 @@
             <td th:text="${filmActor.title}"></td>
             <td>
                 <ul>
-                    <li th:each="actor : ${filmActor.actor}">
-                        <span th:text="${actor.name} + ' ' + ${actor.surname} + ' ' + ${actor.midlName}"></span>
+                    <li th:each="actor : ${filmActor.actors}">
+                        <span th:text="${actor.actorId()} + ' ' + ${actor.name} + ' ' + ${actor.surname} + ' ' + ${actor.midlName}"></span>
                     </li>
                 </ul>
             </td>
@@ -48,17 +48,27 @@
         </tbody>
     </table>
 
-<!--    <nav th:if="${model.totalPage > 1}" aria-label="Page navigation">-->
-<!--        <ul class="pagination justify-content-center">-->
-<!--            <li class="page-item"-->
-<!--                th:each="pageNumber : ${#numbers.sequence(1, model.totalPage)}"-->
-<!--                th:classappend="${pageNumber == form.page} ? 'active'">-->
-<!--                <a class="page-link"-->
-<!--                   th:href="@{/admin/filmActor(page=${pageNumber}, size=${form.size})}"-->
-<!--                   th:text="${pageNumber}">1</a>-->
-<!--            </li>-->
-<!--        </ul>-->
-<!--    </nav>-->
+    <a class="btn btn-primary me-2" th:href="@{/admin/filmActor/create}">Создать</a>
+
+    <div class="d-flex align-items-center mt-2">
+        <form th:action="@{/admin/filmActor/delete}" method="get" class="d-flex align-items-center">
+            <button type="submit" class="btn btn-danger me-2">Удалить</button>
+            <input type="number" class="form-control form-control-sm me-2" name="filmId" placeholder="Film ID" required style="width: 100px;">
+            <input type="number" class="form-control form-control-sm" name="actorId" placeholder="Actor ID" required style="width: 100px;">
+        </form>
+    </div>
+
+    <nav th:if="${model.totalPage > 1}" aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item"
+                th:each="pageNumber : ${#numbers.sequence(1, model.totalPage)}"
+                th:classappend="${pageNumber == form.page} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/admin/filmActor(page=${pageNumber}, size=${form.size})}"
+                   th:text="${pageNumber}">1</a>
+            </li>
+        </ul>
+    </nav>
 </main>
 </body>
-</html>``
+</html>

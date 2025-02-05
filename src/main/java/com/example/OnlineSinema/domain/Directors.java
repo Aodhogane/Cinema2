@@ -9,6 +9,7 @@ import java.util.Set;
 @Entity
 @Table(name = "Directors")
 public class Directors extends BaseEntity {
+
     private String name;
     private String surname;
     private String midlName;
