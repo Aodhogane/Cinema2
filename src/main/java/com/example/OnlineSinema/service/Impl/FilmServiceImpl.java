@@ -12,6 +12,9 @@ import com.example.OnlineSinema.repository.UserRepository;
 import com.example.OnlineSinema.service.FilmService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@EnableCaching
 public class FilmServiceImpl implements FilmService {
 
     private final FilmRepository filmRepository;
@@ -78,6 +82,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    @Cacheable("main")
     public Page<FilmDTO> chuzSort(String title, String genre, int page, int size){
         Page<FilmDTO> filmPage;
 
@@ -102,6 +107,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "main", allEntries = true)
     public void updateRating(int filmId){
         List<Reviews> review = reviewRepository.findReviewByFilmId(filmId);
 
@@ -153,6 +159,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "main", allEntries = true)
     public void update(FilmDTO filmDTO, int filmId){
         Film film = modelMapper.map(filmDTO, Film.class);
         Film filmOld = filmRepository.findById(Film.class, filmId);
@@ -165,8 +172,8 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "main", allEntries = true)
     public void create(FilmInputDTO filmInputDTO){
-//        Film film = modelMapper.map(filmInputDTO, Film.class);
         Film film = new Film(filmInputDTO.getTitle(), filmInputDTO.getExitDate(), filmInputDTO.getRating());
         Directors directors = directorsRepository.findById(Directors.class, filmInputDTO.getDirectorId());
 
@@ -179,6 +186,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "main", allEntries = true)
     public void delete(int filmId) {
         Film film = filmRepository.findById(Film.class, filmId);
         filmRepository.delete(film);

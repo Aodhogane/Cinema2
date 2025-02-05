@@ -3,9 +3,10 @@ package com.example.OnlineSinema.DTO;
 import com.example.OnlineSinema.domain.Directors;
 import com.example.OnlineSinema.enums.Genres;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class FilmDTO {
+public class FilmDTO implements Serializable {
     private int id;
     private String title;
     private LocalDateTime exitDate;
