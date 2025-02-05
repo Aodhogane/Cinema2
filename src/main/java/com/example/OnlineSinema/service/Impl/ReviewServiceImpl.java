@@ -102,15 +102,13 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public void create(ReviewInputDTO reviewInputDTO) {
-        // TODO: тут надо как-то проверить на валидность reviewDTO
-        Reviews review = modelMapper.map(reviewInputDTO, Reviews.class);
+        Reviews review = new Reviews(reviewInputDTO.getComment(), reviewInputDTO.getEstimation(), LocalDateTime.now());
         Film film = filmRepository.findById(Film.class, reviewInputDTO.getFilmId());
         Client client = clientRepository.findById(Client.class, reviewInputDTO.getClientId());
         review.setFilm(film);
         review.setClient(client);
-        review.setDateTime(LocalDateTime.now());
-        filmService.updateRating(reviewInputDTO.getFilmId());
         reviewRepository.create(review);
+        filmService.updateRating(reviewInputDTO.getFilmId());
     }
 
     @Override

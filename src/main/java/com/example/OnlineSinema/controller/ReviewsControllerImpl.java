@@ -1,9 +1,6 @@
 package com.example.OnlineSinema.controller;
 
-import com.example.OnlineSinema.DTO.ActorDTO;
-import com.example.OnlineSinema.DTO.DirectorDTO;
-import com.example.OnlineSinema.DTO.FilmDTO;
-import com.example.OnlineSinema.DTO.ReviewDTO;
+import com.example.OnlineSinema.DTO.*;
 import com.example.OnlineSinema.DTO.inputDTO.ReviewInputDTO;
 import com.example.OnlineSinema.service.*;
 import com.example.SinemaContract.viewModel.BaseViewModel;
@@ -30,17 +27,17 @@ public class ReviewsControllerImpl implements ReviewController {
     private final FilmService filmService;
     private final DirectorService directorService;
     private final ActorService actorService;
-    private final ClientService clientService;
+    private final AuthService authService;
 
     @Autowired
     public ReviewsControllerImpl(ReviewService reviewService, FilmService filmService,
                              DirectorService directorService, ActorService actorService,
-                             ClientService clientService) {
+                                 AuthService authService) {
         this.reviewService = reviewService;
         this.filmService = filmService;
         this.directorService = directorService;
         this.actorService = actorService;
-        this.clientService = clientService;
+        this.authService = authService;
     }
 
 
@@ -71,9 +68,8 @@ public class ReviewsControllerImpl implements ReviewController {
     }
 
     @Override
-    @PostMapping("/create/{clientId}/{filmId}")
+    @PostMapping("/{filmId}")
     public String createReview(@PathVariable int filmId,
-                               @PathVariable int clientId,
                                @Valid @ModelAttribute("form") ReviewCreateForm form,
                                BindingResult bindingResult,
                                Principal principal,
@@ -100,11 +96,13 @@ public class ReviewsControllerImpl implements ReviewController {
             return "addReview";
         }
 
+        BaseUserDTO baseUserDTO = authService.getUser(principal.getName());
+
         ReviewInputDTO reviewInputDTO = new ReviewInputDTO();
         reviewInputDTO.setComment(form.comment());
         reviewInputDTO.setEstimation(form.estimation());
         reviewInputDTO.setFilmId(filmId);
-        reviewInputDTO.setClientId(clientId);
+        reviewInputDTO.setClientId(baseUserDTO.getId());
 
         reviewService.create(reviewInputDTO);
 

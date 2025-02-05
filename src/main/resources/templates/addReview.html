@@ -19,7 +19,7 @@
         <li th:each="actor : ${model.actors}" th:text="${actor.name + ' ' + actor.surname + ' ' + actor.midlName}"></li>
     </ul>
     <h2>Оставить отзыв:</h2>
-    <form th:action="@{/review/create/2/{filmId}(filmId=${model.filmId})}" method="post" th:object="${form}">
+    <form th:action="@{/review/{filmId}(filmId=${model.filmId})}" method="post" th:object="${form}">
         <div class="form-group">
             <label for="estimation">Оценка (от 1 до 5):</label>
             <input type="number" class="form-control" id="estimation" th:field="*{estimation}" min="1" max="5">

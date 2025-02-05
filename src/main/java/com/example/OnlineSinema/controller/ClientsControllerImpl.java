@@ -1,7 +1,9 @@
 package com.example.OnlineSinema.controller;
 
+import com.example.OnlineSinema.DTO.BaseUserDTO;
 import com.example.OnlineSinema.DTO.ClientDTO;
 import com.example.OnlineSinema.DTO.ReviewDTO;
+import com.example.OnlineSinema.service.AuthService;
 import com.example.OnlineSinema.service.ClientService;
 import com.example.OnlineSinema.service.FilmService;
 import com.example.OnlineSinema.service.ReviewService;
@@ -13,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
@@ -27,24 +28,26 @@ public class ClientsControllerImpl implements ClientContriller {
     private final ClientService clientService;
     private final ReviewService reviewService;
     private final FilmService filmService;
+    private final AuthService authService;
 
     @Autowired
     public ClientsControllerImpl(ClientService clientService,
                                  ReviewService reviewService,
-                                 FilmService filmService) {
+                                 FilmService filmService, AuthService authService) {
         this.clientService = clientService;
         this.reviewService = reviewService;
         this.filmService = filmService;
+        this.authService = authService;
     }
 
     @Override
-    @GetMapping("/{clientId}")
-    public String findVlientById(@PathVariable int clientId,
-                                 Principal principal,
+    @GetMapping
+    public String findVlientById(Principal principal,
                                  Model model){
 
-        ClientDTO client = clientService.findClientById(clientId);
-        List<ReviewDTO> review = reviewService.findReviewByClientId(clientId);
+        BaseUserDTO baseUserDTO = authService.getUser(principal.getName());
+        ClientDTO client = clientService.findClientById(baseUserDTO.getId());
+        List<ReviewDTO> review = reviewService.findReviewByClientId(baseUserDTO.getId());
 
         List<ReviewCardViewModel> reviews = new ArrayList<>();
         for (ReviewDTO reviewDTO : review){
