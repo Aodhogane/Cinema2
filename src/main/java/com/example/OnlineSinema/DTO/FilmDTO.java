@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class FilmDTO implements Serializable {
+
     private int id;
     private String title;
     private LocalDateTime exitDate;

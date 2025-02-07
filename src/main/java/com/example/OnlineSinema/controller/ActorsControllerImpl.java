@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Controller
 @RequestMapping("/actor")
@@ -25,6 +28,7 @@ public class ActorsControllerImpl implements ActorController {
 
     private final ActorService actorService;
     private final FilmService filmService;
+    private static final Logger LOG = LogManager.getLogger(Controller.class);
 
     @Autowired
     public ActorsControllerImpl(ActorService actorService, FilmService filmService) {
@@ -37,12 +41,14 @@ public class ActorsControllerImpl implements ActorController {
     public String findActorById(@PathVariable int actorId,
                                 Principal principal,
                                 Model model){
+
+        LOG.log(Level.INFO, "Shows the actor's profile with actorId = " + actorId + " user with email = " + principal.getName());
         ActorDTO actor = actorService.findActorById(actorId);
         List<FilmDTO> films = filmService.findFilmsByActorsId(actorId);
 
         List<FilmCardViewModel> film = new ArrayList<>();
         for (FilmDTO filmDTO : films){
-            FilmCardViewModel filmCardViewModel = new FilmCardViewModel(filmDTO.getTitle(), filmDTO.getExitDate(), filmDTO.getGenres().toString());
+            FilmCardViewModel filmCardViewModel = new FilmCardViewModel(filmDTO.getId(), filmDTO.getTitle(), filmDTO.getExitDate(), filmDTO.getGenres().toString());
             film.add(filmCardViewModel);
         }
 

@@ -1,6 +1,7 @@
 package com.example.OnlineSinema.repository.Impl;
 
 import com.example.OnlineSinema.domain.Film;
+import com.example.OnlineSinema.enums.Genres;
 import com.example.OnlineSinema.repository.FilmRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,7 +29,7 @@ public class FilmRepositoryImpl extends BaseRepository<Film> implements FilmRepo
     }
 
     @Override
-    public Page<Film> findFilmByGenres(String genres, int page, int size){
+    public Page<Film> findFilmByGenres(Genres genres, int page, int size){
         long total = entityManager.createQuery("select count(f) from Film f where f.genres =: genres", Long.class)
                 .setParameter("genres", genres)
                 .getSingleResult();

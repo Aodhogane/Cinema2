@@ -45,6 +45,7 @@ public class AdminFilmActorControllerImpl implements AdminFilmActorController {
     public String adminFilmActorController(@ModelAttribute("form") PageForm form,
                                            Principal principal,
                                            Model model){
+
         int page = form.page() != null ? form.page() : 1;
         int size = form.size() != null ? form.size() : 10;
         form = new PageForm(page, size);
@@ -52,7 +53,9 @@ public class AdminFilmActorControllerImpl implements AdminFilmActorController {
         Page<FilmDTO> filmDTOPage = filmService.findAllPage(page, size);
 
         List<FilmActorCardViewModel> listFA = new ArrayList<>();
+
         for (FilmDTO filmDTO : filmDTOPage){
+
             List<ActorIdViewModel> listActor = new ArrayList<>();
             List<ActorDTO> actorDTOS = actorService.findActorsByFilmId(filmDTO.getId());
 
@@ -62,6 +65,7 @@ public class AdminFilmActorControllerImpl implements AdminFilmActorController {
                 );
                 listActor.add(actor);
             }
+
             FilmActorCardViewModel filmActor = new FilmActorCardViewModel(
                     filmDTO.getId(), filmDTO.getTitle(), listActor);
             listFA.add(filmActor);
@@ -87,6 +91,7 @@ public class AdminFilmActorControllerImpl implements AdminFilmActorController {
     public String filmActorCreate(@Valid @ModelAttribute("form") FilmActorCreateForm form,
                                   BindingResult bindingResult, Principal principal, Model model) {
         if(bindingResult.hasErrors()){
+
             model.addAttribute("form", form);
             return "admin/filmActor/adminFilmActorCreate";
         }

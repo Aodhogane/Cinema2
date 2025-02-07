@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Controller
 @RequestMapping("/review")
@@ -28,6 +31,8 @@ public class ReviewsControllerImpl implements ReviewController {
     private final DirectorService directorService;
     private final ActorService actorService;
     private final AuthService authService;
+    private static final Logger LOG = LogManager.getLogger(Controller.class);
+
 
     @Autowired
     public ReviewsControllerImpl(ReviewService reviewService, FilmService filmService,
@@ -47,6 +52,9 @@ public class ReviewsControllerImpl implements ReviewController {
     public String pageReview(@PathVariable int filmId,
                              Principal principal,
                              Model model) {
+
+        LOG.log(Level.INFO, "Shows the reviews with filmId = " + filmId + " user with email = " + principal.getName());
+
         FilmDTO film = filmService.findFilmById(filmId);
         DirectorDTO director = directorService.findById(film.getDirectorsId());
         List<ActorDTO> actor = actorService.findActorsByFilmId(filmId);
@@ -74,6 +82,9 @@ public class ReviewsControllerImpl implements ReviewController {
                                BindingResult bindingResult,
                                Principal principal,
                                Model model){
+
+        LOG.log(Level.INFO, "Shows the create review with filmId = " + filmId + " user with email = " + principal.getName());
+
 
         if (bindingResult.hasErrors()){
             FilmDTO film = filmService.findFilmById(filmId);

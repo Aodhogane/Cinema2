@@ -1,7 +1,7 @@
 package com.example.OnlineSinema.enums;
 
 public enum Genres {
-    HORROR("HOROR"), DRAMA("DRAMA"), COMEDY("COMEDY"), FANTASTIC("FANTASTIC"), TRILLER("TRILLER");
+    HORROR("HORROR"), DRAMA("DRAMA"), COMEDY("COMEDY"), FANTASTIC("FANTASTIC"), TRILLER("TRILLER");
 
     private final String value;
 

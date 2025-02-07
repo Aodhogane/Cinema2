@@ -1,6 +1,7 @@
 package com.example.OnlineSinema.repository;
 
 import com.example.OnlineSinema.domain.Film;
+import com.example.OnlineSinema.enums.Genres;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface FilmRepository {
     void delete(Film entity);
 
     Page<Film> findFilmByTitle(String title, int page, int size);
-    Page<Film> findFilmByGenres(String genre, int page, int size);
+    Page<Film> findFilmByGenres(Genres genre, int page, int size);
     List<Film> findFilmByActorsId(int actorsId);
     List<Film> findFilmsByDirectorsId(int directorsId);
 }

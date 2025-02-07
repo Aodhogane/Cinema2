@@ -38,7 +38,7 @@ public class AdminActorControllerImpl implements AdminActorController {
     }
 
     @Override
-    @GetMapping()
+    @GetMapping
     public String PageAdminActor(@ModelAttribute("form") PageForm form,
                                  Principal principal,
                                  Model model){

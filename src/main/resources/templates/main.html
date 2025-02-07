@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,8 +10,16 @@
 <div class="container mt-4">
     <header class="d-flex justify-content-between align-items-center mb-4">
         <h1>Фильмы</h1>
-        <div th:if="${model.base.username != null}">
-            <span>Привет, <strong th:text="${model.base.username}"></strong>!</span>
+        <div th:if="${model.base.username != null}" class="d-flex align-items-center">
+            <span class="me-3">Привет, <strong th:text="${model.base.username}"></strong>!</span>
+            <a th:href="@{/client}" class="btn btn-outline-primary">Мой профиль</a>
+            <form th:action="@{/users/logout}" method="post" style="display: inline;">
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+                <button type="submit" class="btn btn-link me-2" sec:authorize="isAuthenticated()">
+                    Выйти
+                </button>
+            </form>
+
         </div>
     </header>
 
@@ -22,14 +30,13 @@
         </div>
         <div class="col-md-4">
             <label for="genre" class="form-label">Жанр</label>
-            <input type="text" id="genre" name="genre" th:value="${sort.genre}" class="form-control" placeholder="Введите жанр">
-        </div>
-        <div class="col-md-2">
-            <label for="pageSize" class="form-label">Кол-во на странице</label>
-            <select id="pageSize" name="size" class="form-select" th:value="${pageSize.size}">
-                <option value="3">3</option>
-                <option value="5">5</option>
-                <option value="10">10</option>
+            <select id="genre" name="genre" class="form-select">
+                <option value="">Выберите жанр</option>
+                <option value="HORROR" th:selected="${sort.genre == 'HORROR'}">HORROR</option>
+                <option value="DRAMA" th:selected="${sort.genre == 'DRAMA'}">DRAMA</option>
+                <option value="COMEDY" th:selected="${sort.genre == 'COMEDY'}">COMEDY</option>
+                <option value="FANTASTIC" th:selected="${sort.genre == 'FANTASTIC'}">FANTASTIC</option>
+                <option value="TRILLER" th:selected="${sort.genre == 'TRILLER'}">TRILLER</option>
             </select>
         </div>
         <div class="col-md-2 d-flex align-items-end">
@@ -41,7 +48,12 @@
         <div class="col" th:each="film : ${model.listFilm}">
             <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title" th:text="${film.title}"></h5>
+                    <h5 class="card-title">
+                        <a th:href="@{/film/{filmId}(filmId=${film.filmId})}"
+                           th:text="${film.title}"
+                           style="text-decoration: none; color: inherit;">
+                        </a>
+                    </h5>
                     <p class="card-text">
                         <strong>Дата выхода:</strong> <span th:text="${film.exitDate}"></span><br>
                         <strong>Жанры:</strong> <span th:text="${film.genres}"></span>
@@ -66,5 +78,6 @@
     </nav>
 </div>
 
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

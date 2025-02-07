@@ -46,12 +46,12 @@ public class AppSecurityConfiguration {
                                         loginPage("/users/login").
                                         usernameParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY).
                                         passwordParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY).
-                                        defaultSuccessUrl("/main").
+                                        defaultSuccessUrl("/main", true).
                                         failureForwardUrl("/users/login-error")
                 )
                 .logout((logout) ->
                         logout.logoutUrl("/users/logout").
-                                logoutSuccessUrl("/main").
+                                logoutSuccessUrl("/users/login").
                                 invalidateHttpSession(true)
                 ).securityContext(
                         securityContext -> securityContext.

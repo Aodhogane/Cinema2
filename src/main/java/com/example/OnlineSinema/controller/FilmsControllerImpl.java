@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Controller
 @RequestMapping("/film")
@@ -30,6 +33,7 @@ public class FilmsControllerImpl implements FilmController {
     private final ClientService clientService;
     private final ActorService actorService;
     private final DirectorService directorService;
+    private static final Logger LOG = LogManager.getLogger(Controller.class);
 
     @Autowired
     public FilmsControllerImpl(FilmService filmService, ReviewService reviewService,
@@ -47,6 +51,10 @@ public class FilmsControllerImpl implements FilmController {
     public String filmDeteilById(@PathVariable int filmId,
                                  Principal principal,
                                  Model model){
+
+        LOG.log(Level.INFO, "Shows the actor's profile with filmId = " + filmId + " user with email = " + principal.getName());
+
+
         FilmDTO films = filmService.findFilmById(filmId);
         List<ActorDTO> actor = actorService.findActorsByFilmId(filmId);
         DirectorDTO director = directorService.findById(films.getDirectorsId());

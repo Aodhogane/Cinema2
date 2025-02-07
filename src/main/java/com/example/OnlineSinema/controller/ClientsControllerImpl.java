@@ -20,6 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 @Controller
 @RequestMapping("/client")
@@ -29,6 +33,7 @@ public class ClientsControllerImpl implements ClientContriller {
     private final ReviewService reviewService;
     private final FilmService filmService;
     private final AuthService authService;
+    private static final Logger LOG = LogManager.getLogger(Controller.class);
 
     @Autowired
     public ClientsControllerImpl(ClientService clientService,
@@ -44,6 +49,8 @@ public class ClientsControllerImpl implements ClientContriller {
     @GetMapping
     public String findVlientById(Principal principal,
                                  Model model){
+
+        LOG.log(Level.INFO, "A user with the name = " + principal.getName() + " click on your account.");
 
         BaseUserDTO baseUserDTO = authService.getUser(principal.getName());
         ClientDTO client = clientService.findClientById(baseUserDTO.getId());

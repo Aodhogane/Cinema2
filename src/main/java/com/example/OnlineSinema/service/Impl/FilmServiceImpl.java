@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@EnableCaching
+//@EnableCaching
 public class FilmServiceImpl implements FilmService {
 
     private final FilmRepository filmRepository;
@@ -70,7 +70,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Page<FilmDTO> filmFilmByGenre(String genre, int page, int size){
-        Page<Film> filmPage = filmRepository.findFilmByGenres(genre, page, size);
+        Page<Film> filmPage = filmRepository.findFilmByGenres(Genres.valueOf(genre), page, size);
 
         List<FilmDTO> filmDTOS = new ArrayList<>();
         for (Film film : filmPage){
@@ -86,9 +86,9 @@ public class FilmServiceImpl implements FilmService {
     public Page<FilmDTO> chuzSort(String title, String genre, int page, int size){
         Page<FilmDTO> filmPage;
 
-        if (title != null){
+        if (title != null && !title.isBlank()){
             filmPage = findFilmByTitle(title, page, size);
-        } else if(genre != null){
+        } else if(genre != null && !genre.isBlank()){
             filmPage = filmFilmByGenre(genre, page, size);
         } else {
             filmPage = findAllPage(page, size);

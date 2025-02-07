@@ -16,12 +16,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Controller
 @RequestMapping("/users")
 public class AuthControllerImpl implements AuthController {
 
     private AuthService authService;
+    private static final Logger LOG = LogManager.getLogger(Controller.class);
 
     @Autowired
     public AuthControllerImpl(AuthService authService) {
@@ -38,6 +42,7 @@ public class AuthControllerImpl implements AuthController {
     @GetMapping("/register")
     public String registerClient(Model model){
 
+        LOG.log(Level.INFO, "User register page");
         model.addAttribute("form", new ClientRegisterCreateForm("", "",
                 "", "", ""));
 
@@ -51,10 +56,12 @@ public class AuthControllerImpl implements AuthController {
                                  Model model){
 
         if (bindingResult.hasErrors()){
+            LOG.log(Level.INFO, "User register error on page");
             model.addAttribute("form", form);
             return "register";
         }
 
+        LOG.log(Level.INFO, "User register error on page");
         UserRegistrationDTO regDTO = new UserRegistrationDTO(form.email(),
                 form.password(), form.confirmPassword(), "CLIENT", form.name());
         authService.register(regDTO);
@@ -66,6 +73,7 @@ public class AuthControllerImpl implements AuthController {
     @GetMapping("/mediaRegister")
     public String mediaRegister(Model model){
 
+        LOG.log(Level.INFO, "Madia user register page");
         model.addAttribute("form", new MediaRegisterCreateForm("", "", "",
                 "", "", "", ""));
 
@@ -79,10 +87,12 @@ public class AuthControllerImpl implements AuthController {
                                 Model model){
 
         if (bindingResult.hasErrors()){
+            LOG.log(Level.INFO, "Madia user register error on page");
             model.addAttribute("form", form);
             return "mediaRegister";
         }
 
+        LOG.log(Level.INFO, "Madia user register page");
         UserRegistrationDTO regDTO = new UserRegistrationDTO(form.email(), form.password(), form.confirmPassword(),
                 form.role(), form.name(), form.surname(), form.midName());
 
@@ -97,7 +107,7 @@ public class AuthControllerImpl implements AuthController {
             @ModelAttribute(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY) String username,
             RedirectAttributes redirectAttributes) {
 
-//        LOG.log(Level.INFO, "login-error method called with POST");
+        LOG.log(Level.INFO, "login-error method called with POST");
 
         redirectAttributes.addFlashAttribute(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY, username);
         redirectAttributes.addFlashAttribute("badCredentials", true);

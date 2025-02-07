@@ -8,6 +8,7 @@
 <body>
 <h1>Login</h1>
 <form th:action="@{/users/login}" method="post">
+    <input type="hidden" name="redirect" value="/main">
     <div>
         <label for="username">Почта:</label>
         <input type="email" id="username" name="username" required>

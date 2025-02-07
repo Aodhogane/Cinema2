@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Controller
 @RequestMapping("/main")
@@ -27,6 +30,7 @@ public class MainPageControllerImpl implements MainController {
 
     private final FilmService filmService;
     private final AuthService authService;
+    private static final Logger LOG = LogManager.getLogger(Controller.class);
 
     @Autowired
     public MainPageControllerImpl(FilmService filmService, AuthService authService) {
@@ -40,14 +44,22 @@ public class MainPageControllerImpl implements MainController {
                               @ModelAttribute("pageSize") PageForm pageForm,
                               Principal principal,
                               Model model) {
+
         int page = pageForm.page() != null ? pageForm.page() : 1;
         int size = pageForm.size() != null ? pageForm.size() : 3;
         pageForm = new PageForm(page, size);
         Page<FilmDTO> filmDTOPage = filmService.chuzSort(sort.title(), sort.genre(), page, size);
 
+        if (principal == null){
+            LOG.log(Level.INFO, "No authoraze user clicks on the main page");
+        }
+        else {
+            LOG.log(Level.INFO, "The user clicks on the main page " + principal.getName());
+        }
+
         List<FilmCardViewModel> filmCard = new ArrayList<>();
         for (FilmDTO filmDTO : filmDTOPage){
-            FilmCardViewModel filmCardWork = new FilmCardViewModel(filmDTO.getTitle(), filmDTO.getExitDate(), filmDTO.getGenres());
+            FilmCardViewModel filmCardWork = new FilmCardViewModel(filmDTO.getId(), filmDTO.getTitle(), filmDTO.getExitDate(), filmDTO.getGenres());
             filmCard.add(filmCardWork);
         }
 
