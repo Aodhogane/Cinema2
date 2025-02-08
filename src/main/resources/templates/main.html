@@ -19,9 +19,12 @@
                     Выйти
                 </button>
             </form>
-
         </div>
     </header>
+
+    <div class="mb-3" sec:authorize="!hasAuthority('ADMIN')">
+        <a th:href="@{/admin/actor}" class="btn btn-danger">Панель админа</a>
+    </div>
 
     <form th:action="@{/main}" method="get" class="row g-3 mb-4">
         <div class="col-md-4">

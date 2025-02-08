@@ -73,7 +73,7 @@ public class FilmsControllerImpl implements FilmController {
             reviews.add(reviewCardViewModel);
         }
 
-        FilmDeteilsViewModel viewModel = new FilmDeteilsViewModel(
+        FilmDeteilsViewModel viewModel = new FilmDeteilsViewModel(films.getId(),
                 films.getTitle(), films.getRating(), actors, director.getName(), director.getSurname(),director.getMidlName(),
                 reviews, createBaseVieModel(principal));
 

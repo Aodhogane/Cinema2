@@ -31,7 +31,12 @@
     </div>
 
     <div th:if="${model.base.username}" class="mt-3">
+        <a class="nav-link" href="/main">Обратно в Main</a></li>
+
         <p>Logged in as: <span th:text="${model.base.username}">Username</span></p>
+
+        <a th:href="@{/review/{filmId}(filmId=${model.filmId})}" class="btn btn-primary">Добавить отзыв</a>
+
     </div>
 </div>
 

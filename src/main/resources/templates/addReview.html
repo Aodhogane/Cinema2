@@ -9,6 +9,7 @@
 <div class="container mt-5">
     <div th:if="${model.base.username != null}" class="mb-3">
         <p>Добро пожаловать, <span th:text="${model.base.username}"></span>!</p>
+        <a class="nav-link" href="/main">Обратно в Main</a></li>
     </div>
     <h1 th:text="${model.title}"></h1>
     <p>Рейтинг фильма: <span th:text="${model.reting}"></span></p>
@@ -19,7 +20,7 @@
         <li th:each="actor : ${model.actors}" th:text="${actor.name + ' ' + actor.surname + ' ' + actor.midlName}"></li>
     </ul>
     <h2>Оставить отзыв:</h2>
-    <form th:action="@{/review/{filmId}(filmId=${model.filmId})}" method="post" th:object="${form}">
+    <form th:action="@{'/review/' + ${model.filmId}}" method="post" th:object="${form}">
         <div class="form-group">
             <label for="estimation">Оценка (от 1 до 5):</label>
             <input type="number" class="form-control" id="estimation" th:field="*{estimation}" min="1" max="5">
