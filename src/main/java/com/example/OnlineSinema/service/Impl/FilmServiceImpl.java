@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-//@EnableCaching
+@EnableCaching
 public class FilmServiceImpl implements FilmService {
 
     private final FilmRepository filmRepository;
